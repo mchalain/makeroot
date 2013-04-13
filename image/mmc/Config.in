@@ -1,0 +1,37 @@
+config MMC_BLOCKDEVICE
+    string "mmc block device path"
+    default "/dev/mmcblk0"
+
+config MMC_BOOT_PATH
+    string "path to the mmc BOOT partition on your host"
+    default "/media/boot"
+
+config MMC_BOOT_PARTITION
+    int "partition number of mmc BOOT partition"
+    default 1
+
+config MMC_ROOT_PATH
+    string "path to the mmc ROOT partition on your host"
+    default "/media/root"
+
+config MMC_ROOT_PARTITION
+    int "partition number of mmc ROOT partition"
+    default 2
+
+config MMC_ROOT_FS_TYPE
+    string "file system type of mmc ROOT partition"
+    default "ext2"
+
+config MMC_USER
+    bool "create partition for user data"
+
+config MMC_USER_PATH
+    string "path to the mmc USER partition on your host"
+    default "/media/user"
+    depends on MMC_USER
+
+config MMC_USER_PARTITION
+    int "partition number of mmc USER partition"
+    default 3
+    depends on MMC_USER
+

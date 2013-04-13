@@ -1,0 +1,14 @@
+#!/bin/sh
+
+echo image build by Makeroot
+
+echo mount
+mount -a
+
+rcFiles=$(/bin/ls /etc/init.d/rc.* 2> /dev/null)
+
+for file in $rcFiles; do
+    if [ -e $file ]; then
+        $file
+    fi
+done

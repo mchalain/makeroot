@@ -1,0 +1,62 @@
+menu "image generation"
+choice 
+    prompt "ROOT files system type"
+    config UBIFS
+        bool "UbiFS"
+    config EXT2
+        bool "Ext2 fs"
+    config EXT4
+        bool "Ext4 fs"
+endchoice
+
+menu "Flash description"
+    depends on UBIFS
+
+    config MTD_PAGESIZE
+        int "Nand page size"
+        default 2048
+
+    config MTD_SUBPAGESIZE
+        int "Nand subpage size"
+        default 512
+
+    config MTD_PEB
+        int "Physical Erase Block (PEB) Size in KiB"
+        default 128
+
+endmenu
+
+menu "Ubifs"
+    depends on UBIFS
+
+    config UBIFS_IMAGE_NAME
+        string "name of the image"
+        default "root"
+
+    config UBIFS_LEB
+        int "Logical Erase Block (LEB) Size in KiB"
+        default 126
+
+    config UBIFS_SIZE
+        int "file system size in MiB"
+        default 1024
+
+endmenu
+
+choice
+    prompt "Image file"
+    config IMAGE_MMC
+        bool "mmc for u-boot"
+    config IMAGE_RAW
+        bool "raw image for flasher"
+    config IMAGE_QEMU
+        bool "raw image for qemu"
+endchoice
+
+config IMAGE_SIZE
+    int "fixed image size in MiB"
+    default 1024
+
+source "image/mmc/Config.in"
+
+endmenu

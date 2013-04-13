@@ -1,0 +1,78 @@
+menu "File System Hierarchy"
+
+choice
+    prompt "System Hierarchy"
+    config FHS_LINUX
+        bool "Linux standard"
+        default y
+        select TREE_BOOT
+        select TREE_DEFROOT
+        select TREE_HOME
+        select TREE_OPT
+        select TREE_ETC
+        select TREE_USR
+        select TREE_VAR
+        select TREE_MEDIA
+        select TREE_SHARE
+        select TREE_MODULES
+        select TREE_FONTS
+
+    config FHS_ANDROID
+        bool "Android system"
+        select TREE_BOOT
+        select TREE_DEFROOT
+        select TREE_HOME
+        select TREE_OPT
+        select TREE_ETC
+        select TREE_USR
+        select TREE_VAR
+        select TREE_MEDIA
+        select TREE_SHARE
+        select TREE_MODULES
+        select TREE_APP
+        select TREE_FONTS
+
+endchoice
+
+config SYSTEM
+    string
+    default "fhs" if FHS_LINUX
+    default "android" if FHS_ANDROID
+
+config TREE_BOOT
+    bool
+
+config TREE_DEFROOT
+    bool
+
+config TREE_HOME
+    bool
+
+config TREE_OPT
+    bool
+
+config TREE_ETC
+    bool
+
+config TREE_USR
+    bool
+
+config TREE_VAR
+    bool
+
+config TREE_MEDIA
+    bool
+
+config TREE_SHARE
+    bool
+
+config TREE_MODULES
+    bool
+
+config TREE_FONTS
+    bool
+
+config TREE_APP
+    bool
+
+endmenu

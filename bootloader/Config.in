@@ -1,0 +1,16 @@
+config U_IMAGE
+    bool
+
+choice
+    prompt "bootloader"
+    config U_BOOT
+        bool "u-boot"
+        select U_IMAGE
+
+    config U_BOOT_UX500
+        bool "u-boot from igloocommunity (snowball)"
+        select U_IMAGE
+
+endchoice
+
+    

@@ -1,0 +1,7 @@
+/dev/root	/	auto	defaults	0	0
+devtmpfs	/dev	devtmpfs	mode=0755,rw	0	0
+devpts		/dev/pts	devpts	gid=5,mode=620	0	0
+proc		/proc	proc	nodev,noexec,nosuid	0	0
+sysfs		/sys	sysfs	nosuid,noexec,nodev	0	0
+tmpfs		/tmp	tmpfs	defaults	0	0
+LABEL=boot	/boot	vfat	rw,quiet,showexec,iocharset=utf8	0	0

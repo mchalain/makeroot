@@ -1,0 +1,52 @@
+menu "C language library : libc"
+choice
+    prompt "libc version"
+    config LIBC_TOOLCHAIN
+        bool "the libc from the toolchain"
+        default y
+
+    config LIBC_GLIBC
+        bool "The Gnu Libc"
+
+    config LIBC_UCLIBC
+        bool "uClibc"
+
+    config LIBC_NEWLIB
+        bool "newlib RedHat embedded libc"
+
+    config LIBC_BIONIC
+        bool "bionic the Google embedded libc"
+
+endchoice
+
+config LIBC_GLIBC_VERSION
+    string "version"
+    default 2.17
+    depends on LIBC_GLIBC
+
+config LIBC_GLIBC_DEFCONFIG
+    string "config file"
+    default libc/config/glibc_defconfig
+    depends on LIBC_GLIBC
+
+config LIBC_UCLIBC_VERSION
+    string "version"
+    default 0.9.33
+    depends on LIBC_UCLIBC
+
+config LIBC_UCLIBC_DEFCONFIG
+    string "config file"
+    default libc/config/uclibc_defconfig
+    depends on LIBC_UCLIBC
+
+config LIBC_NEWLIB_VERSION
+    string "version"
+    default 2.0.0
+    depends on LIBC_NEWLIB
+
+config LIBC_NEWLIB_CONFIGURE
+    string "configure options"
+    default "--target arm-none-eabi --disable-newlib-supplied-syscalls"
+    depends on LIBC_NEWLIB
+
+endmenu

@@ -1,0 +1,35 @@
+menu "Toolchain"
+choice
+    prompt "toolchain select"
+    config TOOLCHAIN_LINARO
+        bool "Linaro Toolchain"
+    config TOOLCHAIN_BARE_METAL
+        bool "bare-metal Toolchain"
+    config TOOLCHAIN_CUSTOM
+        bool "custom Toolchain"
+endchoice
+
+
+config GCCVERSION
+    string
+    prompt  "C Compiler version" if TOOLCHAIN_CUSTOM
+    default "4.4.3"
+
+config TOOLCHAIN_NAME
+    string "toolchain name"
+    default "linaro" if TOOLCHAIN_LINARO
+    default "gcc-arm-none-eabi-4_6-2012q2" if TOOLCHAIN_BARE_METAL
+
+config TOOLCHAIN
+    string "Cross Compilation toolchain Path"
+    default "/opt/linaro" if TOOLCHAIN_LINARO
+    default "/opt/armtools/toolchain" if ARM
+    default "/opt/mipstools/toolchain" if MIPS
+
+config CROSS_COMPILE
+    string "Cross Compilation tools suffix"
+    default "arm-linux-gnueabi" if TOOLCHAIN_LINARO
+    default "arm-none-linux-gnueabi"
+
+endmenu
+

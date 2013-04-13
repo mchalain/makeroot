@@ -1,0 +1,23 @@
+menu "System Type"
+
+choice
+    prompt "System Hierarchy"
+    config FHS_LINUX
+        bool "Linux standard"
+        default y
+
+    config FHS_ANDROID
+        bool "Android system"
+
+endchoice
+
+config SYSTEM
+    string
+    default "fhs" if FHS_LINUX
+    default "android" if FHS_ANDROID
+
+if FHS_LINUX
+source "tree/fhs/Config.in"
+endif
+
+endmenu

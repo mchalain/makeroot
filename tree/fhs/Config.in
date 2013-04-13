@@ -1,0 +1,97 @@
+menu "File System Hierarchy"
+
+config TREE_PROC
+    bool
+    default y
+
+config FSTAB_PROC
+    bool "add entry in fstab for /proc"
+    depends on TREE_PROC
+
+config TREE_SYS
+    bool
+    default y
+
+config FSTAB_SYS
+    bool "add entry in fstab for /sys"
+    depends on TREE_SYS
+
+config TREE_DEV
+    bool
+    default y
+
+choice
+    prompt "device node populating"
+    default DEV_STATIC
+    depends on TREE_DEV
+
+    config DEV_STATIC
+        bool "static device nodes"
+
+    config DEV_TMPDEV_ONLY
+        bool "device file system only"
+        select DEV_TMPDEV
+    
+    config DEV_UDEV
+        bool "udev daemon"
+        select DEV_TMPDEV
+
+    config DEV_MDEV
+        bool "mdev daemon"
+        select DEV_TMPDEV
+        depends on BUSYBOX
+
+endchoice
+
+config DEV_TMPDEV
+    bool
+
+config FSTAB_DEV
+    bool "add entry in fstab for /dev"
+    depends on DEV_TMPDEV
+
+config FSTAB_DEVPTS
+    bool "add entry in fstab for /dev/pts"
+    depends on TREE_DEV
+
+config FSTAB_DEVSHM
+    bool "add entry in fstab for /dev/shm"
+    depends on TREE_DEV
+
+config FSTAB_DEVSHM_SIZE
+    int "size of the shm file system"
+    default 33554432
+    depends on TFSTAB_DEVSHM
+
+config TREE_BOOT
+    bool
+    default y
+
+config FSTAB_BOOTVFAT
+    bool "add entry in fstab for /boot to see the boot partition"
+    depends on TREE_BOOT
+
+config TREE_TMP
+    bool "add /tmp directory"
+
+config FSTAB_TMP
+    bool "add entry in fstab for /tmp"
+    depends on TREE_TMP
+
+config TREE_VAR
+    bool "add /var directory ans sub-directories"
+
+config TREE_MEDIA
+    bool "add /media directory ans sub-directories"
+
+config TREE_MNT
+    bool "add /mnt directory ans sub-directories"
+
+config TREE_LOCAL
+    bool "add /usr/local directory ans sub-directories"
+
+config MTAB_SYMLINK
+    bool "create a symbolic link from /etc/mtab to /tmp/mtab"
+    default y if ROOT_RDONLY
+
+endmenu

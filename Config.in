@@ -1,0 +1,46 @@
+# Config.in
+
+config CONFIGNAME
+    string "Definition Name"
+    default "FHS_Linux_glibc_busybox"
+
+choice
+    prompt "Harware Platform"
+    config ARM
+        bool "ARM Lt CPU"
+    config MIPS
+        bool "MIPS CPU"
+endchoice
+
+config ARCH
+    string "CPU Architecture"
+    default "mips" if MIPS
+    default "arm" if ARM
+
+config CPU
+    string "cpu type"
+    default "armv7" if ARM
+    default "mips" if MIPS
+
+config BOARD
+    string "board name"
+
+source "tools/gcc/Config.in"
+
+menu "Embedded System Build"
+
+source "bootloader/Config.in"
+
+source "tree/Config.in"
+
+source "kernel/Config.in"
+
+source "libc/Config.in"
+
+source "env/Config.in"
+
+source "init/Config.in"
+
+endmenu
+
+source "image/Config.in
