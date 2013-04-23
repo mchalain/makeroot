@@ -3,7 +3,7 @@ ARCH := $(CONFIG_ARCH:"%"=%)
 export CROSS_COMPILE ARCH
 
 
-subdir-$(CONFIG_LIBC_TOOLCHAIN):=toolchain
+subdir-$(CONFIG_LIBC_TOOLCHAIN):=$(src)/toolchain
 
 uclibc-version=$(strip $(if $(CONFIG_LIBC_UCLIBC_VERSION:"%"=%),-$(CONFIG_LIBC_UCLIBC_VERSION:"%"=%)))
 subproject-$(CONFIG_LIBC_UCLIBC)+=uClibc$(uclibc-version)
