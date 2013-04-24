@@ -13,12 +13,21 @@ choice
         bool "Linux from Linaro Team git repository"
         select LINUX
 
+    config LINUX_CUSTOM
+        bool "customized Linux "
+        select LINUX
+
 endchoice
 
 config KERNEL_VERSION
     string "version"
     depends on LINUX_STD
     default "3.7.1"
+
+config LINUX_CUSTOM_URL
+    string "linux source tree URL (compressed file or git repository)
+    default "git://git.kernel.org/linux/kernel/git/arm/arm-soc.git"
+    depends on LINUX_CUSTOM
 
 config KERNEL
     string

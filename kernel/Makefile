@@ -20,6 +20,9 @@ ifeq ($(CONFIG_LINUX_STD), y)
 $(kprj)-url:=http://www.kernel.org/pub/linux/kernel/v3.0/$(kprj).tar.bz2
 endif
 linux-linaro-tracking-url:=git://git.linaro.org/kernel/linux-linaro-tracking.git
+ifneq ($(CONFIG_LINUX_CUSTOM_URL), )
+$(kprj)-url:=$(CONFIG_LINUX_CUSTOM_URL:"%"=%)
+endif
 
 $(kprj)-defconfig:=$(CONFIG_KERNEL_DEFCONFIG:"%"=%)
 $(kprj)-makeflags:=$(makeflags)
