@@ -30,6 +30,7 @@ include $(CONFIG_FILE)
 
 # The filename Kbuild has precedence over Makefile
 build-dir := $(if $(filter /%,$(src)),$(src),$(srctree)/$(src))
+PHONY+=$(build-dir)
 include  $(build-dir)/Makefile
 
 include scripts/tool.mk

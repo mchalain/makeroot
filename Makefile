@@ -62,6 +62,8 @@ SUBDIRS +=bootloader tree kernel libc env init image
 
 all: $(SUBDIRS)
 
+image: tree kernel libc env init 
+
 PHONY += $(SUBDIRS)
 $(SUBDIRS): $(CONFIG_FILE)
 	$(MAKE) $(build)=$@

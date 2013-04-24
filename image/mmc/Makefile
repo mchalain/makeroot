@@ -26,6 +26,7 @@ $(mmcroot): $(device)$(p2)
 	$(MKDIR) $(mmcroot)
 	mount -t ext2 $(device)$(p2) $(mmcroot)
 
+PHONY+=image/mmc
 image/mmc: $(mmcboot) $(mmcroot)
 	$(CP) $(TARGET_OUT)/boot/* $(mmcboot)
 	$(CP) $(TARGET_OUT)/* $(mmcroot)
