@@ -26,7 +26,7 @@ cmd_configure-project = \
 	$(eval sprj-config = $($(notdir $@)-config)) \
         $(eval sprj-makeflags = $($(notdir $@)-makeflags)) \
 	$(if $(sprj-config), $(sprj-config), \
-	$(if $(sprj-defconfig), cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig))
+	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/.config), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig)))
 
 quiet_cmd_build-project = BUILD $@
 cmd_build-project = \
