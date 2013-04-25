@@ -1,0 +1,24 @@
+config FRAMEBUFFER
+    bool
+
+choice
+    prompt "Graphic System"
+
+    config FRAMEBUFFER_ONLY
+        bool "Frame Buffer  only"
+        select FRAMEBUFFER
+        
+    config DIRECTFB
+        bool "DirectFB"
+        select FRAMEBUFFER
+
+    config X11
+        bool "X11 server"
+        select FRAMEBUFFER
+
+    config WAYLAND
+        bool "Wayland"
+        select EGL
+
+endchoice
+

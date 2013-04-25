@@ -41,6 +41,8 @@ source "env/Config.in"
 
 source "init/Config.in"
 
+source "graphics/Config.in"
+
 endmenu
 
 source "image/Config.in"
