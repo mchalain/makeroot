@@ -1,6 +1,11 @@
 # ==========================================================================
 # create directories on the target system
 
+PKG_CONFIG_LIBDIR=$(objtree)/usr/include/pkgconfig
+PKG_CONFIG_PATH=$(objtree)/usr/include/pkgconfig
+PKG_CONFIG_SYSROOT_DIR=$(objtree)
+export PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR
+
 download-copy= | tee $(addprefix $(BUILD_DOWNLOAD_PATH), $(notdir $(1)))
 download-wget=wget -O - $(1) $(if $(findstring y,$(BUILD_DOWNLOAD_KEEP_COPY)), $(download-copy))
 download-directory= cat $(1)
@@ -8,16 +13,16 @@ download-directory= cat $(1)
 download=$(if $(wildcard $(addprefix $(BUILD_DOWNLOAD_PATH), $(notdir $(1)))), $(download-directory), $(download-wget))
 quiet_cmd_download-project = DOWNLOAD $@ from $($@-url)
 cmd_download-project = \
-	$(eval url = $($(notdir $@)-url)) \
-	$(if $(filter $(suffix $(url)), .gz), \
+	$(eval url = $($(notdir $@)-url))  \
+	$(if $(findstring .gz, $(suffix $(url))), \
 		$(call download, $(url)) | tar -xzf - -C $(src), \
-	$(if $(filter $(suffix $(url)), .bz2), \
+	$(if $(findstring .bz2, $(suffix $(url))), \
 		$(call download, $(url)) tar -xjf - -C $(src), \
-	$(if $(filter $(suffix $(url)), .xz), \
+	$(if $(findstring .xz, $(suffix $(url))), \
 		$(call download, $(url)) tar -xJf - -C $(src), \
 	$(if $(findstring :pserver:,$(url)), \
 		cvs -z 9 -d $(url) co $(notdir $@), \
-	$(if $(filter $(suffix $(url)), .git), \
+	$(if $(findstring  .git, $(suffix $(url))), \
 		git clone $(url) $(src)/$@)))))
 
 quiet_cmd_configure-project = CONFIGURE $@
@@ -25,7 +30,7 @@ cmd_configure-project = \
 	$(eval sprj-defconfig = $($(notdir $@)-defconfig)) \
 	$(eval sprj-config = $($(notdir $@)-config)) \
         $(eval sprj-makeflags = $($(notdir $@)-makeflags)) \
-	$(if $(sprj-config), $(sprj-config), \
+	$(if $(sprj-config), $(sprj-src)/$(sprj-config), \
 	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/.config), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig)))
 
 quiet_cmd_build-project = BUILD $@
