@@ -1,10 +1,11 @@
 menu "System Type"
 
 choice
+    default FHS_LINUX
+
     prompt "System Hierarchy"
     config FHS_LINUX
         bool "Linux standard"
-        default y
 
     config FHS_ANDROID
         bool "Android system"

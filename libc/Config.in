@@ -1,9 +1,10 @@
 menu "C language library : libc"
 choice
+    default LIBC_TOOLCHAIN
+
     prompt "libc version"
     config LIBC_TOOLCHAIN
         bool "the libc from the toolchain"
-        default y
 
     config LIBC_GLIBC
         bool "The Gnu Libc"

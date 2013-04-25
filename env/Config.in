@@ -1,12 +1,16 @@
 menu "Environment tools"
 choice
+    default BUSYBOX
+
     prompt "Environment selection"
     config BUSYBOX
         bool "busybox"
-        default y
+
     config GNU
         bool "gnu"
+
     config DALVIK
         bool "Android Dalvik VM"
+
 endchoice
 endmenu

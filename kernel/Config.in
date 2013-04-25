@@ -25,7 +25,7 @@ config KERNEL_VERSION
     default "3.7.1"
 
 config LINUX_CUSTOM_URL
-    string "linux source tree URL (compressed file or git repository)
+    string "linux source tree URL (compressed file or git repository)"
     default "git://git.kernel.org/linux/kernel/git/arm/arm-soc.git"
     depends on LINUX_CUSTOM
 

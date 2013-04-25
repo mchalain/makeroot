@@ -43,4 +43,4 @@ source "init/Config.in"
 
 endmenu
 
-source "image/Config.in
+source "image/Config.in"
