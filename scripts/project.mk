@@ -1,12 +1,14 @@
 # ==========================================================================
 # create directories on the target system
 
-PKG_CONFIG_LIBDIR=$(objtree)/usr/include/pkgconfig
-PKG_CONFIG_PATH=$(objtree)/usr/include/pkgconfig
+PKG_CONFIG_LIBDIR=$(objtree)/usr/lib/pkgconfig
+PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig
 PKG_CONFIG_SYSROOT_DIR=$(objtree)
-export PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR
+CFLAGS=--sysroot=$(objtree)
+LDFLAGS=--sysroot=$(objtree) -Wl,-rpath=$(objtree)/lib
+export PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR CFLAGS LDFLAGS
 
-download-copy= | tee $(addprefix $(BUILD_DOWNLOAD_PATH), $(notdir $(1)))
+download-copy= | tee $(addprefix $(BUILD_DOWNLOAD_PATH), $(notdir $(1)))
 download-wget=wget -O - $(1) $(if $(findstring y,$(BUILD_DOWNLOAD_KEEP_COPY)), $(download-copy))
 download-directory= cat $(1)
 
@@ -17,9 +19,9 @@ cmd_download-project = \
 	$(if $(findstring .gz, $(suffix $(url))), \
 		$(call download, $(url)) | tar -xzf - -C $(src), \
 	$(if $(findstring .bz2, $(suffix $(url))), \
-		$(call download, $(url)) tar -xjf - -C $(src), \
+		$(call download, $(url)) | tar -xjf - -C $(src), \
 	$(if $(findstring .xz, $(suffix $(url))), \
-		$(call download, $(url)) tar -xJf - -C $(src), \
+		$(call download, $(url)) | tar -xJf - -C $(src), \
 	$(if $(findstring :pserver:,$(url)), \
 		cvs -z 9 -d $(url) co $(notdir $@), \
 	$(if $(findstring  .git, $(suffix $(url))), \
@@ -30,7 +32,7 @@ cmd_configure-project = \
 	$(eval sprj-defconfig = $($(notdir $@)-defconfig)) \
 	$(eval sprj-config = $($(notdir $@)-config)) \
         $(eval sprj-makeflags = $($(notdir $@)-makeflags)) \
-	$(if $(sprj-config), $(sprj-src)/$(sprj-config), \
+	$(if $(sprj-config), cd $(sprj-src) && $(sprj-config), \
 	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/.config), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig)))
 
 quiet_cmd_build-project = BUILD $@
@@ -43,10 +45,10 @@ quiet_cmd_install-project = INSTALL $@
 cmd_install-project = \
 	$(eval sprj-install = $($(notdir $@)-install)) \
 	$(eval sprj-makeflags = $($(notdir $@)-makeflags)) \
-	$(if $(sprj-install), $(sprj-install), $(MAKE)  $(sprj-makeflags) MAKEFLAGS= PREFIX=$(objtree) -C $(sprj-src) install)
+	$(if $(sprj-install), $(sprj-install), $(MAKE)  $(sprj-makeflags) MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) -C $(sprj-src) install)
 
 $(sort $(subproject-y)): $($(notdir $@)-defconfig) FORCE
-	@$(eval sprj-src =  $(addprefix $(src)/,$@)) \
+	@$(eval sprj-src = $(addprefix $(src)/,$@)) \
 	$(if $(wildcard  $(sprj-src)), ,$(call cmd,download-project))
 	@$(eval sprj-src =  $(addprefix $(src)/,$@)) \
 	$(call cmd,configure-project)
