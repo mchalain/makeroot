@@ -48,13 +48,13 @@ cmd_install-project = \
 	$(if $(sprj-install), $(sprj-install), $(MAKE)  $(sprj-makeflags) MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) -C $(sprj-src) install)
 
 $(sort $(subproject-y)): $($(notdir $@)-defconfig) FORCE
-	@$(eval sprj-src = $(addprefix $(src)/,$@)) \
+	@$(eval sprj-src = $(addprefix $(src)/,$@$(if $($(notdir $@)-version),-$($(notdir $@)-version)))) \
 	$(if $(wildcard  $(sprj-src)), ,$(call cmd,download-project))
-	@$(eval sprj-src =  $(addprefix $(src)/,$@)) \
+	@$(eval sprj-src =  $(addprefix $(src)/,$@$(if $($(notdir $@)-version),-$($(notdir $@)-version)))) \
 	$(call cmd,configure-project)
         
 	@$(eval sprj-targets = $($(notdir $@)-build-target)) \
-	$(eval sprj-src =  $(addprefix $(src)/,$@)) \
+	$(eval sprj-src =  $(addprefix $(src)/,$@$(if $($(notdir $@)-version),-$($(notdir $@)-version)))) \
 	$(if $(sprj-targets), \
 		$(foreach target, $(sprj-targets), $(call cmd,build-project)), \
 		$(call cmd,build-project))
