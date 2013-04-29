@@ -45,7 +45,7 @@ endif
 # Do not include host rules unles needed
 ifneq ($(hostprogs-y)$(hostprogs-m),)
 include scripts/host.mk
-host-target := $(hostprogs-y)
+host-target := $(host-csingle) $(host-cmulti) $(host-cxxmulti) $(host-cshlib)
 endif
 
 # Do not include directories management rules unles needed
@@ -58,7 +58,7 @@ include scripts/project.mk
 
 ifneq ($(toolchain-y),)
 include scripts/toolchain.mk
-toolchain-target := $(toolchain-y)
+toolchain-target :=  $(addprefix $(hostobjtree)/,$(toolchain-y))
 endif
 
 ifneq ($(strip $(obj-y) $(obj-m) $(obj-n) $(obj-) $(lib-target)),)
@@ -108,6 +108,10 @@ endif # builtin-target
 #
 # Rule to compile a set of .o files into one .a file
 #
+targets += $(toolchain-target)
+
+targets += $(host-target)
+
 ifdef lib-target
 targets += $(lib-target)
 endif
@@ -142,9 +146,9 @@ ifneq ($(cmd_files),)
   include $(cmd_files)
 endif
 
-__build: $(toolchain-target) $(targets) $(extra-y) \
-	 $(subdir-ym) $(always) \
-         $(subproject-y) $(install-y)
+__build: $(subdir-ym) $(targets) $(extra-y) \
+	 $(host-target) $(toolchain-target) \
+	 $(subproject-y) $(install-y)
 	@:
 
 
