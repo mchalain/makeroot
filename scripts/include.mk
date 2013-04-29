@@ -244,7 +244,7 @@ endif
 
 extra-y		:= $(addprefix $(obj)/,$(extra-y))
 always		:= $(addprefix $(obj)/,$(always))
-targets		:= $(addprefix $(obj)/,$(targets))
+targets		:= $(addprefix $(objtree)/,$(targets))
 obj-y		:= $(addprefix $(obj)/,$(obj-y))
 obj-m		:= $(addprefix $(obj)/,$(obj-m))
 lib-y		:= $(addprefix $(obj)/,$(lib-y))
@@ -262,4 +262,5 @@ obj-dirs	:= $(addprefix $(obj)/,$(obj-dirs))
 
 ifneq ($(strip $(root)),)
 objtree:=$(addsuffix $(root),$(objtree))
+hostobjtree:=$(addsuffix $(root),$(hostobjtree))
 endif

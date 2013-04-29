@@ -14,11 +14,12 @@ _all: all
 
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
 objtree		:= $(CURDIR)/out/target/
+hostobjtree	:= $(CURDIR)/out/host/
 src			:= $(srctree)
 obj			:= 
 sysroot		:= $(objtree)
 
-export srctree objtree sysroot
+export srctree objtree sysroot hostobjtree
 
 # CURDIR will be $(srctree)
 MAKEFLAGS += --include-dir=$(srctree)
