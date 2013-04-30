@@ -113,7 +113,7 @@ hostcxx_flags  = -Wp,-MD,$(depfile) $(__hostcxx_flags)
 quiet_cmd_host-csingle 	= HOSTCC  $@
       cmd_host-csingle	= $(HOSTCC) $(hostc_flags) -o $@ $< \
 		-L$(hostobjtree)/lib $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(host-shlib)
-$(host-csingle): $(hostobjtree)/bin/%: $(hostobjtree)/bin $(src)/%.c
+$(host-csingle): $(hostobjtree)/bin/%: $(src)/%.c
 	$(call if_changed_dep,host-csingle)
 
 # Link an executable based on list of .o files, all plain c
