@@ -65,3 +65,10 @@ config LIBXKBCOMMON
     default n
 
 endif
+
+if DIRECTFB
+config DIRECTFB_MULTIAPPS
+	bool "DirectFB with multi applications"
+	default y
+	select LINUX_FUSION
+endif

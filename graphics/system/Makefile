@@ -36,3 +36,8 @@ subproject-$(CONFIG_WESTON)+=weston
 weston-url="git://anongit.freedesktop.org/wayland/weston.git"
 weston-config=./autogen.sh CC=$(CONFIG_CROSS_COMPILE:"%"=%)-gcc --prefix=$(WLD) $(CONFIG_WESTON_OPTIONS:"%"=%)
 
+DirectFB-version=1.6.3
+subproject-$(CONFIG_DIRECTFB)+=DirectFB
+DirectFB-git=git://git.directfb.org/git/directfb/core/DirectFB.git
+DirectFB-url=http://directfb.org/downloads/Core/DirectFB-1.6/DirectFB-$(DirectFB-version).tar.gz
+DirectFB-mkconfig=$(src)/config/DirectFB.mk
