@@ -30,10 +30,12 @@ cmd_download-project = \
 quiet_cmd_configure-project = CONFIGURE $@
 cmd_configure-project = \
 	$(eval sprj-defconfig = $($(notdir $@)-defconfig)) \
+	$(eval sprj-mkconfig = $($(notdir $@)-mkconfig)) \
 	$(eval sprj-config = $($(notdir $@)-config)) \
         $(eval sprj-makeflags = $($(notdir $@)-makeflags)) \
-	$(if $(sprj-config), cd $(sprj-src) && $(sprj-config), \
-	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/.config), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig)))
+	$(if $(sprj-config), $(if $(wildcard  $(sprj-src)/Makefile), ,cd $(sprj-src) && $(sprj-config)), \
+	$(if $(sprj-mkconfig), $(if $(wildcard  $(sprj-src)/Makefile), ,$(MAKE) $(sprj-makeflags) -C $(sprj-src) -f $(sprj-mkconfig)))) \
+	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/.config), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig))))
 
 quiet_cmd_build-project = BUILD $@
 cmd_build-project = \
