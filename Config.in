@@ -44,6 +44,7 @@ source "env/Config.in"
 
 source "init/Config.in"
 
+comment  "Graphics screen support"
 source "graphics/Config.in"
 
 endmenu

@@ -18,16 +18,26 @@ choice
 
     config WAYLAND
         bool "Wayland"
+        select LIBFFI
+        select EXPAT
 
 endchoice
 
 if WAYLAND
+comment "Wayland configuration"
+
+config WAYLAND_VERSION
+    string "Wayland version"
+    default "1.1.0"
+
 choice
     prompt "Compositor"
     default WESTON
 
     config WESTON
         bool "Weston default Wayland Compositor"
+        select LIBXKBCOMMON
+        select LIBUNWIND
 
 endchoice
 
@@ -36,9 +46,7 @@ config WESTON_OPTIONS
     depends on WESTON
     default "--disable-libunwind" if !LIBUNWIND
 
-config LIBUNWIND
-    bool
-    default y if WESTON  && !ARM
+endif
 
 config DRM
     bool "Direct Renderer Manager (help)"
@@ -50,18 +58,12 @@ config MESA
     bool "Mesa OpenGL library"
     select DRM
 
+if MESA
 config MESA_OPTIONS
     string "mesa autogen options"
-    depends on MESA
     default " --enable-gles2 --disable-gallium-egl --with-egl-platforms=x11,wayland,drm --enable-gbm --enable-shared-glapi --with-gallium-drivers=r300,r600,swrast,nouveau" if I386
-
-config LIBFFI
-    bool "libffi a Portable Foreign Function Interface Library "
-    default y if WAYLAND
+endif
 
 config LIBXKBCOMMON
-    bool "libxkbcommon translating evdev keycodes to keysyms"
-    default y if WESTON
-    default n
-
-endif
+    bool
+    prompt  "libxkbcommon translating evdev keycodes to keysyms" if SHOW_ALL
