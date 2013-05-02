@@ -58,6 +58,7 @@ endif
 # Do not include projects rules unles needed
 ifneq ($(subproject-y) $(subproject-m),)
 download-y+=$(foreach prog, $(subproject-y) $(subproject-m),$(if $($(prog)-url),$(prog)))
+subproject-y:=$(addprefix $(obj)/.,$(addsuffix .prj,$(subproject-y)))
 include scripts/project.mk
 endif
 
