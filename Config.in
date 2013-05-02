@@ -4,6 +4,9 @@ config CONFIGNAME
     string "Definition Name"
     default "FHS_Linux_glibc_busybox"
 
+config SHOW_ALL
+    bool "display every configuration entries"
+
 choice
     prompt "Harware Platform"
     config ARM
