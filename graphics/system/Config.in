@@ -67,3 +67,10 @@ endif
 config LIBXKBCOMMON
     bool
     prompt  "libxkbcommon translating evdev keycodes to keysyms" if SHOW_ALL
+
+if DIRECTFB
+config DIRECTFB_MULTIAPPS
+	bool "DirectFB with multi applications"
+	default y
+	select LINUX_FUSION
+endif

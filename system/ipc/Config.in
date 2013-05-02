@@ -1,0 +1,8 @@
+config FUSIONDALE
+	bool "FusionDale IPC library (DirectFB)"
+	default y if DIRECTFB
+	select LINUX_FUSION
+
+config LINUX_FUSION
+	bool
+	prompt "fusion linux's driver" if SHOW_ALL

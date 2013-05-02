@@ -31,3 +31,8 @@ weston-url="http://wayland.freedesktop.org/releases/weston-$(weston-version).tar
 weston-git="git://anongit.freedesktop.org/wayland/weston.git"
 weston-config=./configure --prefix=$(WLD) --includedir=/usr/include $(CONFIG_WESTON_OPTIONS:"%"=%) --host=$(CONFIG_CROSS_COMPILE:"%-"=%) 
 
+DirectFB-version=1.6.3
+subproject-$(CONFIG_DIRECTFB)+=DirectFB
+DirectFB-git=git://git.directfb.org/git/directfb/core/DirectFB.git
+DirectFB-url=http://directfb.org/downloads/Core/DirectFB-1.6/DirectFB-$(DirectFB-version).tar.gz
+DirectFB-mkconfig=$(src)/config/DirectFB.mk
