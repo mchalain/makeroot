@@ -1,0 +1,14 @@
+menu "files parser libraries"
+config EXPAT
+    bool
+    prompt "xml fileparser in C language" if SHOW_ALL
+    help
+        http://expat.sourceforge.net/
+
+config LIBFFI
+    bool
+    prompt "A Portable Foreign Function Interface Library " if SHOW_ALL
+    help
+        http://sourceware.org/libffi/
+
+endmenu
