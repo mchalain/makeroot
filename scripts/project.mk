@@ -8,30 +8,11 @@ CFLAGS=--sysroot=$(objtree)
 LDFLAGS=--sysroot=$(objtree) -Wl,-rpath=$(objtree)/lib
 export PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR CFLAGS LDFLAGS
 
-download-copy= | tee $(addprefix $(BUILD_DOWNLOAD_PATH), $(notdir $(1)))
-download-wget=wget -O - $(1) $(if $(findstring y,$(BUILD_DOWNLOAD_KEEP_COPY)), $(download-copy))
-download-directory= cat $(1)
-
-download=$(if $(wildcard $(addprefix $(BUILD_DOWNLOAD_PATH), $(notdir $(1)))), $(download-directory), $(download-wget))
-quiet_cmd_download-project = DOWNLOAD $@ from $($@-url)
-cmd_download-project = \
-	$(eval url = $($(notdir $@)-url))  \
-	$(if $(findstring .gz, $(suffix $(url))), \
-		$(call download, $(url)) | tar -xzf - -C $(src), \
-	$(if $(findstring .bz2, $(suffix $(url))), \
-		$(call download, $(url)) | tar -xjf - -C $(src), \
-	$(if $(findstring .xz, $(suffix $(url))), \
-		$(call download, $(url)) | tar -xJf - -C $(src), \
-	$(if $(findstring :pserver:,$(url)), \
-		cvs -z 9 -d $(url) co $(notdir $@), \
-	$(if $(findstring  .git, $(suffix $(url))), \
-		git clone $(url) $(src)/$@)))))
-
 quiet_cmd_configure-project = CONFIGURE $@
 cmd_configure-project = \
 	$(eval sprj-defconfig = $($(notdir $@)-defconfig)) \
 	$(eval sprj-config = $($(notdir $@)-config)) \
-        $(eval sprj-makeflags = $($(notdir $@)-makeflags)) \
+	$(eval sprj-makeflags = $($(notdir $@)-makeflags)) \
 	$(if $(sprj-config), cd $(sprj-src) && $(sprj-config), \
 	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/.config), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig)))
 
@@ -47,17 +28,13 @@ cmd_install-project = \
 	$(eval sprj-makeflags = $($(notdir $@)-makeflags)) \
 	$(if $(sprj-install), $(sprj-install), $(MAKE)  $(sprj-makeflags) MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) -C $(sprj-src) install)
 
-$(sort $(subproject-y)): $($(notdir $@)-defconfig) FORCE
-	@$(eval sprj-src = $(addprefix $(src)/,$@$(if $($(notdir $@)-version),-$($(notdir $@)-version)))) \
-	$(if $(wildcard  $(sprj-src)), ,$(call cmd,download-project))
+$(sort $(subproject-y) $(subproject-m)): 
 	@$(eval sprj-src =  $(addprefix $(src)/,$@$(if $($(notdir $@)-version),-$($(notdir $@)-version)))) \
 	$(call cmd,configure-project)
-        
 	@$(eval sprj-targets = $($(notdir $@)-build-target)) \
 	$(eval sprj-src =  $(addprefix $(src)/,$@$(if $($(notdir $@)-version),-$($(notdir $@)-version)))) \
 	$(if $(sprj-targets), \
 		$(foreach target, $(sprj-targets), $(call cmd,build-project)), \
 		$(call cmd,build-project))
 	@$(call cmd,install-project)
-
-FORCE: ;
+	@touch $@

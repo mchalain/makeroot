@@ -19,6 +19,7 @@ targets :=
 subdir-y :=
 subdir-m :=
 subproject-y :=
+download-y :=
 install-y :=
 EXTRA_AFLAGS   :=
 EXTRA_CFLAGS   :=
@@ -46,6 +47,7 @@ endif
 ifneq ($(hostprogs-y)$(hostprogs-m),)
 include scripts/host.mk
 host-target := $(host-csingle) $(host-cmulti) $(host-cxxmulti) $(host-cshlib)
+download-y+=$(foreach prog,$(hostprogs-y)$(hostprogs-m),$(if $($(prog)-url),$(prog)))
 endif
 
 # Do not include directories management rules unles needed
@@ -54,11 +56,15 @@ include scripts/install.mk
 endif
 
 # Do not include projects rules unles needed
+ifneq ($(subproject-y) $(subproject-m),)
+download-y+=$(foreach prog, $(subproject-y) $(subproject-m),$(if $($(prog)-url),$(prog)))
 include scripts/project.mk
+endif
 
 ifneq ($(toolchain-y),)
 include scripts/toolchain.mk
 toolchain-target :=  $(addprefix $(hostobjtree)/,$(toolchain-y))
+download-y+=$(foreach prog, $(toolchain-y),$(if $($(prog)-url),$(prog)))
 endif
 
 ifneq ($(strip $(obj-y) $(obj-m) $(obj-n) $(obj-) $(lib-target)),)
@@ -67,6 +73,11 @@ builtin-target := $(obj)/built-in.o
 endif
 
 include scripts/subdir.mk
+
+ifneq ($(download-y),)
+download-y:=$(addprefix $(obj)/.,$(addsuffix .dwl,$(download-y)))
+include scripts/download.mk
+endif
 
 # ===========================================================================
 
@@ -147,7 +158,7 @@ ifneq ($(cmd_files),)
 endif
 
 __build: $(subdir-ym) $(targets) $(extra-y) \
-	 $(host-target) $(toolchain-target) \
+	 $(download-y) $(host-target) $(toolchain-target) \
 	 $(subproject-y) $(install-y)
 	@:
 
