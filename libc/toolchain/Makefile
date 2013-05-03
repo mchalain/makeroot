@@ -1,4 +1,4 @@
-toolchain:=$(trip $(if $(CONFIG_TOOLCHAIN_EXTERNAL),$(CONFIG_TOOLCHAIN:"%"=%),$(hostobjtree)/toolchain))
+toolchain:=$(strip $(if $(CONFIG_TOOLCHAIN_EXTERNAL),$(CONFIG_TOOLCHAIN:"%"=%),$(hostobjtree)/toolchain))
 cross_compile:=$(strip $(CONFIG_CROSS_COMPILE:"%"=%))
 arch:=$(strip $(if $(wildcard $(join $(toolchain),/$(cross_compile))),$(cross_compile), $(if $(wildcard $(join $(toolchain),/$(cross_compile)hf)),$(cross_compile)hf)))
 
