@@ -65,6 +65,9 @@ all: $(SUBDIRS)
 
 image: tree kernel libc env init 
 
+toolchain:
+	make $(build)=tools/gcc
+
 PHONY += $(SUBDIRS)
 $(SUBDIRS): $(CONFIG_FILE)
 	$(MAKE) $(build)=$@
