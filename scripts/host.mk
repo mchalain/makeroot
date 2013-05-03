@@ -75,13 +75,17 @@ host-objdirs += $(foreach f,$(host-cxxmulti),                  \
 
 host-objdirs := $(strip $(sort $(filter-out ./,$(host-objdirs))))
 
+hosto-csingle	:= $(addprefix $(obj)/,$(host-csingle))
 host-csingle	:= $(addprefix $(hostobjtree)/bin/,$(host-csingle))
+hosto-cmulti	:= $(addprefix $(obj)/,$(host-cmulti))
 host-cmulti	:= $(addprefix $(hostobjtree)/bin/,$(host-cmulti))
-host-cobjs		:= $(addsuffix .host.o, $(addprefix $(obj)/,$(host-cobjs)))
+host-cobjs		:= $(addprefix $(obj)/,$(host-cobjs))
+hosto-cxxmulti	:= $(addprefix $(obj)/,$(host-cxxmulti))
 host-cxxmulti	:= $(addprefix $(hostobjtree)/bin/,$(host-cxxmulti))
-host-cxxobjs	:= $(addsuffix .host.o, $(addprefix $(obj)/,$(host-cxxobjs)))
+host-cxxobjs	:= $(addprefix $(obj)/,$(host-cxxobjs))
+hosto-cshlib	:= $(addprefix $(obj)/,$(host-cshlib))
 host-cshlib	:= $(addprefix $(hostobjtree)/lib/,$(host-cshlib))
-host-cshobjs	:= $(addsuffix .host.o, $(addprefix $(obj)/,$(host-cshobjs)))
+host-cshobjs	:= $(addprefix $(obj)/,$(host-cshobjs))
 host-objdirs    := $(addprefix $(obj)/,$(host-objdirs))
 
 obj-dirs += $(host-objdirs)
@@ -107,67 +111,77 @@ hostcxx_flags  = -Wp,-MD,$(depfile) $(__hostcxx_flags)
 
 #####
 # Compile programs on the host
+quiet_cmd_hostcopy = HOSTCOPY $@
+      cmd_hostcopy = cp $< $@
 
 # Create executable from a single .c file
 # host-csingle -> Executable
-quiet_cmd_host-csingle 	= HOSTCC  $@
-      cmd_host-csingle	= $(HOSTCC) $(hostc_flags) -o $@ $< \
+quiet_cmd_host-csingle 	= HOSTCC $@
+      cmd_host-csingle	= $(eval override CFLAGS= )$(eval override LDFLAGS= )$(HOSTCC) $(hostc_flags) -o $@ $< \
 		-L$(hostobjtree)/lib $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(host-shlib)
-$(host-csingle): $(hostobjtree)/bin/%: $(src)/%.c
+$(hosto-csingle): $(obj)/%: $(src)/%.c
 	$(call if_changed_dep,host-csingle)
+
+$(host-csingle): $(hosto-csingle)
+	$(call if_changed,hostcopy)
 
 # Link an executable based on list of .o files, all plain c
 # host-cmulti -> executable
 quiet_cmd_host-cmulti	= HOSTLD  $@
-      cmd_host-cmulti	= $(HOSTCC) $(HOSTLDFLAGS) -o $@ \
-			  $(addsuffix .host.o, $(addprefix $(obj)/,$(filter-out -l%, $(filter-out %.so,$($(@F)-objs))))) \
+      cmd_host-cmulti	= $(eval override LDFLAGS= )$(HOSTCC) $(HOSTLDFLAGS) -o $@ \
+			  $(addprefix $(obj)/,$(filter-out -l%, $(filter-out %.so,$($(@F)-objs)))) \
 			  -L$(hostobjtree)/lib $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(host-shlib)
-$(host-cmulti): $(hostobjtree)/bin/%: $(hostobjtree)/bin $(host-cobjs) $(host-cshlib)
+$(hosto-cmulti): $(host-cobjs) $(host-cshlib)
 	$(call if_changed,host-cmulti)
+
+$(host-cmulti): $(hosto-cmulti)
+	$(call if_changed,hostcopy)
 
 # Create .o file from a single .c file
 # host-cobjs -> .o
 quiet_cmd_host-cobjs	= HOSTCC  $@
-      cmd_host-cobjs	= $(HOSTCC) $(hostc_flags) -c -o $@ $<
-$(host-cobjs): $(obj)/%.o.host.o: $(src)/%.c
+      cmd_host-cobjs	= $(eval override CFLAGS= )$(HOSTCC) $(hostc_flags) -c -o $@ $<
+$(host-cobjs): $(obj)/%.o: $(src)/%.c
 	$(call if_changed_dep,host-cobjs)
 
 # Link an executable based on list of .o files, a mixture of .c and .cc
 # host-cxxmulti -> executable
 quiet_cmd_host-cxxmulti	= HOSTLD  $@
       cmd_host-cxxmulti	= $(HOSTCXX) $(HOSTLDFLAGS) -o $@ \
-			  $(foreach o,objs cxxobjs,\
-			  $(addsuffix .host.o, $(addprefix $(obj)/,$(filter-out -l%, $(filter-out %.so,$($(@F)-$(o))))))) \
+			  $(foreach o,objs cxxobjs, $(addprefix $(obj)/,$(filter-out -l%, $(filter-out %.so,$($(@F)-$(o)))))) \
 			  -L$(hostobjtree)/lib $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(host-shlib)
-$(host-cxxmulti): $(hostobjtree)/bin/%: $(hostobjtree)/bin $(host-cobjs) $(host-cxxobjs) $(host-cshlib)
+$(hosto-cxxmulti): $(host-cobjs) $(host-cxxobjs) $(host-cshlib)
 	$(call if_changed,host-cxxmulti)
+
+$(host-cxxmulti): $(hosto-cxxmulti)
+	$(call if_changed,hostcopy)
 
 # Create .o file from a single .cc (C++) file
 quiet_cmd_host-cxxobjs	= HOSTCXX $@
       cmd_host-cxxobjs	= $(HOSTCXX) $(hostcxx_flags) -c -o $@ $<
-$(host-cxxobjs): $(obj)/%.o.host: $(src)/%.cc
+$(host-cxxobjs): $(obj)/%.o: $(src)/%.cc
 	$(call if_changed_dep,host-cxxobjs)
-$(host-cxxobjs): $(obj)/%.o.host.o: $(src)/%.cpp
+$(host-cxxobjs): $(obj)/%.o: $(src)/%.cpp
 	$(call if_changed_dep,host-cxxobjs)
 
 # Compile .c file, create position independent .o file
 # host-cshobjs -> .o
 quiet_cmd_host-cshobjs	= HOSTCC  -fPIC $@
       cmd_host-cshobjs	= $(HOSTCC) $(hostc_flags) -fPIC -c -o $@ $<
-$(host-cshobjs): $(obj)/%.o.host.o: $(src)/%.c
+$(host-cshobjs): $(obj)/%.o: $(src)/%.c
 	$(call if_changed_dep,host-cshobjs)
 
 # Link a shared library, based on position independent .o files
 # *.o -> .so shared library (host-cshlib)
 quiet_cmd_host-cshlib	= HOSTLLD -shared $@
       cmd_host-cshlib	= $(HOSTCC) $(HOSTLDFLAGS) -shared -o $@ \
-			  $(addsuffix .host.o, $(addprefix $(obj)/,$(filter-out -l%, $($(@F:.so=-objs))))) \
+			  $(addprefix $(obj)/,$(filter-out -l%, $($(@F:.so=-objs)))) \
 			  $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(host-shlib)
-$(host-cshlib): $(hostobjtree)/lib/%: $(hostobjtree)/lib $(host-cshobjs)
+$(hosto-cshlib): $(host-cshobjs)
 	$(call if_changed,host-cshlib)
+
+$(host-cshlib): $(hosto-cshlib)
+	$(call if_changed,hostcopy)
 
 targets += $(host-csingle)  $(host-cmulti) $(host-cobjs)\
 	   $(host-cxxmulti) $(host-cxxobjs) $(host-cshlib) $(host-cshobjs) 
-
-$(hostobjtree)/bin $(hostobjtree)/lib :
-	mkdir -p $@

@@ -1,5 +1,5 @@
 SYSROOT=$(objtree)
-PATH:=$(PATH):$(join $(src), toolchain/bin)
+PATH:=$(PATH):$(join $(hostobjtree), bin):$(join $(hostobjtree), toolchain/bin)
 export PATH
 
 #-L$(SYSROOT) -v -march=armv5te -funwind-tables
