@@ -69,5 +69,7 @@ toolchain:
 	make $(build)=tools/gcc
 
 PHONY += $(SUBDIRS)
-$(SUBDIRS): $(CONFIG_FILE)
+$(SUBDIRS): FORCE
 	$(MAKE) $(build)=$@
+
+FORCE:;
