@@ -50,22 +50,17 @@ host-target := $(host-csingle) $(host-cmulti) $(host-cxxmulti) $(host-cshlib)
 download-y+=$(foreach prog,$(hostprogs-y)$(hostprogs-m),$(if $($(prog)-url),$(prog)))
 endif
 
-# Do not include directories management rules unles needed
-ifneq ($(install-y),)
 include scripts/install.mk
-endif
+
+include scripts/toolchain.mk
+download-y+=$(foreach prog, $(toolchain-y),$(if $($(prog)-url),$(prog)))
+toolchain-target:=$(hostobjtree)/toolchain
 
 # Do not include projects rules unles needed
 ifneq ($(subproject-y) $(subproject-m),)
 download-y+=$(foreach prog, $(subproject-y) $(subproject-m),$(if $($(prog)-url),$(prog)))
 subproject-y:=$(addprefix $(obj)/.,$(addsuffix .prj,$(subproject-y)))
 include scripts/project.mk
-endif
-
-ifneq ($(toolchain-y),)
-include scripts/toolchain.mk
-toolchain-target :=  $(addprefix $(hostobjtree)/,$(toolchain-y))
-download-y+=$(foreach prog, $(toolchain-y),$(if $($(prog)-url),$(prog)))
 endif
 
 ifneq ($(strip $(obj-y) $(obj-m) $(obj-n) $(obj-) $(lib-target)),)
@@ -162,7 +157,6 @@ __build: $(subdir-ym) $(targets) $(extra-y) \
 	 $(download-y) $(host-target) $(toolchain-target) \
 	 $(subproject-y) $(install-y)
 	@:
-
 
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable se we can use it in if_changed and friends.

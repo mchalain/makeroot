@@ -31,5 +31,9 @@ config CROSS_COMPILE
     default "arm-linux-gnueabi" if TOOLCHAIN_LINARO
     default "arm-none-linux-gnueabi"
 
+config CROSS_COMPILE_HFP
+	bool "Hardware Floating Point support"
+	default n
+
 endmenu
 
