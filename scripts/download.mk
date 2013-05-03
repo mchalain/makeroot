@@ -20,7 +20,4 @@ cmd_download-project = \
 $(download-y): $(obj)/.%.dwl:
 	@$(eval sprj-src = $(addprefix $(src)/,$*$(if $($(notdir $*)-version),-$($(notdir $*)-version)))) \
 	$(if $(wildcard  $(sprj-src)), ,$(call cmd,download-project))
-	touch $@
-
-graphics/system/wayland-1.1.0/src/scanner.c:
-	@echo coucou toto    $(download-y)
+	@touch $@
