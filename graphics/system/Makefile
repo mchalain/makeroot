@@ -21,7 +21,7 @@ mesa-config=./autogen.sh CC=$(CONFIG_CROSS_COMPILE:"%"=%)-gcc --prefix=$(WLD) --
 
 xkbcommon-version=0.3.0
 subproject-$(CONFIG_LIBXKBCOMMON)+=xkbcommon
-xkbcommon-url="http://cgit.freedesktop.org/xorg/lib/libxkbcommon/snapshot/xkbcommon-$(libxkbcommon-version).tar.gz"
+xkbcommon-url="http://cgit.freedesktop.org/xorg/lib/libxkbcommon/snapshot/xkbcommon-$(xkbcommon-version).tar.gz"
 libxkbcommon-git="git://github.com/xkbcommon/libxkbcommon.git"
 xkbcommon-config=./autogen.sh --prefix=$(WLD) --includedir=/usr/include --with-xkb-config-root=$(WLD)/share/xkb --host=$(CONFIG_CROSS_COMPILE:"%-"=%) 
 
