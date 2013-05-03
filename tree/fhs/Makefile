@@ -1,5 +1,6 @@
 root:=
 
+ifeq ($(wildcard $(objtree)/.fhs.tree),)
 install-$(CONFIG_FHS_LINUX)+=etc/fstab home root opt var 
 install-$(CONFIG_TREE_PROC)+=proc 
 install-$(CONFIG_TREE_SYS)+=sys 
@@ -13,6 +14,9 @@ install-$(CONFIG_TREE_MNT)+=mnt/floppy mnt/cdrom mnt/usb
 install-$(CONFIG_TREE_VAR)+=var/log var/mail var/spool var/opt var/cache var/lib/misc var/lib/locate var/run/lock
 install-$(CONFIG_TREE_LOCAL)+=local/bin local/lib
 install-$(CONFIG_MTAB_SYMLINK)+=etc/mtab tmp/mtab
+install-y+=.fhs.tree
+
+endif
 
 etc: copy=tree/fhs/etc/
 sys: dir=y
@@ -42,5 +46,7 @@ tree/fhs/etc/fstab: FORCE
 	@$(if $(CONFIG_FSTAB_SYS), echo 'sysfs		/sys	sysfs	nosuid$(comma)noexec$(comma)nodev	0	0' >> $@)
 	@$(if $(CONFIG_FSTAB_TMP), echo 'tmpfs		/tmp	tmpfs	defaults	0	0' >> $@)
 	@$(if $(CONFIG_FSTAB_BOOTVFAT), echo 'LABEL=boot	/boot	vfat	rw$(comma)quiet$(comma)showexec$(comma)iocharset=utf8	0	0' >> $@)
+
+.fhs.tree: touch=y
 
 FORCE: ;
