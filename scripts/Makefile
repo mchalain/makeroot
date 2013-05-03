@@ -58,8 +58,8 @@ toolchain-target:=$(hostobjtree)/toolchain
 
 # Do not include projects rules unles needed
 ifneq ($(subproject-y) $(subproject-m),)
+subproject-target:=$(addprefix $(obj)/.,$(addsuffix .prj,$(subproject-y)))
 download-y+=$(foreach prog, $(subproject-y) $(subproject-m),$(if $($(prog)-url),$(prog)))
-subproject-y:=$(addprefix $(obj)/.,$(addsuffix .prj,$(subproject-y)))
 include scripts/project.mk
 endif
 
@@ -71,7 +71,7 @@ endif
 include scripts/subdir.mk
 
 ifneq ($(download-y),)
-download-y:=$(addprefix $(obj)/.,$(addsuffix .dwl,$(download-y)))
+download-target:=$(addprefix $(obj)/.,$(addsuffix .dwl,$(download-y)))
 include scripts/download.mk
 endif
 
@@ -154,8 +154,8 @@ ifneq ($(cmd_files),)
 endif
 
 __build: $(subdir-ym) $(targets) $(extra-y) \
-	 $(download-y) $(host-target) $(toolchain-target) \
-	 $(subproject-y) $(install-y)
+	 $(download-target) $(host-target) $(toolchain-target) \
+	 $(subproject-target) $(install-y)
 	@:
 
 # Declare the contents of the .PHONY variable as phony.  We keep that

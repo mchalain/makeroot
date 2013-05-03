@@ -17,7 +17,7 @@ cmd_download-project = \
 	$(if $(findstring  .git, $(suffix $(url))), \
 		git clone $(url) $(src)/$*)))))
 
-$(download-y): $(obj)/.%.dwl:
+$(download-target): $(obj)/.%.dwl:
 	@$(eval sprj-src = $(addprefix $(src)/,$*$(if $($(notdir $*)-version),-$($(notdir $*)-version)))) \
 	$(if $(wildcard  $(sprj-src)), ,$(call cmd,download-project))
 	@touch $@

@@ -4,8 +4,8 @@
 PKG_CONFIG_LIBDIR=$(objtree)/usr/lib/pkgconfig
 PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig
 PKG_CONFIG_SYSROOT_DIR=$(objtree)
-CFLAGS=--sysroot=$(objtree)
-LDFLAGS=--sysroot=$(objtree) -Wl,-rpath=$(objtree)/lib
+CFLAGS=--sysroot=$(SYSROOT)
+LDFLAGS=--sysroot=$(SYSROOT) -Wl,-rpath=$(SYSROOT)/lib
 export PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR CFLAGS LDFLAGS
 
 quiet_cmd_configure-project = CONFIGURE $*
@@ -30,7 +30,8 @@ cmd_install-project = \
 	$(eval sprj-makeflags = $($(notdir $*)-makeflags)) \
 	$(if $(sprj-install), $(sprj-install), $(MAKE)  $(sprj-makeflags) MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) -C $(sprj-src) install)
 
-$(sort $(subproject-y) $(subproject-m)):  $(obj)/.%.prj: $($(notdir $@)-defconfig)
+$(sort $(subproject-target)):  $(obj)/.%.prj: $($(notdir $@)-defconfig)
+	$(foreach prog, $(subproject-y) $(subproject-m),echo $(prog)-url = $(if $($(prog)-url),$(prog)))
 	@$(eval sprj-src =  $(addprefix $(src)/,$*$(if $($(notdir $*)-version),-$($(notdir $*)-version)))) \
 	$(call cmd,configure-project)
 	@$(eval sprj-targets = $($(notdir $*)-build-target)) \
