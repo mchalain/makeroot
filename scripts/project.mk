@@ -3,9 +3,9 @@
 
 PKG_CONFIG_LIBDIR=$(objtree)/usr/lib/pkgconfig
 PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig
-PKG_CONFIG_SYSROOT_DIR=$(objtree)
-CFLAGS=--sysroot=$(SYSROOT)
-LDFLAGS=--sysroot=$(SYSROOT) -Wl,-rpath=$(SYSROOT)/lib
+PKG_CONFIG_SYSROOT_DIR=$(sysroot)
+CFLAGS=--sysroot=$(sysroot)
+LDFLAGS=--sysroot=$(sysroot) -Wl,-rpath=$(sysroot)/lib
 export PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR CFLAGS LDFLAGS
 
 quiet_cmd_configure-project = CONFIGURE $*

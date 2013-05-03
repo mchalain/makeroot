@@ -44,7 +44,7 @@ scripts_basic:
 scripts/basic/%: scripts_basic ;
 
 PHONY+=menuconfig
-menuconfig: scripts_basic
+%config: scripts_basic
 	$(Q)$(MAKE) $(build)=scripts/kconfig $@
 
 $(CONFIG_FILE):
