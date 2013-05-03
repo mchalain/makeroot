@@ -59,9 +59,9 @@ CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
 ARCH ?= $(CONFIG_ARCH:"%"=%)
 export CROSS_COMPILE ARCH
 
-SUBDIRS +=bootloader tree kernel libc env init system graphics image
+SUBDIRS +=tree libc kernel env init system graphics image
 
-all: $(SUBDIRS)
+all: toolchain $(SUBDIRS)
 
 image: tree kernel libc env init 
 
