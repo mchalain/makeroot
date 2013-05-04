@@ -44,7 +44,7 @@ scripts_basic:
 scripts/basic/%: scripts_basic ;
 
 PHONY+=menuconfig
-%config: scripts_basic
+menuconfig: scripts_basic
 	$(Q)$(MAKE) $(build)=scripts/kconfig $@
 
 $(CONFIG_FILE):
@@ -66,7 +66,10 @@ all: toolchain $(SUBDIRS)
 image: tree kernel libc env init 
 
 toolchain:
-	make $(build)=tools/gcc
+	$(MAKE) $(build)=tools/gcc
+
+bootloader: FORCE
+	$(MAKE) $(build)=$@
 
 PHONY += $(SUBDIRS)
 $(SUBDIRS): FORCE

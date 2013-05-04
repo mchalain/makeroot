@@ -94,7 +94,7 @@ obj-dirs += $(host-objdirs)
 # Handle options to gcc. Support building with separate output directory
 
 _hostc_flags   = $(HOSTCFLAGS)   $(HOST_EXTRACFLAGS)   \
-		 $(HOSTCFLAGS_$(basetarget).o)
+		 $(HOSTCFLAGS_$(basetarget).o) $(sort $(foreach m,$(__hostprogs),$($(m)-cflags)))
 _hostcxx_flags = $(HOSTCXXFLAGS) $(HOST_EXTRACXXFLAGS) \
 		 $(HOSTCXXFLAGS_$(basetarget).o)
 
