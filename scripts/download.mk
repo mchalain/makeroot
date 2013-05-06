@@ -14,8 +14,11 @@ cmd_download-project = \
 		$(call download, $(url)) | tar -xJf - -C $(src), \
 	$(if $(findstring :pserver:,$(url)), \
 		cvs -z 9 -d $(url) co $(notdir $*), \
-	$(if $(findstring  .git, $(suffix $(url))), \
-		git clone $(url) $(src)/$*)))))
+	$(if $($(notdir $*)-git), cmd_git-project, $(error set $($(notdir $*)-url)))))))
+
+cmd_git-project = \
+	$(eval url = $($(notdir $*)-git:"%"=%)) \
+	$(if $(findstring .git, $(suffix $(url))), git clone $(url) $(src)/$*)
 
 $(download-target): $(obj)/.%.dwl:
 	@$(eval sprj-src = $(addprefix $(src)/,$*$(if $($(notdir $*)-version),-$($(notdir $*)-version)))) \

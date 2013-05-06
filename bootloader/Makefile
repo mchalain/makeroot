@@ -2,11 +2,11 @@
 u-boot-dir=u-boot
 
 subproject-$(CONFIG_U_BOOT_UX500)+=u-boot-ux500
-u-boot-ux500-url:=git://igloocommunity.org/git/boot/u-boot-ux500.git
-u-boot-ux500-config:=$(MAKE) CROSS_COMPILE=arm-linux-gnueabihf- snowball_config
+u-boot-ux500-git:=git://igloocommunity.org/git/boot/u-boot-ux500.git
+u-boot-ux500-config:=$(MAKE) CROSS_COMPILE=$(CROSS_COMPILE) snowball_config
 
 subproject-$(CONFIG_U_BOOT)+=u-boot
-u-boot-url:=git://www.denx.de/git/u-boot.git
+u-boot-git:=git://www.denx.de/git/u-boot.git
 u-boot-mkconfig:=$(src)/config/u-boot.mk
 u-boot-makeflags:=CROSS_COMPILE=arm-linux-gnueabihf-
 
