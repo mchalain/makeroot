@@ -1,3 +1,3 @@
 
-all
-	$(MAKE) -C ../u-boot CROSS_COMPILE=arm-linux-gnueabihf- snowball_config
+%_config:
+	$(MAKE) -C ../u-boot CROSS_COMPILE=$(CROSS_COMPILE) $@

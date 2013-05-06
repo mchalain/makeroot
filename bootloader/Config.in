@@ -13,4 +13,8 @@ choice
 
 endchoice
 
+config U_BOOT_TARGET
+	string "the SoC target name"
+	default "snowball"
+
     

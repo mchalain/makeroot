@@ -3,12 +3,13 @@ u-boot-dir=u-boot
 
 subproject-$(CONFIG_U_BOOT_UX500)+=u-boot-ux500
 u-boot-ux500-git:=git://igloocommunity.org/git/boot/u-boot-ux500.git
-u-boot-ux500-config:=$(MAKE) CROSS_COMPILE=$(CROSS_COMPILE) snowball_config
+u-boot-ux500-config:=$(MAKE) CROSS_COMPILE=$(CONFIG_CROSS_COMPILE:"%"=%-) snowball_config
+u-boot-ux500-makeflags:=CROSS_COMPILE=$(CONFIG_CROSS_COMPILE:"%"=%-)
 
 subproject-$(CONFIG_U_BOOT)+=u-boot
 u-boot-git:=git://www.denx.de/git/u-boot.git
-u-boot-mkconfig:=$(src)/config/u-boot.mk
-u-boot-makeflags:=CROSS_COMPILE=arm-linux-gnueabihf-
+u-boot-mkconfig:=$(src)/config/u-boot.mk $(CONFIG_U_BOOT_TARGET:"%"=%)_config
+u-boot-makeflags:=CROSS_COMPILE=$(CONFIG_CROSS_COMPILE:"%"=%-)
 
 #hostprogs-$(CONFIG_U_IMAGE)+=mkimage
 mkimage-objs=$(u-boot-dir)/tools/aisimage.o \
