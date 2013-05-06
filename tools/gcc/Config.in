@@ -10,10 +10,16 @@ choice
 endchoice
 
 
-config GCCVERSION
+config TOOLCHAIN_GCC_VERSION
+    string "C Compiler version"
+    default "4.7" if TOOLCHAIN_LINARO
+    default "4_6-2012q2" if TOOLCHAIN_BARE_METAL
+    default "4.6"
+
+config TOOLCHAIN_LINARO_VERSION
     string
-    prompt  "C Compiler version" if TOOLCHAIN_CUSTOM
-    default "4.4.3"
+    prompt "Linaro Compiler version" if TOOLCHAIN_LINARO
+    default "2013.04-20130415"
 
 config TOOLCHAIN_NAME
     string "toolchain name"
@@ -28,7 +34,7 @@ config TOOLCHAIN
 
 config CROSS_COMPILE
     string "Cross Compilation tools suffix"
-    default "arm-linux-gnueabi" if TOOLCHAIN_LINARO
+    default "arm-linux-gnueabihf" if TOOLCHAIN_LINARO
     default "arm-none-linux-gnueabi"
 
 config CROSS_COMPILE_HFP

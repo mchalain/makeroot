@@ -4,9 +4,7 @@
 PKG_CONFIG_LIBDIR=$(objtree)/usr/lib/pkgconfig
 PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig
 PKG_CONFIG_SYSROOT_DIR=$(sysroot)
-CFLAGS=--sysroot=$(sysroot)
-LDFLAGS=--sysroot=$(sysroot) -Wl,-rpath=$(sysroot)/lib
-export PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR CFLAGS LDFLAGS
+export PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR
 
 config_shipped:=.config_shipped.prj
 
@@ -17,7 +15,7 @@ cmd_configure-project = \
 	$(eval sprj-config = $($(notdir $*)-config)) \
 	$(eval sprj-makeflags = $($(notdir $*)-makeflags)) \
 	$(if $(sprj-config), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cd $(sprj-src) && $(sprj-config) ), \
-	$(if $(sprj-mkconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,$(MAKE) $(sprj-makeflags) -C $(sprj-src) -f $(sprj-mkconfig)), \
+	$(if $(sprj-mkconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,$(MAKE) $(sprj-makeflags) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig)), \
 	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig))))
 
 quiet_cmd_build-project = BUILD $*

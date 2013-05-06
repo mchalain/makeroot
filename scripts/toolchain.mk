@@ -1,6 +1,11 @@
 sysroot=$(objtree)
 PATH:=$(PATH):$(join $(hostobjtree), bin):$(join $(hostobjtree), toolchain/bin)
-export PATH
+float-abi=soft
+arch=armv4t
+#CROSS_COMPILE:= defined in $(src)/Makefile
+CFLAGS:=--sysroot=$(sysroot) $(if $(filter armv4t,$(SUBARCH)), -marm -march=$(arch) -mfloat-abi=$(float-abi))
+LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath=$(sysroot)/lib
+export PATH CFLAGS LDFLAGS
 
 #-L$(sysroot) -v -march=armv5te -funwind-tables
 # /opt/codesourcery/libexec/gcc/arm-none-linux-gnueabi/4.4.1/collect2
