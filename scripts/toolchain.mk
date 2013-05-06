@@ -1,9 +1,9 @@
 sysroot=$(objtree)
 PATH:=$(PATH):$(join $(hostobjtree), bin):$(join $(hostobjtree), toolchain/bin)
 float-abi=soft
-arch=armv4t
+cpu=armv4t
 #CROSS_COMPILE:= defined in $(src)/Makefile
-CFLAGS:=--sysroot=$(sysroot) $(if $(filter armv4t,$(SUBARCH)), -marm -march=$(arch) -mfloat-abi=$(float-abi))
+CFLAGS:=--sysroot=$(sysroot) $(if $(filter armv4t,$(SUBARCH)), -marm -march=$(cpu) -mfloat-abi=$(float-abi))
 LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath=$(sysroot)/lib
 export PATH CFLAGS LDFLAGS
 
