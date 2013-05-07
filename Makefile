@@ -28,6 +28,7 @@ SUBARCH ?= $(CONFIG_SUBARCH:"%"=%)
 HFP ?= $(CONFIG_HFP_CPU:"%"=%)
 THUMB ?= $(CONFIG_THUMB:"%"=%)
 GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
+hostobjtree	:= $(CURDIR)/out/host/
 TOOLCHAIN_PATH ?=$(if $(CONFIG_TOOLCHAIN_PATH), $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(join $(hostobjtree), toolchain/bin))
 export CROSS_COMPILE ARCH BOARD SUBARCH HFP THUMB GCC_FLAGS TOOLCHAIN_PATH
 
