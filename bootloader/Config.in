@@ -10,11 +10,13 @@ choice
     config U_BOOT_UX500
         bool "u-boot from igloocommunity (snowball)"
         select U_IMAGE
+        depends on BOARD_SNOWBALL
 
 endchoice
 
 config U_BOOT_TARGET
 	string "the SoC target name"
-	default "snowball"
+	default "snowball" if BOARD_SNOWBALL
+	default BOARD_NAME
 
     
