@@ -1,5 +1,5 @@
 sysroot=$(objtree)
-PATH:=$(PATH):$(join $(hostobjtree), bin):$(join $(hostobjtree), toolchain/bin)
+PATH:=$(PATH):$(join $(hostobjtree), bin):$(TOOLCHAIN_PATH)
 flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) -march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
 #CROSS_COMPILE:= defined in $(src)/Makefile
 CFLAGS:=--sysroot=$(sysroot) $(flags_extend) $(GCC_FLAGS)
@@ -16,7 +16,7 @@ $(hostobjtree):
 	mkdir -p $@
 
 $(hostobjtree)/toolchain: $(hostobjtree)
-	$(eval install-target = $@) \
+	@$(eval install-target = $@) \
 	$(eval tc=$(toolchain-y)) \
 	$(eval link = $(addprefix $(srctree)/$(src)/,$(tc)$(if $($(notdir $(tc))-version),-$($(notdir $(tc))-version:"%"=%)))) \
 	$(if $(wildcard $(install-target)), , $(if $(wildcard $(link)), $(call cmd,link)))

@@ -12,15 +12,6 @@ endif # ifeq ($(BUILD_SRC),)
 PHONY+=all
 _all: all
 
-srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
-objtree		:= $(CURDIR)/out/target/
-hostobjtree	:= $(CURDIR)/out/host/
-src			:= $(srctree)
-obj			:= 
-sysroot		:= $(objtree)
-
-export srctree objtree sysroot hostobjtree
-
 # CURDIR will be $(srctree)
 MAKEFLAGS += --include-dir=$(srctree)
 
@@ -28,6 +19,25 @@ CONFIG_FILE	?= $(srctree)/.config
 export CONFIG_FILE
 
 -include  $(srctree)/$(CONFIG_FILE)
+
+CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
+ARCH ?= $(CONFIG_ARCH:"%"=%)
+BOARD ?= $(CONFIG_BOARD_NAME:"%"=%)
+SUBARCH ?= $(CONFIG_SUBARCH:"%"=%)
+HFP ?= $(CONFIG_HFP_CPU:"%"=%)
+THUMB ?= $(CONFIG_THUMB:"%"=%)
+GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
+TOOLCHAIN_PATH ?=$(if $(CONFIG_TOOLCHAIN_PATH), $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(join $(hostobjtree), toolchain/bin))
+export CROSS_COMPILE ARCH SUBARCH HFP THUMB GCC_FLAGS TOOLCHAIN_PATH
+
+srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
+objtree		:= $(CURDIR)/out/target/$(if $(BOARD),$(BOARD)/)
+hostobjtree	:= $(CURDIR)/out/host/
+src			:= $(srctree)
+obj			:= 
+sysroot		:= $(objtree)
+
+export srctree objtree sysroot hostobjtree
 
 # We need some generic definitions.
 $(srctree)/scripts/include.mk: ;
@@ -54,14 +64,6 @@ $(objtree)/include/config/auto.conf: $(CONFIG_FILE)
 	$(Q)mkdir -p $(objtree)/include/config
 	$(Q)cp $(CONFIG_FILE) $(objtree)/include/config/auto.conf 
 	echo $@
-
-CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
-ARCH ?= $(CONFIG_ARCH:"%"=%)
-SUBARCH ?= $(CONFIG_SUBARCH:"%"=%)
-HFP ?= $(CONFIG_HFP_CPU:"%"=%)
-THUMB ?= $(CONFIG_THUMB:"%"=%)
-GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
-export CROSS_COMPILE ARCH SUBARCH HFP
 
 SUBDIRS +=tree libc kernel env init system graphics image
 

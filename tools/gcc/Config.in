@@ -1,45 +1,74 @@
 menu "Toolchain"
+config LINARO
+	bool
+
 choice
     prompt "toolchain select"
+		default TOOLCHAIN_LINARO if LINARO
     config TOOLCHAIN_LINARO
         bool "Linaro Toolchain"
+        depends on ARM
     config TOOLCHAIN_BARE_METAL
         bool "bare-metal Toolchain"
+        depends on ARM
+    config TOOLCHAIN_SOURCERY
+		bool "Code Sourcery Toolchain"
     config TOOLCHAIN_CUSTOM
         bool "custom Toolchain"
 endchoice
 
-
-config TOOLCHAIN_GCC_VERSION
-    string "C Compiler version"
-    default "4.7" if TOOLCHAIN_LINARO
-    default "4_6-2012q2" if TOOLCHAIN_BARE_METAL
-    default "4.6"
+if LINARO
+choice
+	prompt "Linaro release"
+	config LINARO_R_2013_04
+		bool "2013.04"
+	config LINARO_R_2013_03
+		bool "2013.03"
+	config LINARO_R_2012_03
+		bool "2012.03"
+	config LINARO_R_OTHER
+		bool "Other release"
+endchoice
 
 config TOOLCHAIN_LINARO_VERSION
     string
-    prompt "Linaro Compiler version" if TOOLCHAIN_LINARO
-    default "2013.04-20130415"
+    prompt "Linaro Compiler version" if LINARO_R_OTHER
+    default "2013.04-20130415" if LINARO_R_2013_04
+    default "2013.03-20130313" if LINARO_R_2013_03
+    default "2012.03-20120326" if LINARO_R_2012_03
+
+endif
+
+config TOOLCHAIN_GCC_VERSION
+    string "C Compiler version"
+    default "4.7" if LINARO_R_2013_04
+    default "" if LINARO_R_2012_03
+    default "4.6"
+
+config CROSS_COMPILE
+    string "Cross Compilation tools suffix"
+    default "arm-linux-gnueabihf" if LINARO_R_2013_04
+    default "arm-linux-gnueabi" if LINARO_R_2012_03
+    default "arm-none-linux-gnueabi"
 
 config TOOLCHAIN_NAME
     string "toolchain name"
     default "linaro" if TOOLCHAIN_LINARO
     default "gcc-arm-none-eabi-4_6-2012q2" if TOOLCHAIN_BARE_METAL
 
-config TOOLCHAIN
+menuconfig TOOLCHAIN_INSTALLATION
+	bool "Toolchain installation"
+
+config TOOLCHAIN_PATH
     string "Cross Compilation toolchain Path"
+    depends on TOOLCHAIN_INSTALLATION
     default "/opt/linaro" if TOOLCHAIN_LINARO
     default "/opt/armtools/toolchain" if ARM
     default "/opt/mipstools/toolchain" if MIPS
 
-config CROSS_COMPILE
-    string "Cross Compilation tools suffix"
-    default "arm-linux-gnueabihf" if TOOLCHAIN_LINARO
-    default "arm-none-linux-gnueabi"
-
-config CROSS_COMPILE_HFP
-	bool "Hardware Floating Point support"
-	default n
+config TOOLCHAIN_INSTALL
+	bool
+	default y if !TOOLCHAIN_INSTALLATION
 
 endmenu
 
