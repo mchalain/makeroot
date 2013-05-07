@@ -18,6 +18,7 @@ MAKEFLAGS += --include-dir=$(srctree)
 CONFIG_FILE	?= $(srctree)/.config
 export CONFIG_FILE
 
+srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
 -include  $(srctree)/$(CONFIG_FILE)
 
 CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
