@@ -15,7 +15,7 @@ _all: all
 # CURDIR will be $(srctree)
 MAKEFLAGS += --include-dir=$(srctree)
 
-CONFIG_FILE	?= $(srctree)/.config
+CONFIG_FILE	?= .config
 export CONFIG_FILE
 
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
