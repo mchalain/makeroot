@@ -14,14 +14,13 @@ cmd_chown = chown $(chown) $(install-target)
 cmd_chmod = chmod $(chmod) $(install-target)
 
 quiet_cmd_install = INSTALL $@
-cmd_install = $(eval install-target = $(addprefix $(objtree)/,$@)) \
-$(if $(findstring y,$(dir)), $(cmd_mkdir), $(if $(move), $(cmd_move), $(if $(copy), $(cmd_copy), $(if $(link), $(cmd_link), $(if $(findstring y,$(touch)), $(cmd_touch)))))) \
+cmd_install = $(eval install-target = $@) \
+cd $(objtree)/ && $(if $(findstring y,$(dir)), $(cmd_mkdir), $(if $(move), $(cmd_move), $(if $(copy), $(cmd_copy), $(if $(link), $(cmd_link), $(if $(findstring y,$(touch)), $(cmd_touch)))))) \
 $(if $(chmod), ; $(cmd_chmod)$(if $(chown), ; $(cmd_chown)))
 
 install-subdirs:=$(filter-out $(addsuffix /,$(install-y)), $(filter-out ./,$(dir $(install-y))))
 $(sort $(install-y)): $(install-subdirs)
-	@$(call cmd,install)
+	@$(if $(wildcard $(objtree)/$@),,$(call cmd,install))
 
 $(install-subdirs):
-	@$(eval install-target = $(addprefix $(objtree)/,$@)) \
-	$(call cmd,mkdir)
+	@$(if $(wildcard $(objtree)/$@),,$(eval install-target = $@) cd $(objtree)/ && $(call cmd,mkdir))
