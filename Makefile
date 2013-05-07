@@ -68,13 +68,15 @@ $(objtree)/include/config/auto.conf: $(CONFIG_FILE)
 	echo $@
 
 SUBDIRS +=tree libc kernel env init system graphics image
-
+ifeq ($(CONFIG_TOOLCHAIN_INSTALL),y)
 all: toolchain $(SUBDIRS)
-
-image: tree kernel libc env init 
-
 toolchain:
 	$(MAKE) $(build)=tools/gcc
+else
+all: $(SUBDIRS)
+endif
+
+image: tree kernel libc env init 
 
 bootloader: FORCE
 	$(MAKE) $(build)=$@
