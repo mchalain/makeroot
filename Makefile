@@ -57,7 +57,11 @@ $(objtree)/include/config/auto.conf: $(CONFIG_FILE)
 
 CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
 ARCH ?= $(CONFIG_ARCH:"%"=%)
-export CROSS_COMPILE ARCH
+SUBARCH ?= $(CONFIG_SUBARCH:"%"=%)
+HFP ?= $(CONFIG_HFP_CPU:"%"=%)
+THUMB ?= $(CONFIG_THUMB:"%"=%)
+GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
+export CROSS_COMPILE ARCH SUBARCH HFP
 
 SUBDIRS +=tree libc kernel env init system graphics image
 

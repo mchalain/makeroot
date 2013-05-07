@@ -1,10 +1,9 @@
 sysroot=$(objtree)
 PATH:=$(PATH):$(join $(hostobjtree), bin):$(join $(hostobjtree), toolchain/bin)
-float-abi=soft
-cpu=armv4t
+flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) -march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
 #CROSS_COMPILE:= defined in $(src)/Makefile
-CFLAGS:=--sysroot=$(sysroot) $(if $(filter armv4t,$(SUBARCH)), -marm -march=$(cpu) -mfloat-abi=$(float-abi))
-LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath=$(sysroot)/lib
+CFLAGS:=--sysroot=$(sysroot) $(flags_extend) $(GCC_FLAGS)
+LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath=$(sysroot)/lib $(flags_extend) $(GCC_FLAGS)
 export PATH CFLAGS LDFLAGS
 
 #-L$(sysroot) -v -march=armv5te -funwind-tables

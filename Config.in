@@ -7,6 +7,8 @@ config CONFIGNAME
 config SHOW_ALL
     bool "display every configuration entries"
 
+menu "target definition"
+
 choice
     prompt "Harware Platform"
     config ARM
@@ -20,13 +22,102 @@ config ARCH
     default "mips" if MIPS
     default "arm" if ARM
 
-config CPU
-    string "cpu type"
-    default "armv7" if ARM
-    default "mips" if MIPS
+if ARM
+choice
+    prompt "Board"
+    default BOARD_SNOWBALL
+    config BOARD_SNOWBALL
+        bool "ST-Ericson Snowball"
+        select LINARO
+        help
+			http://www.igloocommunity.org/
 
-config BOARD
-    string "board name"
+    config BOARD_ORIGEN
+        bool "Samsung Origen Board"
+        select LINARO
+        help
+			http://www.origenboard.org
+			https://wiki.linaro.org/Boards/Origen/Index
+
+    config BOARD_VEXPRESS
+        bool "Arm Lt V-Express"
+        select LINARO
+        help
+			http://www.arm.com/products/tools/development-boards/
+			https://wiki.linaro.org/Boards/Vexpress
+
+    config BOARD_BEAGLE
+        bool "Texas Instrument Beagle Board"
+        select LINARO
+        help
+			https://wiki.linaro.org/Boards/BeagleBoardXM
+
+    config BOARD_PANDA
+        bool "Texas Instrument Pando Board"
+        select LINARO
+    config BOARD_IMX51
+        bool "Freescale DragonBall iMX51"
+        select LINARO
+    config BOARD_OVERO
+		bool "Gumstix Overo"
+		select LINARO
+		help
+			https://wiki.linaro.org/Boards/Overo
+    config BOARD_OTHER
+
+endchoice
+
+config BOARD_NAME
+    string
+    prompt "Board name if BOARD_OTHER
+    default "snowball" if BOARD_SNOWBALL
+    default "origen" if BOARD_ORIGEN
+    default "vexpress" if BOARD_VEXPRESS
+    default "beagle" if BOARD_BEAGLE
+    default "panda" if BOARD_PANDA
+    default "imx51" if BOARD_IMX51
+    default "overo" if BOARD_OVERO
+
+choice
+	prompt "sub architecture definition"
+	default SUBARCH_V7A if BOARD_SNOWBALL || BOARD_ORIGEN || BOARD_VEXPRESS || BOARD_BEAGLE || BOARD_IMX51 || BOARD_OVERO
+	default SUBARCH_V4T
+	config SUBARCH_V4T
+		bool "ARM v4T 7TDMI 9TDMI 920T 940T"
+	config SUBARCH_V5TE
+		bool "ARM v5TE 946E-S 966E-S 968E-S 1020E 1022E 1026EJ-S"
+	config SUBARCH_V6
+		bool "ARM v6 136J-S"
+	config SUBARCH_V7M
+		bool "ARM v7-A Cortex M3 M5"
+	config SUBARCH_V7A
+		bool "ARM v7-A Cortex A5 A7 A8 A9 A15"
+		select HFP_CPU
+	config SUBARCH_OTHER
+		bool "Other ARM subarchitecture"
+endchoice
+
+config SUBARCH
+	string
+	prompt "ARM subarchitecture" if SUBARCH_OTHER
+	default "armv4t" if SUBARCH_V4T
+	default "armv5te" if SUBARCH_V5TE
+	default "armv6" if SUBARCH_V6
+	default "armv7-m" if SUBARCH_V7M
+	default "armv7-a" if SUBARCH_V7A
+
+config HFP_CPU
+	bool "Hard Floating Point coprocessor"
+
+config THUMB
+	bool "build in Thumb format"
+endif
+
+config GCC_FLAGS
+	string "GCC processor flags"
+	default ""
+
+endmenu
 
 source "tools/gcc/Config.in"
 
