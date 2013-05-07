@@ -18,9 +18,10 @@ cmd_install = $(eval install-target = $(addprefix $(objtree)/,$@)) \
 $(if $(findstring y,$(dir)), $(cmd_mkdir), $(if $(move), $(cmd_move), $(if $(copy), $(cmd_copy), $(if $(link), $(cmd_link), $(if $(findstring y,$(touch)), $(cmd_touch)))))) \
 $(if $(chmod), ; $(cmd_chmod)$(if $(chown), ; $(cmd_chown)))
 
-$(sort $(install-y)): $(filter-out $(sort $(install-y)), $(sort $(dir $(install-y))))
+install-subdirs:=$(filter-out $(addsuffix /,$(install-y)), $(filter-out ./,$(dir $(install-y))))
+$(sort $(install-y)): $(install-subdirs)
 	@$(call cmd,install)
 
-$(filter-out $(sort $(install-y)), $(sort $(dir $(install-y)))):
+$(install-subdirs):
 	@$(eval install-target = $(addprefix $(objtree)/,$@)) \
 	$(call cmd,mkdir)
