@@ -6,6 +6,9 @@ expat-makeflags= CC=$(CONFIG_CROSS_COMPILE:"%"=%)-gcc
 
 subproject-$(CONFIG_LIBFFI)+=libffi
 libffi-git="git://github.com/atgreen/libffi.git"
-libffi-config=./configure CC=$(CONFIG_CROSS_COMPILE:"%"=%)-gcc --prefix=/usr --host=$(CONFIG_CROSS_COMPILE:"%-"=%)
+libffi-config=./configure CC=$(CONFIG_CROSS_COMPILE:"%"=%)-gcc --prefix=/usr --includedir=/usr/include --host=$(CONFIG_CROSS_COMPILE:"%-"=%)
 libffi-makeflags=
 
+install-$(CONFIG_LIBFFI)+=usr/include/ffi.h
+usr/include/ffi.h:copy=usr/lib/libffi-3.0.13/include/ffi.h
+usr/include/ffi.h:$(objtree)/usr/lib/libffi-3.0.13/include/ffi.h
