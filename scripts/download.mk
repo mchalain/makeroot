@@ -14,7 +14,7 @@ cmd_download-project = \
 		$(call download, $(url)) | tar -xJf - -C $(src), \
 	$(if $(findstring :pserver:,$(url)), \
 		cvs -z 9 -d $(url) co $(notdir $*), \
-	$(if $($(notdir $*)-git), cmd_git-project, $(error set $($(notdir $*)-url)))))))
+	$(if $($(notdir $*)-git),$(call cmd_git-project),$(error set $($(notdir $*)-url)))))))
 
 cmd_git-project = \
 	$(eval url = $($(notdir $*)-git:"%"=%)) \

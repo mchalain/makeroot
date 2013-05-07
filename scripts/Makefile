@@ -59,7 +59,7 @@ toolchain-target:=$(hostobjtree)/toolchain
 # Do not include projects rules unles needed
 ifneq ($(subproject-y) $(subproject-m),)
 subproject-target:=$(addprefix $(obj)/.,$(addsuffix .prj,$(subproject-y)))
-download-y+=$(foreach prog, $(subproject-y) $(subproject-m),$(if $($(prog)-url),$(prog)))
+download-y+=$(foreach prog, $(subproject-y) $(subproject-m),$(if $($(prog)-url),$(prog),$(if $($(prog)-git),$(prog))))
 include scripts/project.mk
 endif
 
