@@ -1,0 +1,41 @@
+
+choice
+	prompt "Open EGL libraries"
+	config EGL_LIMA
+		bool "Lima EGL library"
+		depends on MALI
+
+	config EGL_MESA
+		bool "Mesa OpenGL library"
+		select EGL_DRM
+endchoice
+
+if EGL_MESA
+config EGL_MESA_OPTIONS
+    string "mesa autogen options"
+    default " --enable-gles2 --disable-gallium-egl --with-egl-platforms=x11,wayland,drm --enable-gbm --enable-shared-glapi --with-gallium-drivers=r300,r600,swrast,nouveau" if I386
+endif
+
+config EGL_GLEW
+	bool "Linaro Graphics Miscellany"
+	depends on LINARO
+
+config EGL_DRM
+    bool "Direct Renderer Manager (help)"
+    help
+        The Direct Renderer Manager is a Kernel feature to enable.
+        This configuration activates the libdrm build.
+
+choice
+	prompt "GLES2 distribution"
+	config EGL_SUNXI_MALI
+		bool "Sunxi Mali GLES2 prorietary librariesfor AllWinner"
+		depends on MALI
+		help
+			http://linux-sunxi.org/Main_Page
+	config EGL_SNOWBALL_MALI
+		bool "Mali GLES2 prorietary libraries for snowball"
+		depends on BOARD_SNOWBALL
+		help
+			http://linux-sunxi.org/Main_Page
+endchoice

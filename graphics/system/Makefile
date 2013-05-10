@@ -4,27 +4,22 @@ wayland-version=$(CONFIG_WAYLAND_VERSION:"%"=%)
 subproject-$(CONFIG_WAYLAND)+=wayland
 wayland-git="git://anongit.freedesktop.org/wayland/wayland.git"
 wayland-url="http://wayland.freedesktop.org/releases/wayland-$(wayland-version).tar.xz"
-wayland-config=$(MAKE) clean; ./configure CC="$(CONFIG_CROSS_COMPILE:"%"=%)-gcc" --prefix=$(WLD) --includedir=/usr/include --host=$(CONFIG_CROSS_COMPILE:"%"=%) --disable-scanner --disable-documentation
-wayland-makeflags=
+wayland-mkconfig=$(src)/config/wayland.mk
+#wayland-config=$(MAKE) clean; ./configure CC="$(CONFIG_CROSS_COMPILE:"%"=%)-gcc" --prefix=$(WLD) --includedir=/usr/include --host=$(CONFIG_CROSS_COMPILE:"%"=%) --disable-scanner --disable-documentation
+wayland-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 hostprogs-$(CONFIG_WAYLAND)+=wayland-scanner
 wayland-scanner-url=$(wayland-url)
 wayland-scanner-objs=wayland-$(wayland-version)/src/scanner.o wayland-$(wayland-version)/src/wayland-util.o -lexpat
 wayland-scanner-install=wayland-scanner
 
-subproject-$(CONFIG_DRM)+=libdrm
-libdrm-git="git://anongit.freedesktop.org/git/mesa/drm.git"
-libdrm-config=./autogen.sh CC=$(CONFIG_CROSS_COMPILE:"%"=%)-gcc --prefix=$(WLD) --includedir=/usr/include --host=$(CONFIG_CROSS_COMPILE:"%"=%) 
-
-subproject-$(CONFIG_DRM)+=mesa
-mesa-git="git://anongit.freedesktop.org/mesa/mesa.git"
-mesa-config=./autogen.sh CC=$(CONFIG_CROSS_COMPILE:"%"=%)-gcc --prefix=$(WLD) --includedir=/usr/include $(CONFIG_MESA_OPTIONS:"%"=%) --host=$(CONFIG_CROSS_COMPILE:"%"=%) 
-
 xkbcommon-version=0.3.0
 subproject-$(CONFIG_LIBXKBCOMMON)+=xkbcommon
 xkbcommon-url="http://cgit.freedesktop.org/xorg/lib/libxkbcommon/snapshot/xkbcommon-$(xkbcommon-version).tar.gz"
 libxkbcommon-git="git://github.com/xkbcommon/libxkbcommon.git"
-xkbcommon-config=./autogen.sh --prefix=$(WLD) --includedir=/usr/include --with-xkb-config-root=$(WLD)/share/xkb --host=$(CONFIG_CROSS_COMPILE:"%-"=%) 
+xkbcommon-mkconfig=$(src)/config/wayland.mk
+xkbcommon-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+#xkbcommon-config= 
 
 weston-version=$(CONFIG_WAYLAND_VERSION:"%"=%)
 subproject-$(CONFIG_WESTON)+=weston

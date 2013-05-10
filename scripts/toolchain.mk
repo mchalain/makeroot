@@ -1,11 +1,3 @@
-sysroot=$(objtree)
-PATH:=$(PATH):$(join $(hostobjtree), bin):$(TOOLCHAIN_PATH)
-flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) -march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
-#CROSS_COMPILE:= defined in $(src)/Makefile
-CFLAGS:=--sysroot=$(sysroot) $(flags_extend) $(GCC_FLAGS)
-LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath=$(sysroot)/lib -Wl,-rpath=$(sysroot)/usr/lib $(flags_extend) $(GCC_FLAGS)
-export PATH CFLAGS LDFLAGS
-
 #-L$(sysroot) -v -march=armv5te -funwind-tables
 # /opt/codesourcery/libexec/gcc/arm-none-linux-gnueabi/4.4.1/collect2
 #toolchain_path=/opt/codesourcery

@@ -29,19 +29,26 @@ choice
     config BOARD_SNOWBALL
         bool "ST-Ericson Snowball"
         select LINARO
+        select SUBARCH_V7A
+        select HFP_CPU
+        select GPU_MALI400
         help
 			http://www.igloocommunity.org/
 
     config BOARD_ORIGEN
         bool "Samsung Origen Board"
         select LINARO
-        help
+        select SUBARCH_V7A
+         select HFP_CPU
+       help
 			http://www.origenboard.org
 			https://wiki.linaro.org/Boards/Origen/Index
 
     config BOARD_VEXPRESS
         bool "Arm Lt V-Express"
         select LINARO
+        select SUBARCH_V7A
+        select HFP_CPU
         help
 			http://www.arm.com/products/tools/development-boards/
 			https://wiki.linaro.org/Boards/Vexpress
@@ -49,18 +56,28 @@ choice
     config BOARD_BEAGLE
         bool "Texas Instrument Beagle Board"
         select LINARO
+        select SUBARCH_V7A
+        select HFP_CPU
         help
 			https://wiki.linaro.org/Boards/BeagleBoardXM
 
     config BOARD_PANDA
         bool "Texas Instrument Pando Board"
         select LINARO
+        select SUBARCH_V7A
+        select HFP_CPU
+
     config BOARD_IMX51
         bool "Freescale DragonBall iMX51"
         select LINARO
+        select SUBARCH_V7A
+        select HFP_CPU
+
     config BOARD_OVERO
 		bool "Gumstix Overo"
 		select LINARO
+        select SUBARCH_V7A
+        select HFP_CPU
 		help
 			https://wiki.linaro.org/Boards/Overo
     config BOARD_OTHER
@@ -69,7 +86,7 @@ endchoice
 
 config BOARD_NAME
     string
-    prompt "Board name if BOARD_OTHER
+    prompt "Board name" if BOARD_OTHER
     default "snowball" if BOARD_SNOWBALL
     default "origen" if BOARD_ORIGEN
     default "vexpress" if BOARD_VEXPRESS
@@ -80,8 +97,6 @@ config BOARD_NAME
 
 choice
 	prompt "sub architecture definition"
-	default SUBARCH_V7A if BOARD_SNOWBALL || BOARD_ORIGEN || BOARD_VEXPRESS || BOARD_BEAGLE || BOARD_IMX51 || BOARD_OVERO
-	default SUBARCH_V4T
 	config SUBARCH_V4T
 		bool "ARM v4T 7TDMI 9TDMI 920T 940T"
 	config SUBARCH_V5TE
@@ -117,6 +132,20 @@ config GCC_FLAGS
 	string "GCC processor flags"
 	default ""
 
+config MALI
+	bool
+choice
+	prompt "Graphics CoProcessor"
+	config GPU_NONE
+		bool "none"
+	config GPU_MALI200
+		bool "Mali 200"
+		select MALI
+	config GPU_MALI400
+		bool "Mali 400"
+		select MALI
+endchoice
+
 endmenu
 
 source "tools/gcc/Config.in"
@@ -132,8 +161,6 @@ source "kernel/Config.in"
 source "libc/Config.in"
 
 source "env/Config.in"
-
-source "init/Config.in"
 
 source "system/Config.in"
 

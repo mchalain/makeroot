@@ -1,0 +1,8 @@
+menu "images manipulation libraries"
+config PIXMAN
+    bool
+    prompt "pixel manipulation library" if SHOW_ALL
+    help
+        http://pixman.org/
+
+endmenu

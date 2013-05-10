@@ -20,4 +20,8 @@ if WAYLAND
 source "graphics/wayland/Config.in"
 endif
 
+if EGL
+source "graphics/egl/Config.in"
+endif
+
 endif

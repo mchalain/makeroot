@@ -1,5 +1,7 @@
 config FRAMEBUFFER
     bool
+config EGL
+	bool
 
 choice
     prompt "Graphic System"
@@ -38,6 +40,8 @@ choice
         bool "Weston default Wayland Compositor"
         select LIBXKBCOMMON
         select LIBUNWIND
+        select PIXMAN
+        select EGL
 
 endchoice
 
@@ -46,22 +50,6 @@ config WESTON_OPTIONS
     depends on WESTON
     default "--disable-libunwind" if !LIBUNWIND
 
-endif
-
-config DRM
-    bool "Direct Renderer Manager (help)"
-    help
-        The Direct Renderer Manager is a Kernel feature to enable.
-        This configuration activates the libdrm build.
-
-config MESA
-    bool "Mesa OpenGL library"
-    select DRM
-
-if MESA
-config MESA_OPTIONS
-    string "mesa autogen options"
-    default " --enable-gles2 --disable-gallium-egl --with-egl-platforms=x11,wayland,drm --enable-gbm --enable-shared-glapi --with-gallium-drivers=r300,r600,swrast,nouveau" if I386
 endif
 
 config LIBXKBCOMMON
@@ -74,3 +62,4 @@ config DIRECTFB_MULTIAPPS
 	default y
 	select LINUX_FUSION
 endif
+

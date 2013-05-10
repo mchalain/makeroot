@@ -1,3 +1,4 @@
+subdir-$(CONFIG_EGL)+=$(src)/egl
 subdir-$(CONFIG_GRAPHICS)+=$(src)/system
 
 subdir-$(CONFIG_WAYLAND)+=$(src)/wayland
