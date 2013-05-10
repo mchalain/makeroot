@@ -2,5 +2,7 @@
 
 subdir-ym	:= $(sort $(subdir-y) $(subdir-m))
 
+PHONY += $(subdir-ym)
 $(subdir-ym):
-	@$(if $(wildcard $(src)/$@), ,$(call cmd,download-project))
+	$(Q)$(MAKE) $(build)=$@
+

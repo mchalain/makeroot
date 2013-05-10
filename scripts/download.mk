@@ -1,8 +1,8 @@
-download-copy= | tee $(addprefix $(BUILD_DOWNLOAD_PATH), $(notdir $(1)))
+download-copy= | tee $(addprefix $(BUILD_DOWNLOAD_PATH)/, $(notdir $(1)))
 download-wget=wget -O - $(1) $(if $(findstring y,$(BUILD_DOWNLOAD_KEEP_COPY)), $(download-copy))
-download-directory= cat $(1)
+download-directory= cat $(addprefix $(BUILD_DOWNLOAD_PATH)/, $(notdir $(1)))
 
-download=$(if $(wildcard $(addprefix $(BUILD_DOWNLOAD_PATH), $(notdir $(1)))), $(download-directory), $(download-wget))
+download=$(if $(wildcard $(addprefix $(BUILD_DOWNLOAD_PATH)/, $(notdir $(1)))), $(download-directory), $(download-wget))
 quiet_cmd_download-project = DOWNLOAD $* from $($(notdir $*)-url:"%"=%)
 cmd_download-project = \
 	$(eval url = $($(notdir $*)-url:"%"=%)) \

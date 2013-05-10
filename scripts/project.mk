@@ -1,6 +1,11 @@
 # ==========================================================================
 # create directories on the target system
 
+flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) -march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
+CFLAGS:=--sysroot=$(sysroot) $(flags_extend) $(GCC_FLAGS)
+LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath=$(sysroot)/lib -Wl,-rpath=$(sysroot)/usr/lib $(flags_extend) $(GCC_FLAGS)
+export CFLAGS LDFLAGS
+
 PKG_CONFIG_LIBDIR=$(objtree)/usr/lib/pkgconfig
 PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig
 PKG_CONFIG_SYSROOT_DIR=$(sysroot)

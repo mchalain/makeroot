@@ -131,7 +131,7 @@ $(host-objdirs) $(hostbin) $(hostlib):
 # Create executable from a single .c file
 # host-csingle -> Executable
 quiet_cmd_host-csingle 	= HOSTCC $@
-      cmd_host-csingle	= $(eval override CFLAGS= )$(eval override LDFLAGS= ) \
+      cmd_host-csingle	= CFLAGS= LDFLAGS=  \
 		$(HOSTCC) $(hostc_flags) -o $@ $< \
 		-L$(hostlib) $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(host-shlib)
 $(host-csingle): $(obj)/%: $(src)/%.c
@@ -142,10 +142,10 @@ $(host-csingle): $(hostbin)/%: $(src)/%.c
 # Link an executable based on list of .o files, all plain c
 # host-cmulti -> executable
 quiet_cmd_host-cmulti	= HOSTLD  $@
-      cmd_host-cmulti	= $(eval override LDFLAGS= ) \
-			  $(HOSTCC) $(HOSTLDFLAGS) -o $@ \
-			  $(addprefix $(hostobj)/,$(filter %.o,$($(@F)-objs))) \
-			  -L$(hostlib) $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(filter -l%,$($(@F)-objs))
+      cmd_host-cmulti	= LDFLAGS=  \
+		$(HOSTCC) $(HOSTLDFLAGS) -o $@ \
+		$(addprefix $(hostobj)/,$(filter %.o,$($(@F)-objs))) \
+		-L$(hostlib) $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(filter -l%,$($(@F)-objs))
 $(host-cmulti): $(hostbin) $(host-cobjs) $(host-cshlib)
 	$(call if_changed,host-cmulti)
 
@@ -153,7 +153,8 @@ $(host-cmulti): $(hostbin) $(host-cobjs) $(host-cshlib)
 # Create .o file from a single .c file
 # host-cobjs -> .o
 quiet_cmd_host-cobjs	= HOSTCC  $@
-      cmd_host-cobjs	= $(eval override CFLAGS= )$(HOSTCC) $(hostc_flags) -c -o $@ $<
+      cmd_host-cobjs	= CFLAGS= \
+		$(HOSTCC) $(hostc_flags) -c -o $@ $<
 $(host-cobjs): $(host-objdirs)
 $(host-cobjs): $(hostobj)/%.o: $(src)/%.c
 	$(call if_changed_dep,host-cobjs)

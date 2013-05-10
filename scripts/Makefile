@@ -26,6 +26,9 @@ EXTRA_CFLAGS   :=
 EXTRA_CPPFLAGS :=
 EXTRA_LDFLAGS  :=
 
+PATH:=$(PATH):$(join $(hostobjtree),bin):$(TOOLCHAIN_PATH)
+export PATH
+
 # Read .config if it exist, otherwise ignore
 include $(CONFIG_FILE)
 
@@ -129,10 +132,6 @@ targets += $(targets-y)
 
 # Descending
 # ---------------------------------------------------------------------------
-
-PHONY += $(subdir-ym)
-$(subdir-ym):
-	$(Q)$(MAKE) $(build)=$@
 
 # Add FORCE to the prequisites of a target to force it to be always rebuilt.
 # ---------------------------------------------------------------------------
