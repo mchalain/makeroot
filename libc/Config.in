@@ -18,6 +18,10 @@ choice
     config LIBC_BIONIC
         bool "bionic the Google embedded libc"
 
+	config LIBC_LINARO_RUNTIME
+		bool "Gnu Libc from the Linaro toolchain"
+		depends on LINARO
+
 endchoice
 
 config LIBC_GLIBC_VERSION
