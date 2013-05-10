@@ -30,7 +30,9 @@ THUMB ?= $(CONFIG_THUMB:"%"=%)
 GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
 hostobjtree	:= $(CURDIR)/out/host/
 TOOLCHAIN_PATH ?=$(if $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CONFIG_TOOLCHAIN_PATH:"%"=%),$(join $(hostobjtree),toolchain))/bin
-export CROSS_COMPILE ARCH BOARD SUBARCH HFP THUMB GCC_FLAGS TOOLCHAIN_PATH
+sysroot=$(objtree)
+PATH:=$(PATH):$(join $(hostobjtree), bin):$(TOOLCHAIN_PATH)
+export GCC_FLAGS CROSS_COMPILE ARCH BOARD SUBARCH HFP THUMB TOOLCHAIN_PATH
 
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
 objtree		:= $(CURDIR)/out/target/$(if $(BOARD),$(BOARD)/)
@@ -71,7 +73,7 @@ SUBDIRS +=tree libc kernel env init system graphics image
 ifeq ($(CONFIG_TOOLCHAIN_INSTALL),y)
 all: toolchain $(SUBDIRS)
 toolchain:
-	$(MAKE) $(build)=tools/gcc
+	$(Q)$(MAKE) $(build)=tools/gcc
 else
 all: $(SUBDIRS)
 endif
@@ -79,10 +81,10 @@ endif
 image: tree kernel libc env init 
 
 bootloader: FORCE
-	$(MAKE) $(build)=$@
+	$(Q)$(MAKE) $(build)=$@
 
 PHONY += $(SUBDIRS)
 $(SUBDIRS): FORCE
-	$(MAKE) $(build)=$@
+	$(Q)$(MAKE) $(build)=$@
 
 FORCE:;
