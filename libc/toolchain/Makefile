@@ -2,17 +2,13 @@ toolchain:=$(if $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CONFIG_TOOLCHAIN_PATH:"%"=%),$(
 cross_compile:=$(strip $(CONFIG_CROSS_COMPILE:"%"=%))
 arch:=$(strip $(if $(wildcard $(join $(toolchain),/$(cross_compile))),$(cross_compile), $(if $(wildcard $(join $(toolchain),/$(cross_compile)hf)),$(cross_compile)hf)))
 
-install-$(CONFIG_LIBC_TOOLCHAIN)+=lib/$(cross_compile)
-lib/$(cross_compile): copy=$(toolchain)/$(arch)/libc/lib/$(cross_compile)
-lib/$(cross_compile): $(toolchain)/$(arch)/libc/lib/$(cross_compile)
+install-$(CONFIG_LIBC_TOOLCHAIN)+=lib/
+lib/: copy=$(toolchain)/$(arch)/libc/lib/
+lib/: $(toolchain)/$(arch)/libc/lib/
 
-install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/lib/$(cross_compile)
-usr/lib/$(cross_compile): copy=$(toolchain)/$(arch)/libc/usr/lib/$(cross_compile)
-usr/lib/$(cross_compile): $(toolchain)/$(arch)/libc/usr/lib/$(cross_compile)
-
-install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/lib/locale
-usr/lib/locale: copy=$(toolchain)/$(arch)/libc/usr/lib/locale
-usr/lib/locale: $(toolchain)/$(arch)/libc/usr/lib/locale
+install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/lib/
+usr/lib/: copy=$(toolchain)/$(arch)/libc/usr/lib/
+usr/lib/: $(toolchain)/$(arch)/libc/usr/lib/
 
 install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/include
 usr/include: copy=$(toolchain)/$(arch)/libc/usr/include
