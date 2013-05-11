@@ -22,6 +22,7 @@ choice
         bool "Wayland"
         select LIBFFI
         select EXPAT
+        select WAYLAND_LIB
 
 endchoice
 

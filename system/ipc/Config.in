@@ -1,3 +1,9 @@
+menu "Inter Process Communication and protocol libraries"
+
+config WAYLAND_LIB
+	bool "Wayland graphic protocol"
+	depends on GRAPHICS
+
 config FUSIONDALE
 	bool "FusionDale IPC library (DirectFB)"
 	default y if DIRECTFB
@@ -6,3 +12,5 @@ config FUSIONDALE
 config LINUX_FUSION
 	bool
 	prompt "fusion linux's driver" if SHOW_ALL
+
+endmenu
