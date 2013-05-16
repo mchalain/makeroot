@@ -18,9 +18,9 @@ cmd_install = $(eval install-target = $@) \
 cd $(objtree)/ && $(if $(findstring y,$(dir)), $(cmd_mkdir), $(if $(move), $(cmd_move), $(if $(copy), $(cmd_copy), $(if $(link), $(cmd_link), $(if $(findstring y,$(touch)), $(cmd_touch)))))) \
 $(if $(chmod), ; $(cmd_chmod)$(if $(chown), ; $(cmd_chown)))
 
-install-subdirs:=$(filter-out $(addsuffix /,$(install-y)), $(filter-out ./,$(dir $(install-y))))
-$(sort $(install-y)): $(install-subdirs)
-	@$(if $(wildcard $(objtree)/$@),,$(call cmd,install))
-
+install-subdirs:=$(filter-out $(addsuffix /,$(install-y:%/=%)), $(filter-out ./,$(dir $(install-y))))
 $(install-subdirs):
 	@$(if $(wildcard $(objtree)/$@),,$(eval install-target = $@) cd $(objtree)/ && $(call cmd,mkdir))
+
+$(sort $(install-y)): $(install-subdirs)
+	@$(if $(wildcard $(objtree)/$@),,$(call cmd,install))
