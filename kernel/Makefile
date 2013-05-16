@@ -10,6 +10,7 @@ makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
 
 ifeq ($(CONFIG_LINUX_LINARO_TRACKING), y)
 version:=-linaro-tracking
+CONFIG_KERNEL_VERSION=linaro-tracking
 else
 version:=-$(CONFIG_KERNEL_VERSION:"%"=%)
 endif
