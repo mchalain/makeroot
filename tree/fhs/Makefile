@@ -18,7 +18,7 @@ install-y+=.fhs.tree
 
 endif
 
-etc: copy=tree/fhs/etc/
+etc: dir=y
 sys: dir=y
 proc: dir=y
 dev: dir=y
@@ -26,7 +26,7 @@ dev/pts: dir=y
 dev/shm: dir=y
 boot: dir=y
 tmp: dir=y
-home root opt: dir=y
+home root opt var: dir=y
 var/log var/mail var/spool var/opt var/cache var/lib/misc var/lib/locate var/run/lock: dir=y
 media/floppy media/cdrom media/usb: dir=y
 mnt/floppy mnt/cdrom mnt/usb: dir=y
@@ -34,10 +34,10 @@ local/bin local/lib: dir=y
 etc/mtab: link=tmp/mtab
 tmp/mtab: touch=y
 
-etc/fstab: copy=tree/fhs/etc/fstab
-etc/fstab: tree/fhs/etc/fstab
+etc/fstab: copy=$(srctree)/tree/fhs/etc/fstab
+etc/fstab: $(srctree)/tree/fhs/etc/fstab
 
-tree/fhs/etc/fstab: FORCE
+$(srctree)/tree/fhs/etc/fstab: FORCE
 	@echo '/dev/root	/	auto	defaults	0	0' > $@
 	@$(if $(CONFIG_FSTAB_DEV), echo 'devtmpfs	/dev	devtmpfs	mode=0755$(comma)rw	0	0' >> $@ )
 	@$(if $(CONFIG_FSTAB_DEVPTS), echo 'devpts		/dev/pts	devpts	gid=5$(comma)mode=620	0	0' >> $@)
