@@ -12,6 +12,8 @@ PKG_CONFIG_SYSROOT_DIR=$(sysroot)
 export PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR
 
 config_shipped:=.config_shipped.prj
+build_shipped:=.build_shipped.prj
+install_shipped:=.install_shipped.prj
 
 quiet_cmd_configure-project = CONFIGURE $*
 cmd_configure-project = \
@@ -27,7 +29,7 @@ quiet_cmd_build-project = BUILD $*
 cmd_build-project = \
 	$(eval sprj-build = $($(notdir $*)-build)) \
 	$(eval sprj-makeflags = $($(notdir $*)-makeflags)) \
-	$(if $(sprj-build), $(sprj-build), \
+	$(if $(sprj-build), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,cd $(sprj-src) && $(sprj-build) ), \
 	$(if $(sprj-mkbuild), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) build), \
 	$(MAKE) $(sprj-makeflags) MAKEFLAGS= -C $(sprj-src) $(target); ))
 
@@ -35,8 +37,8 @@ quiet_cmd_install-project = INSTALL $*
 cmd_install-project = \
 	$(eval sprj-install = $($(notdir $*)-install)) \
 	$(eval sprj-makeflags = $($(notdir $*)-makeflags)) \
-	$(if $(sprj-install), $(sprj-install), \
-	$(if $(sprj-mkinstall), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) install), \
+	$(if $(sprj-install), $(if $(wildcard  $(sprj-src)/$(install_shipped)), ,cd $(sprj-src) && $(sprj-install) ), \
+	$(if $(sprj-mkinstall), $(if $(wildcard  $(sprj-src)/$(install_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) install), \
 	$(MAKE)  $(sprj-makeflags) MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) -C $(sprj-src) install))
 
 $(sort $(subproject-target)):  $(obj)/.%.prj: $($(notdir $@)-defconfig)
