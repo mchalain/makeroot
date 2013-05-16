@@ -5,4 +5,11 @@ config PIXMAN
     help
         http://pixman.org/
 
+config LIBPNG
+    bool
+    prompt "png Portable Network Graphics library" if SHOW_ALL
+    select ZLIB
+    help
+        http://www.libpng.org/pub/png/
+
 endmenu
