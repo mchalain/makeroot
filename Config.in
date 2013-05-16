@@ -80,13 +80,17 @@ choice
         select HFP_CPU
 		help
 			https://wiki.linaro.org/Boards/Overo
-    config BOARD_OTHER
+    config BOARD_MULTI
+		bool "not specific board"
+		help
+			this entry allows to select the same module (example egl drivers)
+			for different boards.
 
 endchoice
 
 config BOARD_NAME
     string
-    prompt "Board name" if BOARD_OTHER
+    prompt "Board name" if BOARD_MULTI
     default "snowball" if BOARD_SNOWBALL
     default "origen" if BOARD_ORIGEN
     default "vexpress" if BOARD_VEXPRESS
@@ -139,11 +143,13 @@ choice
 	config GPU_NONE
 		bool "none"
 	config GPU_MALI200
-		bool "Mali 200"
+		bool "Mali 200 (ARM lt)"
 		select MALI
 	config GPU_MALI400
-		bool "Mali 400"
+		bool "Mali 400 (ARM lt)"
 		select MALI
+	config GPU_ADRENO
+		bool "Adreno (Qualcomm)"
 endchoice
 
 endmenu

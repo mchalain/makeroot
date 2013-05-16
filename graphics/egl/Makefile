@@ -8,17 +8,25 @@ sunxi-mali-git="https://github.com/linux-sunxi/sunxi-mali.git"
 sunxi-mali-config=git submodule init && git submodule update
 sunxi-mali-makeflags=DESTDIR=$(objtree) ABI=armhf VERSION=r3p1 CC=$(CROSS_COMPILE:%-=%)-gcc CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" 
 
-subproject-$(CONFIG_EGL_DRM)+=libdrm
-libdrm-git="git://anongit.freedesktop.org/git/mesa/drm.git"
-libdrm-config=./autogen.sh CC=$(CROSS_COMPILE:%-=%)-gcc --prefix=$(WLD) --includedir=/usr/include --host=$(CONFIG_CROSS_COMPILE:"%"=%) 
-
-subproject-$(CONFIG_EGL_DRM)+=mesa
+ifeq ($(USE_GIT),y)
+mesa:=mesa
+else
+mesa:=Mesa
+endif
+Mesa-version=9.1.2
+subproject-$(CONFIG_EGL_MESA)+=$(mesa)
 mesa-git="git://anongit.freedesktop.org/mesa/mesa.git"
-mesa-config=./autogen.sh CC=$(CROSS_COMPILE:%-=%)-gcc --prefix=$(WLD) --includedir=/usr/include $(CONFIG_MESA_OPTIONS:"%"=%) --host=$(CONFIG_CROSS_COMPILE:"%"=%) 
+Mesa-url="ftp://ftp.freedesktop.org/pub/mesa/$(mesa-version)/MesaLib$(Mesa-version:%=-%).tar.bz2"
+$(mesa)-mkconfig=$(src)/config/mesa.mk
+#mesa-config=./autogen.sh CC=$(CROSS_COMPILE:%-=%)-gcc --prefix=$(WLD) --includedir=/usr/include $(CONFIG_MESA_OPTIONS:"%"=%) --host=$(CONFIG_CROSS_COMPILE:"%"=%) 
 
 subproject-$(CONFIG_EGL_LIMA)+=lima
 lima-git="git://gitorious.org/lima/lima.git"
 lima-makeflags= CC=$(CROSS_COMPILE:%-=%)-gcc CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" 
+
+subproject-$(CONFIG_EGL_FREEDRENO)+=freedreno
+freedreno-git="https://github.com/freedreno/freedreno.git"
+freedreno-makeflags= CC=$(CROSS_COMPILE:%-=%)-gcc CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" 
 
 glew-release=2011.10
 glew-version=1.7.0$(glew-release:%=-%)-es
