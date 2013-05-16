@@ -27,13 +27,11 @@ $(kprj)-git:=$(filter %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter git:%, $
 endif
 
 $(kprj)-defconfig:=$(CONFIG_KERNEL_DEFCONFIG:"%"=%)
-$(kprj)-makeflags:=$(makeflags)
-$(kprj)-install:=$(MAKE) $(makeflags) -C $(src)/$(kprj) INSTALL_PATH=$(bootdir) install
-$(kprj)-install+=; echo INSTALL MODULES; $(MAKE) $(makeflags) -C $(src)/$(kprj) INSTALL_MOD_PATH=$(objtree)  modules_install
-$(kprj)-install+=; echo INSTALL HEADERS; $(MAKE) $(makeflags) -C $(src)/$(kprj) INSTALL_HDR_PATH=$(objtree)/usr/ headers_install
+$(kprj)-makeflags:=$(makeflags) INSTALL_PATH=$(bootdir) INSTALL_MOD_PATH=$(objtree) INSTALL_HDR_PATH=$(objtree)/usr/
 ifneq (,$(findstring y,$(CONFIG_U_IMAGE)))
-	$(kprj)-build-target:= uImage modules
-	$(kprj)-install+= ; echo COPY $(src)/$(kprj)/$(uImage); cp $(src)/$(kprj)/$(uImage) $(bootdir)
+	$(kprj)-build-target:= uImage modules modules_install headers_install
+	$(kprj)-install:= $(MAKE) $(makeflags) INSTALL_PATH=$(bootdir) INSTALLKERNEL:=noinstallkernel uinstall
 else
 	$(kprj)-build-target:= modules $(CONFIG_KERNEL_IMAGE:"%"=%) 
+	$(kprj)-install:= $(MAKE) $(makeflags) INSTALL_PATH=$(bootdir) INSTALLKERNEL:=noinstallkernel install
 endif
