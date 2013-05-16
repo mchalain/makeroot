@@ -3,4 +3,5 @@ source "init/Config.in"
 source "system/fileparser/Config.in"
 source "system/images/Config.in"
 source "system/ipc/Config.in"
+source "system/manager/Config.in"
 endmenu

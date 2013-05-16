@@ -1,0 +1,3 @@
+config UDEV_DEAMON
+	bool "udev Deamon manager"
+	depends on DEV_UDEV
