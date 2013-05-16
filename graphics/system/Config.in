@@ -10,6 +10,9 @@ choice
         bool "Frame Buffer  only"
         select FRAMEBUFFER
         
+    config DRM
+        bool "Direct Rendering Manager"
+        
     config DIRECTFB
         bool "DirectFB"
         select FRAMEBUFFER
@@ -64,3 +67,9 @@ config DIRECTFB_MULTIAPPS
 	select LINUX_FUSION
 endif
 
+config DRM
+    bool
+    prompt "Direct Renderer Manager (help)" if SHOW_ALL
+    help
+        The Direct Renderer Manager is a Kernel feature to enable.
+        This configuration activates the libdrm build.

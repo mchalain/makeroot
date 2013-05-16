@@ -1,5 +1,7 @@
 WLD:=/usr
 
+include $(CONFIG)
+
 all: configure
 
 .PHONY+=clean
@@ -17,8 +19,14 @@ configure: FORCE
 endif
 
 ifeq ($(notdir $(CURDIR)),weston-1.1.0)
+WESTON_CONFIGURE_OPTIONS:=--prefix=$(WLD) --includedir=/usr/include
+WESTON_CONFIGURE_OPTIONS+=--host=$(CROSS_COMPILE:%-=%)
+ifneq ($(CONFIG_X11),y)
+WESTON_CONFIGURE_OPTIONS+=--disable-xwayland --disable-x11-compositor
+endif
+WESTON_CONFIGURE_OPTIONS+=--enable-rpi-compositor --enable-clients
 configure: FORCE
-	./configure CC="$(CROSS_COMPILE:%-=%)-gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=$(WLD) --includedir=/usr/include $(CONFIG_WESTON_OPTIONS:"%"=%) --host=$(CROSS_COMPILE:%-=%)
+	./configure CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" $(WESTON_CONFIGURE_OPTIONS) $(CONFIG_WESTON_OPTIONS:"%"=%)
 endif
 
 .PHONY+=build

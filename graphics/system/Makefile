@@ -1,3 +1,7 @@
+subproject-$(CONFIG_DRM)+=libdrm
+libdrm-git="git://anongit.freedesktop.org/git/mesa/drm.git"
+libdrm-mkconfig=$(srctree)/graphics/egl/config/mesa.mk
+
 xkbcommon-version=0.3.0
 subproject-$(CONFIG_LIBXKBCOMMON)+=xkbcommon
 xkbcommon-url="http://cgit.freedesktop.org/xorg/lib/libxkbcommon/snapshot/xkbcommon-$(xkbcommon-version).tar.gz"
