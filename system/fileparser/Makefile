@@ -12,3 +12,6 @@ libffi-makeflags=
 install-$(CONFIG_LIBFFI)+=usr/include/ffi.h
 usr/include/ffi.h:copy=usr/lib/libffi-3.0.13/include/ffi.h
 usr/include/ffi.h:$(objtree)/usr/lib/libffi-3.0.13/include/ffi.h
+install-$(CONFIG_LIBFFI)+=usr/include/ffitarget.h
+usr/include/ffitarget.h:copy=usr/lib/libffi-3.0.13/include/ffitarget.h
+usr/include/ffitarget.h:$(objtree)/usr/lib/libffi-3.0.13/include/ffitarget.h
