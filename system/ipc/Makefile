@@ -7,11 +7,14 @@ wayland-url="http://wayland.freedesktop.org/releases/wayland-$(wayland-version).
 wayland-mkconfig=graphics/system/config/wayland.mk
 #wayland-config=$(MAKE) clean; ./configure CC="$(CONFIG_CROSS_COMPILE:"%"=%)-gcc" --prefix=$(WLD) --includedir=/usr/include --host=$(CONFIG_CROSS_COMPILE:"%"=%) --disable-scanner --disable-documentation
 wayland-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+wayland-directory=$(if $(findstring git,$(wayland-version)),wayland,wayland$(wayland-version:%=-%))
 
+ifneq ($(wildcard $(wayland-directory)),)
 hostprogs-$(CONFIG_WAYLAND)+=wayland-scanner
 wayland-scanner-url=$(wayland-url)
-wayland-scanner-objs=wayland-$(wayland-version)/src/scanner.o wayland-$(wayland-version)/src/wayland-util.o -lexpat
+wayland-scanner-objs=$(wayland-directory)/src/scanner.o $(wayland-directory)/src/wayland-util.o -lexpat
 wayland-scanner-install=wayland-scanner
+endif
 
 linux-fusion-version=9.0.0
 subproject-$(CONFIG_LINUX_FUSION)+=linux-fusion
