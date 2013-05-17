@@ -1,28 +1,29 @@
 config FRAMEBUFFER
     bool
-config EGL
-	bool
 
 choice
     prompt "Graphic System"
 
     config FRAMEBUFFER_ONLY
-        bool "Frame Buffer  only"
+        tristate "Frame Buffer  only"
         select FRAMEBUFFER
         
     config DRM
-        bool "Direct Rendering Manager"
+        tristate "Direct Rendering Manager"
+		help
+			The Direct Renderer Manager is a Kernel feature to enable.
+			This configuration activates the libdrm build.
         
     config DIRECTFB
-        bool "DirectFB"
+        tristate "DirectFB"
         select FRAMEBUFFER
 
     config X11
-        bool "X11 server"
+        tristate "X11 server"
         select FRAMEBUFFER
 
     config WAYLAND
-        bool "Wayland"
+        tristate "Wayland"
         select LIBFFI
         select EXPAT
         select WAYLAND_LIB
@@ -45,7 +46,11 @@ choice
         select LIBXKBCOMMON
         select LIBUNWIND
         select PIXMAN
+        select LIBPNG
+        select LIBJPEG
         select EGL
+        select DRM
+        select FRAMEBUFFER
 
 endchoice
 
@@ -66,10 +71,3 @@ config DIRECTFB_MULTIAPPS
 	default y
 	select LINUX_FUSION
 endif
-
-config DRM
-    bool
-    prompt "Direct Renderer Manager (help)" if SHOW_ALL
-    help
-        The Direct Renderer Manager is a Kernel feature to enable.
-        This configuration activates the libdrm build.

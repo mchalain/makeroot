@@ -24,9 +24,20 @@ WESTON_CONFIGURE_OPTIONS+=--host=$(CROSS_COMPILE:%-=%)
 ifneq ($(CONFIG_X11),y)
 WESTON_CONFIGURE_OPTIONS+=--disable-xwayland --disable-x11-compositor
 endif
-WESTON_CONFIGURE_OPTIONS+=--enable-rpi-compositor --enable-clients
+ifeq ($(CONFIG_PAM),y)
+WESTON_CONFIGURE_OPTIONS+=--enable-weston-launch
+else
+WESTON_CONFIGURE_OPTIONS+=--disable-weston-launch
+endif
+WESTON_CONFIGURE_OPTIONS+=--enable-rpi-compositor
+ifeq ($(CONFIG_CAIRO),y)
+WESTON_CONFIGURE_OPTIONS+=--enable-clients --with-cairo-glesv2
+else
+WESTON_CONFIGURE_OPTIONS+=--disable-clients --disable-wcap-tools
+endif
 configure: FORCE
-	./configure CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" $(WESTON_CONFIGURE_OPTIONS) $(CONFIG_WESTON_OPTIONS:"%"=%)
+	./configure CFLAGS="$(CFLAGS) -I$(objtree)/usr/include/pixman-1" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig \
+		$(WESTON_CONFIGURE_OPTIONS) $(CONFIG_WESTON_OPTIONS:"%"=%)
 endif
 
 .PHONY+=build

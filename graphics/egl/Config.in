@@ -1,3 +1,4 @@
+comment "openGL support"
 config EGL_GLEW
 	bool "Linaro Graphics Miscellany"
 	depends on LINARO
@@ -25,17 +26,17 @@ config EGL_MESA_OPTIONS
     string "mesa autogen options"
     default ""
 
-choice
-	prompt "Gallium EGL driver"
-	config EGL_LIMA
-		bool "Lima EGL library for Mali (ARM tm) GPU"
-		depends on GPU_MALI200 || GPU_MALI400 || BOARD_MULTI
-
-	config EGL_FREEDRENO
-		bool "FreeDreno EGL library for Adreno (Qualcomm tm) GPU"
-		depends on GPU_ADRENO || BOARD_MULTI
-
-endchoice
+# choice
+# 	prompt "Gallium EGL driver"
+# 	config EGL_LIMA
+# 		bool "Lima EGL library for Mali (ARM tm) GPU"
+# 		depends on GPU_MALI200 || GPU_MALI400 || BOARD_MULTI
+# 
+# 	config EGL_FREEDRENO
+# 		bool "FreeDreno EGL library for Adreno (Qualcomm tm) GPU"
+# 		depends on GPU_ADRENO || BOARD_MULTI
+# 
+# endchoice
 
 endif
 
