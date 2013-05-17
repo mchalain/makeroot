@@ -1,5 +1,15 @@
 config FRAMEBUFFER
     bool
+config CAIRO
+	bool
+	prompt "Cairo grphic rendering" if SHOW_ALL
+config DRM
+	bool
+	prompt "Direct Rendering Manager" if SHOW_ALL
+	help
+		The Direct Renderer Manager is a Kernel feature to enable.
+		This configuration activates the libdrm build.
+        
 
 choice
     prompt "Graphic System"
@@ -7,12 +17,6 @@ choice
     config FRAMEBUFFER_ONLY
         tristate "Frame Buffer  only"
         select FRAMEBUFFER
-        
-    config DRM
-        tristate "Direct Rendering Manager"
-		help
-			The Direct Renderer Manager is a Kernel feature to enable.
-			This configuration activates the libdrm build.
         
     config DIRECTFB
         tristate "DirectFB"
@@ -51,6 +55,7 @@ choice
         select EGL
         select DRM
         select FRAMEBUFFER
+        select CAIRO
 
 endchoice
 
