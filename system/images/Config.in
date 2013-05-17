@@ -12,4 +12,10 @@ config LIBPNG
     help
         http://www.libpng.org/pub/png/
 
+config LIBJPEG
+    bool
+    prompt "jpeg file library" if SHOW_ALL
+    help
+        http://www.libjpeg-turbo.org/
+
 endmenu
