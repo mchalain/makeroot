@@ -2,7 +2,7 @@ config FRAMEBUFFER
     bool
 config CAIRO
 	bool
-	prompt "Cairo grphic rendering" if SHOW_ALL
+	prompt "Cairo graphic rendering" if SHOW_ALL
 config DRM
 	bool
 	prompt "Direct Rendering Manager" if SHOW_ALL

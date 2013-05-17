@@ -19,3 +19,4 @@ DirectFB-mkconfig=graphics/system/config/DirectFB.mk
 cairo-version=1.12.14
 subproject-$(CONFIG_CAIRO)+=cairo
 cairo-url=http://cairographics.org/releases/cairo-1.12.14.tar.xz
+cairo-config=./configure CFLAGS="$(CFLAGS) -I$(objtree)/usr/include/pixman-1" LDFLAGS="$(LDFLAGS)" --prefix=/usr --includedir=/usr/include --host=$(CROSS_COMPILE:%-=%) 
