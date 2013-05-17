@@ -9,16 +9,17 @@ clean: FORCE
 	$(MAKE) clean
 
 .PHONY+=configure
-ifeq ($(notdir $(CURDIR)),wayland-1.1.0)
+ifeq ($(findstring wayland,$(notdir $(CURDIR))),wayland)
 configure: FORCE
-	./configure CC="$(CROSS_COMPILE:%-=%)-gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=$(WLD) --includedir=/usr/include --host=$(CROSS_COMPILE:%-=%) --disable-scanner --disable-documentation
+	$(Q)$(if $(wildcard configure),,autoreconf --force -v --install)
+	$(Q) ./configure CC="$(CROSS_COMPILE:%-=%)-gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=$(WLD) --includedir=/usr/include --host=$(CROSS_COMPILE:%-=%) --disable-scanner --disable-documentation
 endif
-ifeq ($(notdir $(CURDIR)),xkbcommon-0.3.0)
+ifeq ($(findstring xkbcommon,$(notdir $(CURDIR))),xkbcommon)
 configure: FORCE
 	./autogen.sh --prefix=$(WLD) --includedir=/usr/include --with-xkb-config-root=$(WLD)/share/xkb --host=$(CROSS_COMPILE:%-=%)
 endif
 
-ifeq ($(notdir $(CURDIR)),weston-1.1.0)
+ifeq ($(findstring weston,$(notdir $(CURDIR))),weston)
 WESTON_CONFIGURE_OPTIONS:=--prefix=$(WLD) --includedir=/usr/include
 WESTON_CONFIGURE_OPTIONS+=--host=$(CROSS_COMPILE:%-=%)
 ifneq ($(CONFIG_X11),y)
@@ -36,7 +37,8 @@ else
 WESTON_CONFIGURE_OPTIONS+=--disable-clients --disable-wcap-tools
 endif
 configure: FORCE
-	./configure CFLAGS="$(CFLAGS) -I$(objtree)/usr/include/pixman-1" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig \
+	$(Q)$(if $(wildcard configure),,autoreconf --force -v --install)
+	$(Q) ./configure CFLAGS="$(CFLAGS) -I$(objtree)/usr/include/pixman-1" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig \
 		$(WESTON_CONFIGURE_OPTIONS) $(CONFIG_WESTON_OPTIONS:"%"=%)
 endif
 
