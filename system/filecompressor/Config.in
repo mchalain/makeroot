@@ -1,0 +1,8 @@
+menu "files compressor libraries and utilities"
+config ZLIB
+    bool
+    prompt "zip compression library" if SHOW_ALL
+    help
+        http://zlib.net/
+
+endmenu

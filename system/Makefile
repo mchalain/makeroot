@@ -1,3 +1,5 @@
+subdir-y+=$(src)/filecompressor
+
 subdir-y+=$(src)/fileparser
 
 subdir-y+=$(src)/images
