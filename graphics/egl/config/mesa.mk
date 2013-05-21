@@ -41,6 +41,9 @@ endif
 MESA_CONFIGURE_OPTIONS:=
 ifeq ($(CONFIG_DRM),y)
 egl-platforms:=drm
+MESA_CONFIGURE_OPTIONS+=--with-driver=dri
+else
+MESA_CONFIGURE_OPTIONS+=--disable-dri
 endif
 ifeq ($(CONFIG_WAYLAND),y)
 egl-platforms:=$(if $(egl-platforms),$(egl-platforms)$(comma))wayland
@@ -48,7 +51,7 @@ endif
 ifeq ($(CONFIG_X11),y)
 egl-platforms:=$(if $(egl-platforms),$(egl-platforms)$(comma))x11
 else
-MESA_CONFIGURE_OPTIONS+=--disable-dri --disable-glx
+MESA_CONFIGURE_OPTIONS+=--disable-glx
 endif
 MESA_CONFIGURE_OPTIONS+=--with-egl-platforms="$(egl-platforms)"
 ifneq ($(CONFIG_SCREEN_WIDTH),)
@@ -60,13 +63,11 @@ endif
 MESA_CONFIGURE_OPTIONS+=--with-sysroot=$(dir $(CONFIG))/out/target/$(CONFIG_BOARD_NAME:"%"=%)
 MESA_CONFIGURE_OPTIONS+=--enable-gles2 --enable-gles1 --enable-gbm
 gallium-drivers:=swrast
-ifeq ($(CONFIG_EGL_LIMA),Y)
-gallium-drivers+=limare
-endif
+dri-drivers:=swrast
 ifeq ($(CONFIG_EGL_FREEDRENO),y)
 gallium-drivers+=$(if $(gallium-drivers),$(gallium-drivers)$(comma))freedreno
 endif
-MESA_CONFIGURE_OPTIONS+= --with-gallium-drivers="$(strip $(gallium-drivers))"
+MESA_CONFIGURE_OPTIONS+= --with-gallium-drivers="$(strip $(gallium-drivers))"  --with-dri-drivers="$(strip $(dri-drivers))"
 MESA_CONFIGURE_OPTIONS+=$(CONFIG_EGL_MESA_OPTIONS:"%"=%)
 ifeq ($(notdir $(CURDIR)),mesa)
 configure: FORCE
