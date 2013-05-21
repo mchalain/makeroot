@@ -42,7 +42,7 @@ sdk-csingle		:= $(foreach m,$(host-csingle),$(if $($(m)-install),$(m)))
 host-csingle		:= $(foreach m,$(host-csingle),$(if $($(m)-install),,$(m)))
 
 # C executables linked based on several .o files
-host-cmulti	:= $(foreach m,$(__hostprogs),$(if $($(m)-cxxobjs),,$(if $($(m)-objs),$(m)$(shell rm $(addprefix $(hostobj)/,$(filter-out -l%,$($(m)-objs)))))))
+host-cmulti	:= $(foreach m,$(__hostprogs),$(if $($(m)-cxxobjs),,$(if $($(m)-objs),$(m)$(shell rm -f $(addprefix $(hostobj)/,$(filter-out -l%,$($(m)-objs)))))))
 sdk-cmulti		:= $(foreach m,$(host-cmulti),$(if $($(m)-install),$(m)))
 host-cmulti		:= $(foreach m,$(host-cmulti),$(if $($(m)-install),,$(m)))
 
@@ -52,7 +52,7 @@ host-cobjs	:= $(sort $(foreach m,$(__hostprogs),$($(m)-objs)))
 # C++ code
 # C++ executables compiled from at least on .cc file
 # and zero or more .c files
-host-cxxmulti	:= $(foreach m,$(__hostprogs),$(if $($(m)-cxxobjs),$(m)$(shell rm $(addprefix $(hostobj)/,$(filter-out -l%,$($(m)-objs))))))
+host-cxxmulti	:= $(foreach m,$(__hostprogs),$(if $($(m)-cxxobjs),$(m)$(shell rm -f $(addprefix $(hostobj)/,$(filter-out -l%,$($(m)-objs))))))
 sdk-cxxmulti	:= $(foreach m,$(host-cxxmulti),$(if $($(m)-install),$(m)))
 host-cxxmulti	:= $(foreach m,$(host-cxxmulti),$(if $($(m)-install),,$(m)))
 
