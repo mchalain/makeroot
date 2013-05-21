@@ -22,6 +22,10 @@ choice
         select LINUX
         select LINUX_LINARO
 
+    config LINUX_IGLOO
+        bool "igloo community Linux source for Snowball board"
+        select LINUX
+
     config LINUX_CUSTOM
         bool "customized Linux "
         select LINUX
