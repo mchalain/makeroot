@@ -8,30 +8,45 @@ uImage:=arch/$(ARCH)/boot/uImage
 makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
 
 
+ifeq ($(CONFIG_LINUX_LINARO), y)
+target=linux-linaro
 ifeq ($(CONFIG_LINUX_LINARO_TRACKING), y)
-version:=-linaro-tracking
-CONFIG_KERNEL_VERSION=linaro-tracking
+CONFIG_KERNEL_VERSION:=tracking
 else
-version:=-$(CONFIG_KERNEL_VERSION:"%"=%)
+linaro-release=$(CONFIG_LINUX_LINARO_RELEASE_Y).$(CONFIG_LINUX_LINARO_RELEASE_M)
+ifeq ($(linaro-release), 13.02)
+CONFIG_KERNEL_VERSION:=3.8$(linaro-release:%=-20%)
 endif
+ifeq ($(linaro-release), 13.03)
+CONFIG_KERNEL_VERSION:=3.9-rc3$(linaro-release:%=-20%)
+endif
+ifeq ($(linaro-release), 13.04)
+CONFIG_KERNEL_VERSION:=3.9-rc7$(linaro-release:%=-20%)
+endif
+endif
+else
+target=linux
+endif
+$(target)-version:=$(CONFIG_KERNEL_VERSION:"%"=%)
 
-kprj=linux$(version)
-subproject-$(CONFIG_LINUX)+=$(kprj)
+subproject-$(CONFIG_LINUX)+=$(target)
 ifeq ($(CONFIG_LINUX_STD), y)
-$(kprj)-url:=http://www.kernel.org/pub/linux/kernel/v3.0/$(kprj).tar.bz2
+linux-url:=http://www.kernel.org/pub/linux/kernel/v3.0/linux$(linux-version:%=-%).tar.bz2
 endif
 linux-linaro-tracking-git:=git://git.linaro.org/kernel/linux-linaro-tracking.git
+linux-linaro-url=https://releases.linaro.org/$(linaro-release)/components/kernel/linux-linaro/linux-linaro$($(target)-version:%=-%).tar.bz2
+
 ifneq ($(CONFIG_LINUX_CUSTOM_URL), "")
-$(kprj)-url:=$(filter-out %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter-out git:%, $(CONFIG_LINUX_CUSTOM_URL:"%"=%))
-$(kprj)-git:=$(filter %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter git:%, $(CONFIG_LINUX_CUSTOM_URL:"%"=%))
+linux-url:=$(filter-out %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter-out git:%, $(CONFIG_LINUX_CUSTOM_URL:"%"=%))
+linux-git:=$(filter %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter git:%, $(CONFIG_LINUX_CUSTOM_URL:"%"=%))
 endif
 
-$(kprj)-defconfig:=$(CONFIG_KERNEL_DEFCONFIG:"%"=%)
-$(kprj)-makeflags:=$(makeflags) INSTALL_PATH=$(bootdir) INSTALL_MOD_PATH=$(objtree) INSTALL_HDR_PATH=$(objtree)/usr/
+$(target)-defconfig:=$(CONFIG_KERNEL_DEFCONFIG:"%"=%)
+$(target)-makeflags:=$(makeflags) INSTALL_PATH=$(bootdir) INSTALL_MOD_PATH=$(objtree) INSTALL_HDR_PATH=$(objtree)/usr/
 ifneq (,$(findstring y,$(CONFIG_U_IMAGE)))
-	$(kprj)-build-target:= uImage modules modules_install headers_install
-	$(kprj)-install:= $(MAKE) $(makeflags) INSTALL_PATH=$(bootdir) INSTALLKERNEL:=noinstallkernel uinstall
+	$(target)-build-target:= uImage modules modules_install headers_install
+	$(target)-install:= $(MAKE) $(makeflags) INSTALL_PATH=$(bootdir) INSTALLKERNEL:=noinstallkernel uinstall
 else
-	$(kprj)-build-target:= modules $(CONFIG_KERNEL_IMAGE:"%"=%) 
-	$(kprj)-install:= $(MAKE) $(makeflags) INSTALL_PATH=$(bootdir) INSTALLKERNEL:=noinstallkernel install
+	$(target)-build-target:= modules $(CONFIG_KERNEL_IMAGE:"%"=%) modules_install headers_install
+	$(target)-install:= $(MAKE) $(makeflags) INSTALL_PATH=$(bootdir) INSTALLKERNEL:=noinstallkernel install
 endif

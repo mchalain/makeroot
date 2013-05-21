@@ -3,15 +3,24 @@ menu "Kernel Configuration"
 config LINUX
     bool
 
+config LINUX_LINARO
+    bool
+
 choice
     prompt "Kernel version"
     config LINUX_STD
         bool "Linux standard"
         select LINUX
 
+    config LINUX_LINARO_RELEASE
+        bool "Linux from Linaro Team"
+        select LINUX
+        select LINUX_LINARO
+
     config LINUX_LINARO_TRACKING
         bool "Linux from Linaro Team git repository"
         select LINUX
+        select LINUX_LINARO
 
     config LINUX_CUSTOM
         bool "customized Linux "
@@ -21,8 +30,21 @@ endchoice
 
 config KERNEL_VERSION
     string "version"
-    depends on LINUX_STD
-    default "3.7.1"
+    depends on LINUX
+    default "3.7.1" if LINUX_STD
+    default "3.8" if LINUX_LINARO_RELEASE
+
+config LINUX_LINARO_RELEASE_Y
+	int "linaro release year"
+	range 12 13
+	depends on LINUX_LINARO_RELEASE
+	default 13
+
+config LINUX_LINARO_RELEASE_M
+	int "linaro release month"
+	range 01 12
+	depends on LINUX_LINARO_RELEASE
+	default 02
 
 config LINUX_CUSTOM_URL
     string "linux source tree URL (compressed file or git repository)"
@@ -31,8 +53,10 @@ config LINUX_CUSTOM_URL
 
 config KERNEL
     string
-    default "linux" if LINUX
     default "linux-linaro-tracking" if LINUX_LINARO_TRACKING
+    default "linux-linaro" if LINUX_LINARO_RELEASE
+    default "linux" if LINUX
+    prompt "Kernel name" if LINUX_CUSTOM
 
 config KERNEL_DEFCONFIG
     string "default configuration file"
