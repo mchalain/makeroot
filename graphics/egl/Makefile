@@ -20,6 +20,9 @@ Mesa-url="ftp://ftp.freedesktop.org/pub/mesa/$(mesa-version)/MesaLib$(Mesa-versi
 $(mesa)-mkconfig=$(src)/config/mesa.mk
 #mesa-config=./autogen.sh CC=$(CROSS_COMPILE:%-=%)-gcc --prefix=$(WLD) --includedir=/usr/include $(CONFIG_MESA_OPTIONS:"%"=%) --host=$(CONFIG_CROSS_COMPILE:"%"=%) 
 
+subproject-$(CONFIG_EGL_VIRTUAL_DRV)+=$(opengl-es-virtual-drv)
+opengl-es-virtual-drv-url=https://review.tizen.org/git/?p=adaptation/opengl-es-virtual-drv.git
+
 subproject-$(CONFIG_EGL_LIMA)+=lima
 lima-git="git://gitorious.org/lima/lima.git"
 lima-makeflags= CC=$(CROSS_COMPILE:%-=%)-gcc CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" 

@@ -18,6 +18,10 @@ choice
 		depends on BOARD_SNOWBALL || BOARD_MULTI
 		help
 			http://linux-sunxi.org/Main_Page
+	config EGL_VIRTUAL_DRV
+		bool "Tizen Virtual driver"
+		help
+			http://linux-sunxi.org/Main_Page
 endchoice
 
 if EGL_MESA
