@@ -61,13 +61,16 @@ PHONY+=menuconfig
 menuconfig: scripts_basic
 	$(Q)$(MAKE) $(build)=scripts/kconfig $@
 
+%config: FORCE
+	@echo Make $@
+	$(Q)$(MAKE) $(build)=scripts/kconfig $@
+
 $(CONFIG_FILE):
 	$(error run " make menuconfig " first)
 
-$(objtree)/include/config/auto.conf: $(CONFIG_FILE)
-	$(Q)mkdir -p $(objtree)/include/config
-	$(Q)cp $(CONFIG_FILE) $(objtree)/include/config/auto.conf 
-	echo $@
+$(objtree)/auto.conf: $(CONFIG_FILE)
+	$(Q)mkdir -p $(dir $@)
+	$(Q)cp $(CONFIG_FILE) $@
 
 SUBDIRS +=tree libc kernel env init system graphics image
 ifeq ($(CONFIG_TOOLCHAIN_INSTALL),y)
