@@ -47,6 +47,7 @@ linux-url:=$(filter-out %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter-out gi
 linux-git:=$(filter %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter git:%, $(CONFIG_LINUX_CUSTOM_URL:"%"=%))
 endif
 
+#sed -e "/unwanted /d" -i scripts/Makefile.headersinst
 $(target)-defconfig:=$(CONFIG_KERNEL_DEFCONFIG:"%"=%)
 $(target)-makeflags:=$(makeflags) INSTALL_PATH=$(bootdir) INSTALL_MOD_PATH=$(objtree) INSTALL_HDR_PATH=$(objtree)/usr/
 ifneq (,$(findstring y,$(CONFIG_U_IMAGE)))
