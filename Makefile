@@ -81,6 +81,9 @@ else
 all: $(SUBDIRS)
 endif
 
+egl:
+	$(Q)$(MAKE) $(build)=graphics/egl
+
 image: tree kernel libc env init 
 
 bootloader: FORCE
