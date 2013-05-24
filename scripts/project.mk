@@ -3,7 +3,7 @@
 
 flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) -march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
 CFLAGS:=--sysroot=$(sysroot) $(flags_extend) $(GCC_FLAGS)
-LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath=$(sysroot)/lib -Wl,-rpath=$(sysroot)/usr/lib $(flags_extend) $(GCC_FLAGS)
+LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath-link=$(sysroot)/lib -Wl,-rpath-link=$(sysroot)/usr/lib $(flags_extend) $(GCC_FLAGS)
 export CFLAGS LDFLAGS
 
 PKG_CONFIG_LIBDIR=$(objtree)/usr/lib/pkgconfig
@@ -24,11 +24,11 @@ cmd_configure-project = \
 	$(if $(sprj-mkconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) configure ), \
 	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig))))
 
-quiet_cmd_build-project = BUILD $*
+quiet_cmd_build-project = BUILD $* $(target)
 cmd_build-project = \
 	$(eval sprj-build = $($(notdir $*)-build)) \
 	$(if $(sprj-build), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,cd $(sprj-src) && $(sprj-build) ), \
-	$(if $(sprj-mkbuild), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) build), \
+	$(if $(sprj-mkbuild), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) $(if $(target), $(target),build)), \
 	$(MAKE) $(sprj-makeflags) MAKEFLAGS= -C $(sprj-src) $(target); ))
 
 quiet_cmd_install-project = INSTALL $*
