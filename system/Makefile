@@ -8,3 +8,4 @@ subdir-y+=$(src)/ipc
 
 subdir-y+=$(src)/manager
 
+subdir-y+=$(src)/dev

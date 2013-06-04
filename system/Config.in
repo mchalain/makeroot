@@ -5,4 +5,9 @@ source "system/filecompressor/Config.in"
 source "system/images/Config.in"
 source "system/ipc/Config.in"
 source "system/manager/Config.in"
+menuconfig DEV
+	bool "Development tools"
+if DEV
+source "system/dev/Config.in" 
+endif
 endmenu

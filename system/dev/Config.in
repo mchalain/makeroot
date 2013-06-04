@@ -1,0 +1,2 @@
+config TOOLS_GDB
+	bool "gdb debugger"
