@@ -1,0 +1,9 @@
+config ALSA
+	bool "ALSA userland library and utils"
+	default y
+
+config ALSA_TOOLS
+	bool "ALSA specials tools"
+	depends on ALSA
+	default n
+
