@@ -20,9 +20,12 @@ cmd_configure-project = \
 	$(eval sprj-defconfig = $($(notdir $*)-defconfig)) \
 	$(eval sprj-mkconfig = $($(notdir $*)-mkconfig)) \
 	$(eval sprj-config = $($(notdir $*)-config)) \
+	$(eval sprj-config-opts = $($(notdir $*)-configure-arguments)) \
+	$(if $(wildcard $(sprj-src)/install),,ln -s /usr/bin/install $(sprj-src)/install && ) \
 	$(if $(sprj-config), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cd $(sprj-src) && $(sprj-config) ), \
 	$(if $(sprj-mkconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) configure ), \
-	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig))))
+	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig), \
+	$(if $(wildcard $(sprj-src)/configure), cd $(sprj-src) && ./configure --host=$(CROSS_COMPILE:%-=%) --target=$(CROSS_COMPILE:%-=%) --prefix=/usr $(sprj-config-opts)) ) ) )
 
 quiet_cmd_build-project = BUILD $* $(target)
 cmd_build-project = \
