@@ -37,3 +37,8 @@ install-$(CONFIG_LIBC_LINARO_RUNTIME)+=usr/lib/
 usr/lib/: copy=$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/usr/lib/
 usr/lib/: $(src)/gcc-linaro$(gcc-linaro-version:%=-%)/usr/lib/
 
+
+patchelf-version=0.6
+subproject-y=patchelf
+patchelf-url=http://hydra.nixos.org/build/1524660/download/3/patchelf-0.6.tar.gz
+patchelf-config=./configure --host=$(CROSS_COMPILE:%-=%)

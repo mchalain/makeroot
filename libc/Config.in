@@ -54,4 +54,11 @@ config LIBC_NEWLIB_CONFIGURE
     default "--target arm-none-eabi --disable-newlib-supplied-syscalls"
     depends on LIBC_NEWLIB
 
+config PATCHELF
+	bool "patchelf utility"
+	help
+	patchelf is a small utility to modify the linker inside a binary.
+	Example need to launch /usr/bin/foobar but foobar must load 
+	/usr/lib/mylibc/libc.so instead /lib/libc.so
+
 endmenu
