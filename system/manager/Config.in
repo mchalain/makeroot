@@ -1,3 +1,15 @@
-config UDEV_DEAMON
-	bool "udev Deamon manager"
-	depends on DEV_UDEV
+menu "devices manager"
+choice
+	default UDEV_DEAMON
+
+	prompt "device nodes manager"
+	config UDEV_DEAMON
+		bool "udev Deamon manager"
+		depends on DEV_UDEV
+
+endchoice
+
+	config MTDEV_DEAMON
+		bool "mtdev multitouch device protocol"
+
+endmenu
