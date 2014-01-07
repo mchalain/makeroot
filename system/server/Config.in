@@ -1,0 +1,10 @@
+config CUPS
+	bool "CUPS printer server"
+
+config LIBSOUP
+	bool "HTTP client/server library"
+	depends on GLIB
+
+config GUPNP
+	bool "Gnome UPnP framwork"
+	depends on LIBSOUP
