@@ -72,7 +72,7 @@ $(objtree)/auto.conf: $(CONFIG_FILE)
 	$(Q)mkdir -p $(dir $@)
 	$(Q)cp $(CONFIG_FILE) $@
 
-SUBDIRS +=tree libc kernel env init system graphics image
+SUBDIRS +=tree libc kernel env init system graphics audio image
 ifeq ($(CONFIG_TOOLCHAIN_INSTALL),y)
 all: toolchain $(SUBDIRS)
 toolchain:

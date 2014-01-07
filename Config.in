@@ -173,6 +173,9 @@ source "system/Config.in"
 comment  "Graphics screen support"
 source "graphics/Config.in"
 
+comment "Audio support"
+source "audio/Config.in"
+
 endmenu
 
 source "image/Config.in"
