@@ -12,7 +12,7 @@ clean: FORCE
 ifeq ($(findstring wayland,$(notdir $(CURDIR))),wayland)
 configure: FORCE
 	$(Q)$(if $(wildcard configure),,autoreconf --force -v --install)
-	$(Q) ./configure CC="$(CROSS_COMPILE:%-=%)-gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=$(WLD) --includedir=/usr/include --host=$(CROSS_COMPILE:%-=%) --disable-scanner --disable-documentation
+	$(Q) ./configure CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=$(WLD) --includedir=/usr/include --host=$(CROSS_COMPILE:%-=%) --disable-documentation
 endif
 ifeq ($(findstring xkbcommon,$(notdir $(CURDIR))),xkbcommon)
 configure: FORCE
