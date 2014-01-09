@@ -26,7 +26,7 @@ EXTRA_CFLAGS   :=
 EXTRA_CPPFLAGS :=
 EXTRA_LDFLAGS  :=
 
-PATH:=$(PATH):$(join $(hostobjtree),bin):$(TOOLCHAIN_PATH)
+PATH:=$(join $(hostobjtree),bin):$(TOOLCHAIN_PATH):$(PATH)
 export PATH
 
 # Read .config if it exist, otherwise ignore
@@ -40,6 +40,10 @@ include  $(build-dir)/Makefile
 include scripts/tool.mk
 
 include scripts/include.mk
+
+hostobj:=$(obj)
+hostbin:=$(hostobjtree)/bin
+hostlib:=$(hostobjtree)/lib
 
 ifneq ($(strip $(lib-y) $(lib-m) $(lib-n) $(lib-)),)
 include scripts/library.mk
