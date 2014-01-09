@@ -7,3 +7,7 @@ maemo_flasher-url:=http://tablets-dev.nokia.com/maemo-dev-env-downloads.php?f=ma
 
 subproject-$(CONFIG_TOOLS_IGLOO_RIFF)+=riff
 
+fileutils-verion=4.0
+download-y+=fileutils
+fileutils-url=ftp://ftp.gnu.org/old-gnu/fileutils/fileutils-$(fileutils-verion).tar.gz
+subdir-y+=$(src)/install
