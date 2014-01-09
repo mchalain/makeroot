@@ -21,10 +21,17 @@ cmd_download-git = \
 	$(eval url = $($(notdir $*)-git:"%"=%)) \
 	git clone $(url) $(src)/$*
 
+quiet_cmd_download-hg = DOWNLOAD $* from $($(notdir $*)-git:"%"=%)
+cmd_download-hg = \
+	$(eval url = $($(notdir $*)-hg:"%"=%)) \
+	hg clone $(url) $(src)/$*
+
 $(download-target): $(obj)/.%.dwl:
 	@$(if $(findstring git,$($(notdir $*)-version)), \
 		$(eval download-cmd=download-git), \
-		$(eval sprj-version=$($(notdir $*)-version)) $(eval download-cmd=download-url)) \
+		$(if $(findstring hg,$($(notdir $*)-version)), \
+			$(eval download-cmd=download-hg), \
+			$(eval sprj-version=$($(notdir $*)-version)) $(eval download-cmd=download-url))) \
 	$(eval sprj-src = $(addprefix $(src)/,$*$(if $(sprj-version),-$(sprj-version)))) \
 	$(if $(wildcard  $(sprj-src)), ,$(call cmd,$(download-cmd)))
 	@touch $@
