@@ -3,8 +3,18 @@
 
 flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) -march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
 CFLAGS:=--sysroot=$(sysroot) $(flags_extend) $(GCC_FLAGS)
-LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath-link=$(sysroot)/lib -Wl,-rpath-link=$(sysroot)/usr/lib $(flags_extend) $(GCC_FLAGS)
-export CFLAGS LDFLAGS
+CPPFLAGS:=$(CFLAGS)
+CXXFLAGS:=$(CFLAGS)
+LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath-link=$(sysroot)/usr/lib/:$(sysroot)/lib/ $(flags_extend) $(GCC_FLAGS)
+DSOFLAGS:=$(LDFLAGS)
+export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS
+
+# install-sh is a tool to install binaries and data inside the root directory
+# this script can use different applications that we can modify by environment variables
+# CHGRPPROG CHMODPROG CHOWNPROG MKDIRPROG MVPROG RMPROG
+CPPROG:=$(CROSS_COMPILE)cpp
+STRIPPROG:=$(CROSS_COMPILE)strip
+export STRIPPROG CPPROG
 
 PKG_CONFIG_LIBDIR=$(objtree)/usr/lib/pkgconfig
 PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig
@@ -25,7 +35,7 @@ cmd_configure-project = \
 	$(if $(sprj-config), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cd $(sprj-src) && $(sprj-config) ), \
 	$(if $(sprj-mkconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) configure ), \
 	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig), \
-	$(if $(wildcard $(sprj-src)/configure), cd $(sprj-src) && ./configure --host=$(CROSS_COMPILE:%-=%) --target=$(CROSS_COMPILE:%-=%) --prefix=/usr $(sprj-config-opts)) ) ) )
+	$(if $(wildcard $(sprj-src)/configure), cd $(sprj-src) && ./configure --host=$(CROSS_COMPILE:%-=%) --target=$(CROSS_COMPILE:%-=%) --prefix=/usr --sysconfdir=/etc $(sprj-config-opts)) ) ) )
 
 quiet_cmd_build-project = BUILD $* $(target)
 cmd_build-project = \
@@ -39,7 +49,7 @@ cmd_install-project = \
 	$(eval sprj-install = $($(notdir $*)-install)) \
 	$(if $(sprj-install), $(if $(wildcard  $(sprj-src)/$(install_shipped)), ,cd $(sprj-src) && $(sprj-install) ), \
 	$(if $(sprj-mkinstall), $(if $(wildcard  $(sprj-src)/$(install_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) install), \
-	$(MAKE)  $(sprj-makeflags) MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) -C $(sprj-src) install))
+	$(MAKE)  $(sprj-makeflags) INSTALL=$(hostbin:%=%/)install MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) DSTROOT=$(objtree) -C $(sprj-src) install))
 
 $(sort $(subproject-target)):  $(obj)/.%.prj: $($(notdir $@)-defconfig)
 	$(eval sprj-makeflags = $($(notdir $*)-makeflags))
