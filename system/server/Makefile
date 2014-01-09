@@ -33,19 +33,29 @@ proftpd-version=1.3.4d
 subproject-$(CONFIG_PROFTP)+=proftpd
 proftpd-url=ftp://ftp.proftpd.org/distrib/source/proftpd-$(proftpd-version).tar.gz
 
-pupnp-version=git
-subproject-$(CONFIG_LIBUPNP)+=pupnp
-pupnp-git= git://gitorious.org/pupnp/pupnp.git
+subproject-$(LIBUPNP_OLD)+=libupnp
+
+# the git reposiroty stores the cod inside pupnp directory,
+# the official release stores the code inside libupnp
+libupnp-version=1.6.19
+subproject-$(CONFIG_LIBUPNP)+=$(if $(findstring git,$(libupnp-version)), pupnp, libupnp)
+libupnp-url:=http://downloads.sourceforge.net/pupnp/libupnp-$(pupnp-version).tar.bz2
+pupnp-git:= git://gitorious.org/pupnp/pupnp.git
 
 libdlna-version=0.2.4
 subproject-$(CONFIG_LIBUPNP)+=libdlna
 libdlna-url= http://libdlna.geexbox.org/releases/libdlna-$(libdlna-version).tar.bz2
 libdlna-hg=http://hg.geexbox.org/libdlna
+libdlna-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --prefix=/usr
 
 ushare-version=1.1a
 subproject-$(CONFIG_USHARE)+=ushare
 ushare-url=http://ushare.geexbox.org/releases/ushare-$(ushare-version).tar.bz2
 ushare-hg=http://hg.geexbox.org/ushare
+ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --prefix=/usr --sysconfdir=/etc
+ifeq ($(LIBDLNA),y)
+ushare-config+=--enable-dlna
+endif
 
 mediatomb-version=0.12.1
 subproject-$(CONFIG_MEDIATOMB)+=mediatomb
@@ -63,17 +73,17 @@ gssdp-version=0.14.6
 gssdp-mainversion=0.14
 subproject-$(CONFIG_GUPNP)+=gssdp
 gssdp-url=https://download.gnome.org/sources/gupnp/$(gssdp-mainversion)/gssdp-$(gssdp-version).tar.xz
-gssdp-git="git://git.gnome.org/gssdp.git"
+gssdp-git=git://git.gnome.org/gssdp.git
 
 gupnp-version=0.20.9
 gupnp-mainversion=0.20
 subproject-$(CONFIG_GUPNP)+=gupnp
 gupnp-url=https://download.gnome.org/sources/gupnp/$(gupnp-mainversion)/gupnp-$(gupnp-version).tar.xz
-gupnp-git="git://git.gnome.org/gupnp.git"
+gupnp-git=git://git.gnome.org/gupnp.git
 
 gupnp-dlna-version=0.10.2
 gupnp-dlna-mainversion=0.10
 subproject-$(CONFIG_GUPNP)+=gupnp-dlna
 gupnp-dlna-url=https://download.gnome.org/sources/gupnp/$(gupnp-dlna-mainversion)/gupnp-dlna-$(gupnp-dlna-version).tar.xz
-gupnp-dlna-git="git://git.gnome.org/gupnp-dlna.git"
+gupnp-dlna-git=git://git.gnome.org/gupnp-dlna.git
 

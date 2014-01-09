@@ -9,11 +9,23 @@ config PROFTP
 	help
 		http://www.proftpd.org
 
-config LIBUPNP
-	bool "libupnp Universable Plug and Play framework"
+config LIBDLNA
+	bool "DLNA library framework"
 	help
-		http://www.libupnp.org/
 		http://libdlna.geexbox.org/
+	depends on FFMPEG
+
+config LIBUPNP_OLD
+	bool "Universable Plug and Play framework"
+	help
+		no more supported
+		http://upnp.sourceforge.net/
+
+config LIBUPNP
+	bool "Portable Universable Plug and Play framework"
+	help
+		pupnp is the replacement of the original libupnp
+		http://pupnp.sourceforge.net/
 
 config USHARE
 	bool "uShare DLNA Media Server"
