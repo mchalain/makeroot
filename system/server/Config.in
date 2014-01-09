@@ -1,10 +1,42 @@
+menu "network server"
 config CUPS
 	bool "CUPS printer server"
+	help
+		http://www.cups.org
+
+config PROFTP
+	bool "ProFTP file transfert server"
+	help
+		http://www.proftpd.org
+
+config LIBUPNP
+	bool "libupnp Universable Plug and Play framework"
+	help
+		http://www.libupnp.org/
+		http://libdlna.geexbox.org/
+
+config USHARE
+	bool "uShare DLNA Media Server"
+	select LIBUPNP
+	help
+		http://ushare.geexbox.org/
+
+config MEDIATOMB
+	bool "MediaTomb DLNA Media Server"
+	select LIBUPNP
+	help
+		http://mediatomb.cc/
 
 config LIBSOUP
 	bool "HTTP client/server library"
 	depends on GLIB
+	help
+		https://wiki.gnome.org/action/show/Projects/libsoup
 
 config GUPNP
-	bool "Gnome UPnP framwork"
+	bool "Gnome Universable Plug and Play framework"
 	depends on LIBSOUP
+	help
+		https://wiki.gnome.org/action/show/Projects/GUPnP
+
+endmenu

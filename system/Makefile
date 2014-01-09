@@ -9,3 +9,5 @@ subdir-y+=$(src)/ipc
 subdir-y+=$(src)/manager
 
 subdir-y+=$(src)/dev
+
+subdir-y+=$(src)/server
