@@ -1,0 +1,7 @@
+menu "video framework"
+config FFMPEG
+	bool "FFmpeg the mpeg format framework"
+	help
+		http://ffmpeg.org/
+
+endmenu
