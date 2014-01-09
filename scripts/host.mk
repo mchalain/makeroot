@@ -32,12 +32,9 @@
 
 __hostprogs := $(sort $(hostprogs-y) $(hostprogs-m))
 
-hostobj:=$(obj)
-hostbin:=$(hostobjtree)/bin
-hostlib:=$(hostobjtree)/lib
 # C code
 # Executables compiled from a single .c file
-host-csingle	:= $(foreach m,$(__hostprogs),$(if $($(m)-objs),,$(m)))
+host-csingle	:= $(foreach m,$(__hostprogs),$(if $($(m)-cxxobjs),,$(if $($(m)-objs),,$(m))))
 sdk-csingle		:= $(foreach m,$(host-csingle),$(if $($(m)-install),$(m)))
 host-csingle		:= $(foreach m,$(host-csingle),$(if $($(m)-install),,$(m)))
 
@@ -65,11 +62,18 @@ host-cshlib	:= $(sort $(filter %.so, $(host-cobjs)))
 sdk-cshlib	:= $(foreach m,$(host-cshlib),$(if $($(m)-install),$(m)))
 host-cshlib	:= $(foreach m,$(host-cshlib),$(if $($(m)-install),,$(m)))
 
+# Static libaries (only .c supported)
+# Static libraries (.a) - all .a files referenced in "xxx-objs"
+host-cstlib	:= $(sort $(filter %.a, $(host-cobjs)))
+
 # Remove .so files from "xxx-objs"
 host-cobjs	:= $(filter-out -l%,$(filter-out %.so,$(host-cobjs)))
 
 #Object (.o) files used by the shared libaries
 host-cshobjs	:= $(sort $(foreach m,$(host-cshlib),$($(m:.so=-objs))))
+
+#Object (.o) files used by the static libaries
+host-cstobjs	:= $(sort $(foreach m,$(host-cshlib),$($(m:.a=-objs))))
 
 # output directory for programs/.o files
 # hostprogs-y := tools/build may have been specified. Retreive directory
@@ -96,6 +100,7 @@ host-cxxobjs	:= $(addprefix $(hostobj)/,$(host-cxxobjs))
 host-cshlib	:= $(addprefix $(obj)/,$(notdir $(host-cshlib)))
 host-cshlib	+= $(addprefix $(hostlib)/,$(notdir $(sdk-cshlib)))
 host-cshobjs	:= $(addprefix $(hostobj)/,$(host-cshobjs))
+host-cstobjs	:= $(addprefix $(hostobj)/,$(host-cstobjs))
 host-srcdirs    := $(addprefix $(src)/,$(host-objdirs))
 host-objdirs    := $(addprefix $(hostobj)/,$(host-objdirs))
 
@@ -107,7 +112,7 @@ obj-dirs += $(host-objdirs)
 _hostc_flags   = $(HOSTCFLAGS)   $(HOST_EXTRACFLAGS)   \
 		 $(HOSTCFLAGS_$(basetarget).o) $(sort $(foreach m,$(__hostprogs),$($(m)-cflags)))
 _hostcxx_flags = $(HOSTCXXFLAGS) $(HOST_EXTRACXXFLAGS) \
-		 $(HOSTCXXFLAGS_$(basetarget).o)
+		 $(HOSTCXXFLAGS_$(basetarget).o) $(sort $(foreach m,$(__hostprogs),$($(m)-cflags)))
 
 ifeq ($(KBUILD_SRC),)
 __hostc_flags	= $(_hostc_flags)
@@ -172,10 +177,12 @@ $(host-cxxmulti): $(hostbin) $(host-cobjs) $(host-cxxobjs) $(host-cshlib)
 quiet_cmd_host-cxxobjs	= HOSTCXX $@
       cmd_host-cxxobjs	= $(HOSTCXX) $(hostcxx_flags) -c -o $@ $<
 $(host-cxxobjs): $(host-objdirs)
-$(host-cxxobjs): $(hostobj)/%.o: $(src)/%.cc
+$(host-cxxobjs): $(hostobj)/%.o: $(src)/%.cxx
 	$(call if_changed_dep,host-cxxobjs)
-$(host-cxxobjs): $(hostobj)/%.o: $(src)/%.cpp
-	$(call if_changed_dep,host-cxxobjs)
+#$(host-cxxobjs): $(hostobj)/%.o: $(src)/%.cc
+#	$(call if_changed_dep,host-cxxobjs)
+#$(host-cxxobjs): $(hostobj)/%.o: $(src)/%.cpp
+#	$(call if_changed_dep,host-cxxobjs)
 
 # Compile .c file, create position independent .o file
 # host-cshobjs -> .o
@@ -196,3 +203,9 @@ $(hosto-cshlib): $(host-cshobjs)
 
 targets += $(host-csingle)  $(host-cmulti) $(host-cobjs)\
 	   $(host-cxxmulti) $(host-cxxobjs) $(host-cshlib) $(host-cshobjs) 
+
+.y.c:
+	$(YACC) $(AM_YFLAGS) $(YFLAGS) $< && mv y.tab.c $*.c
+	if test -f y.tab.h; then \
+	if cmp -s y.tab.h $*.h; then rm -f y.tab.h; else mv y.tab.h $*.h; fi; \
+	else :; fi
