@@ -2,6 +2,10 @@
 subdir-$(CONFIG_IMAGE_MMC)=image/mmc
 subdir-$(CONFIG_IMAGE_QEMU)=image/mmc
 
+targets-$(CONFIG_UBIFS)+=$(imagename).ubi
+
+#*************************************************************
+# UBIFS rules
 imagename=$(UBIFS_IMAGE_NAME)
 vol_id=0
 miniosize = $(CONFIG_MTD_PAGESIZE)
@@ -34,14 +38,6 @@ $(imagename).ubi.cfg: $(imagename).ubifs
 
 $(imagename).ubi: $(imagename).ubi.cfg
 	@ubinize -m $(miniosize) -p $(pebsize) -s $(subpagesize) -o $@ $<
-
-ifeq ("y", "$(CONFIG_UBIFS)")
-targets+=$(imagename).ubi
-endif
-ifeq ("y", "$(CONFIG_IMAGE_MMC)")
-targets+=$(CONFIG_MMC_ROOT_PATH:"%"=%)
-endif
-
 
 #	qflasher -w -m rx51 -x $QBOOTDIR/xloader-qemu.bin -s $QBOOTDIR/secondary-qemu.bin -k $KERNEL -r /tmp/nemo.ubi.img -o $QEMUDATADIR/$IMAGE -p k=3072 -p i=1024 -p r=257278 -v
 

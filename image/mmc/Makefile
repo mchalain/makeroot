@@ -1,3 +1,6 @@
+targets-$(CONFIG_IMAGE_MMC)+=$(CONFIG_MMC_ROOT_PATH:"%"=%)
+targets-$(CONFIG_IMAGE_QEMU)+=$(CONFIG_MMC_ROOT_PATH:"%"=%)
+
 device=$(CONFIG_MMC_BLOCKDEVICE:"%"=%)
 mmcboot=$(CONFIG_MMC_BOOT_PATH:"%"=%)
 mmcroot=$(CONFIG_MMC_ROOT_PATH:"%"=%)
@@ -8,7 +11,10 @@ p3=p$(CONFIG_MMC_USER_PARTITION)
 cylinders = $(shell echo $(CONFIG_IMAGE_SIZE)/255/63/512 | bc)
 
 $(device):
-	@$(if $(findstring y, $(CONFIG_IMAGE_QEMU)), qemu-img create -f raw $@ $(CONFIG_IMAGE_SIZE), echo "change CONFIG_MMC_BLOCKDEVICE")
+	@$(if $(findstring y, $(CONFIG_IMAGE_QEMU)), \
+		qemu-img create -f raw $@ $(CONFIG_IMAGE_SIZE), \
+		echo "insert sd card inside $(device)"; false)
+
 
 $(device)$(p1) $(device)$(p2): $(device)
 	{ \

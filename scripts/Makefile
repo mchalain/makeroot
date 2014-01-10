@@ -132,8 +132,6 @@ endif
 
 targets += $(multi-used-y) $(multi-used-m)
 
-targets += $(targets-y)
-
 # Descending
 # ---------------------------------------------------------------------------
 
@@ -151,6 +149,9 @@ FORCE:
 
 targets := $(wildcard $(sort $(targets)))
 cmd_files := $(wildcard $(foreach f,$(targets),$(dir $(f)).$(notdir $(f)).cmd))
+
+# targets-y is rules which don't depend of a file
+targets += $(targets-y)
 
 ifneq ($(cmd_files),)
   include $(cmd_files)
