@@ -18,7 +18,7 @@ config SYSTEM
     default "android" if FHS_ANDROID
 
 if FHS_LINUX
-source "tree/fhs/Config.in"
+source "system/tree/fhs/Config.in"
 endif
 
 endmenu

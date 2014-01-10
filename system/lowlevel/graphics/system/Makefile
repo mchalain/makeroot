@@ -1,11 +1,11 @@
 cairo-version=1.12.14
 subproject-$(CONFIG_CAIRO)+=cairo
 cairo-url=http://cairographics.org/releases/cairo-1.12.14.tar.xz
-cairo-mkconfig=graphics/egl/config/mesa.mk
+cairo-mkconfig=$(src)/../egl/config/mesa.mk
 
 subproject-$(CONFIG_DRM)+=libdrm
 libdrm-git="git://anongit.freedesktop.org/git/mesa/drm.git"
-libdrm-mkconfig=graphics/egl/config/mesa.mk
+libdrm-mkconfig=$(src)/../egl/config/mesa.mk
 
 subproject-$(CONFIG_BOARD_SNOWBALL)+=hdmiservice
 hdmiservice-git=git://igloocommunity.org/git/bsp/hdmiservice.git
@@ -32,4 +32,4 @@ DirectFB-version=1.6.3
 subproject-$(CONFIG_DIRECTFB)+=DirectFB
 DirectFB-git=git://git.directfb.org/git/directfb/core/DirectFB.git
 DirectFB-url=http://directfb.org/downloads/Core/DirectFB-1.6/DirectFB-$(DirectFB-version).tar.gz
-DirectFB-mkconfig=graphics/system/config/DirectFB.mk
+DirectFB-mkconfig=$(src)/config/DirectFB.mk

@@ -1,4 +1,10 @@
 menu "images manipulation libraries"
+
+config FREETYPE
+	bool "Font manager"
+	help
+		http://www.freetype.org/
+
 config PIXMAN
     bool
     prompt "pixel manipulation library" if SHOW_ALL

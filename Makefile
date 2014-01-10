@@ -72,19 +72,29 @@ $(objtree)/auto.conf: $(CONFIG_FILE)
 	$(Q)mkdir -p $(dir $@)
 	$(Q)cp $(CONFIG_FILE) $@
 
-SUBDIRS +=tools tree libc kernel env init system graphics audio image
+SUBDIRS +=tools kernel system image
 ifeq ($(CONFIG_TOOLCHAIN_INSTALL),y)
 all: toolchain $(SUBDIRS)
 toolchain:
 	$(Q)$(MAKE) $(build)=tools/gcc
 else
-all: $(SUBDIRS)
+all: tools tree kernel libc base init system image
 endif
 
-egl:
-	$(Q)$(MAKE) $(build)=graphics/egl
+tree:
+	$(Q)$(MAKE) $(build)=system/tree
 
-image: tree kernel libc env init 
+libc:
+	$(Q)$(MAKE) $(build)=system/libc
+
+base:
+	$(Q)$(MAKE) $(build)=system/base
+
+init:
+	$(Q)$(MAKE) $(build)=system/init
+
+egl:
+	$(Q)$(MAKE) $(build)=system/lowlevel/graphics/egl
 
 bootloader: FORCE
 	$(Q)$(MAKE) $(build)=$@

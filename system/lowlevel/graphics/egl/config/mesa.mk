@@ -40,6 +40,9 @@ configure: FORCE
 endif
 
 CAIRO_CONFIGURE_OPTIONS:=
+ifeq ($(CONFIG_FREETYPE),y)
+CAIRO_CONFIGURE_OPTIONS+=FREETYPE_CFLAGS="-I/usr/include/freetype2/"
+endif
 ifeq ($(CONFIG_EGL),y)
 CAIRO_CONFIGURE_OPTIONS+=--enable-glesv2
 endif

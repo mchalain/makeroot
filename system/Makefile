@@ -1,14 +1,8 @@
-subdir-y+=$(src)/filecompressor
+subdir-y+=$(src)/lowlevel
 
-subdir-y+=$(src)/fileparser
+subdir-y+=$(src)/framework
 
-subdir-y+=$(src)/images
-
-subdir-y+=$(src)/video
-
-subdir-y+=$(src)/ipc
-
-subdir-y+=$(src)/manager
+subdir-y+=$(src)/lowlevel/graphics
 
 subdir-y+=$(src)/dev
 

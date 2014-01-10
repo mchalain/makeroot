@@ -11,10 +11,14 @@ libjpeg-turbo-url="http://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo$
 libjpeg-turbo-config=./configure CC="$(CROSS_COMPILE)gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig --host=$(CROSS_COMPILE:%-=%) --prefix=/usr --disable-static
 libjpeg-turbo-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CPPFLAGS="$(CFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
-pixman-version=0.30.0
+pixman-version:=0.30.0
 subproject-$(CONFIG_PIXMAN)+=pixman
-pixman-url="http://cairographics.org/releases/pixman$(pixman-version:%=-%).tar.gz"
-pixman-git="http://cgit.freedesktop.org/pixman/pixman.git"
-pixman-config=./configure CC="$(CROSS_COMPILE)gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig --host=$(CROSS_COMPILE:%-=%) --prefix=/usr
-pixman-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+pixman-url:="http://cairographics.org/releases/pixman$(pixman-version:%=-%).tar.gz"
+pixman-git:="http://cgit.freedesktop.org/pixman/pixman.git"
+pixman-config:=./configure CC="$(CROSS_COMPILE)gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig --host=$(CROSS_COMPILE:%-=%) --prefix=/usr
+pixman-makeflags:=CROSS_COMPILE="$(CROSS_COMPILE)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
+freetype-version=2.5.2
+subproject-$(CONFIG_FREETYPE)+=freetype
+freetype-url:=http://download.savannah.gnu.org/releases/freetype/freetype-$(freetype-version).tar.gz
+freetype-configure-arguments:=LIBPNG_CFLAGS=-I/usr/lib LIBPNG_LDFLAGS=-lpng16

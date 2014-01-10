@@ -160,21 +160,15 @@ menu "Embedded System Build"
 
 source "bootloader/Config.in"
 
-source "tree/Config.in"
+source "system/tree/Config.in"
 
 source "kernel/Config.in"
 
-source "libc/Config.in"
+source "system/libc/Config.in"
 
-source "env/Config.in"
+source "system/base/Config.in"
 
 source "system/Config.in"
-
-comment  "Graphics screen support"
-source "graphics/Config.in"
-
-comment "Audio support"
-source "audio/Config.in"
 
 endmenu
 

@@ -1,12 +1,8 @@
 menu "system applications and libraries"
-source "init/Config.in"
-source "system/fileparser/Config.in"
-source "system/filecompressor/Config.in"
-source "system/images/Config.in"
-source "system/ipc/Config.in"
-source "system/manager/Config.in"
+source "system/init/Config.in"
+source "system/lowlevel/Config.in"
+source "system/framework/Config.in"
 source "system/server/Config.in"
-source "system/video/Config.in"
 menuconfig DEV
 	bool "Development tools"
 if DEV

@@ -3,6 +3,8 @@ config FRAMEBUFFER
 config CAIRO
 	bool
 	prompt "Cairo graphic rendering" if SHOW_ALL
+	select FREETYPE
+
 config DRM
 	bool
 	prompt "Direct Rendering Manager" if SHOW_ALL

@@ -1,0 +1,27 @@
+menuconfig GRAPHICS
+    bool "Graphics screen support"
+
+if GRAPHICS
+
+config EGL
+    bool
+
+source "system/lowlevel/graphics/system/Config.in"
+
+if DIRECTFB
+source "system/lowlevel/graphics/directFB/Config.in"
+endif
+
+if X11
+source "system/lowlevel/graphics/X11/Config.in"
+endif
+
+if WAYLAND
+source "system/lowlevel/graphics/wayland/Config.in"
+endif
+
+if EGL
+source "system/lowlevel/graphics/egl/Config.in"
+endif
+
+endif
