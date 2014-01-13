@@ -41,6 +41,8 @@ include scripts/tool.mk
 
 include scripts/include.mk
 
+include scripts/android.mk
+
 hostobj:=$(obj)
 hostbin:=$(hostobjtree)/bin
 hostlib:=$(hostobjtree)/lib

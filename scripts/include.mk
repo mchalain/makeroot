@@ -131,6 +131,7 @@ ld-option = $(call try-run,\
 # Usage:
 # $(Q)$(MAKE) $(build)=dir
 build := -f $(if $(BUILD_SRC),$(srctree)/)scripts/Makefile obj
+android-build := -C $(if $(BUILD_SRC),$(srctree)/)scripts/android ONE_SHOT_MAKEFILE
 
 # Prefix -I with $(srctree) if it is not an absolute path.
 addtree = $(if $(filter-out -I/%,$(1)),$(patsubst -I%,-I$(srctree)/%,$(1))) $(1)
