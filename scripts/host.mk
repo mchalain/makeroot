@@ -155,7 +155,7 @@ $(host-cmulti): $(hostbin) $(host-cobjs) $(host-cshlib)
 	$(call if_changed,host-cmulti)
 
 
-# Create .o file from a single .c file
+# Create .o file from a multi .c file
 # host-cobjs -> .o
 quiet_cmd_host-cobjs	= HOSTCC  $@
       cmd_host-cobjs	= CFLAGS= \
