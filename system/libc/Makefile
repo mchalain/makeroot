@@ -24,7 +24,9 @@ glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc$(glibc-version).tar.xz
 glibc-git:=git://sourceware.org/git/glibc.git
 
 
-bionic-git:=git://android.googlesource.com/platform/bionic.git
+bionic-version:=git
+subproject-$(CONFIG_LIBC_BIONIC)+=bionic
+bionic-git:=https://android.googlesource.com/platform/bionic
 
 linaro-release=$(firstword $(subst -, ,$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)))
 gcc-linaro-version=$(CONFIG_CROSS_COMPILE:"%"=%)$(gcc-version:%=-%)-$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)_runtime
@@ -39,6 +41,6 @@ usr/lib/: $(src)/gcc-linaro$(gcc-linaro-version:%=-%)/usr/lib/
 
 
 patchelf-version=0.6
-subproject-y=patchelf
+subproject-y+=patchelf
 patchelf-url=http://hydra.nixos.org/build/1524660/download/3/patchelf-0.6.tar.gz
 patchelf-config=./configure --host=$(CROSS_COMPILE:%-=%)
