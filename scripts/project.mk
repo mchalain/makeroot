@@ -25,6 +25,12 @@ config_shipped:=.config_shipped.prj
 build_shipped:=.build_shipped.prj
 install_shipped:=.install_shipped.prj
 
+configure-cmd:=./configure \
+	--host=$(CROSS_COMPILE:%-=%) \
+	--target=$(CROSS_COMPILE:%-=%) \
+	--prefix=/usr \
+	--sysconfdir=/etc \
+	$(sprj-config-opts)
 quiet_cmd_configure-project = CONFIGURE $*
 cmd_configure-project = \
 	$(eval sprj-defconfig = $($(notdir $*)-defconfig)) \
@@ -35,14 +41,16 @@ cmd_configure-project = \
 	$(if $(sprj-config), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cd $(sprj-src) && $(sprj-config) ), \
 	$(if $(sprj-mkconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) configure ), \
 	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig), \
-	$(if $(wildcard $(sprj-src)/configure), cd $(sprj-src) && ./configure --host=$(CROSS_COMPILE:%-=%) --target=$(CROSS_COMPILE:%-=%) --prefix=/usr --sysconfdir=/etc $(sprj-config-opts)) ) ) )
+	$(if $(wildcard $(sprj-src)/configure), cd $(sprj-src) && $(configure-cmd), \
+	$(if $(wildcard $(sprj-src)/configure.ac), cd $(sprj-src) && autoreconf --force -i && $(configure-cmd), echo "no configuration found";) ) ) ) )
 
 quiet_cmd_build-project = BUILD $* $(target)
 cmd_build-project = \
 	$(eval sprj-build = $($(notdir $*)-build)) \
 	$(if $(sprj-build), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,cd $(sprj-src) && $(sprj-build) ), \
 	$(if $(sprj-mkbuild), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) $(if $(target), $(target),build)), \
-	$(MAKE) $(sprj-makeflags) MAKEFLAGS= -C $(sprj-src) $(target); ))
+	$(if $(wildcard  $(sprj-src)/Makefile), $(MAKE) $(sprj-makeflags) MAKEFLAGS= -C $(sprj-src) $(target);, \
+	$(if $(wildcard  $(sprj-src)/Android.mk), $(call android-tools) && $(MAKE) $(sprj-makeflags) MAKEFLAGS= $(android-build)=$(sprj-src)/Android.mk, echo "no build script found";) )))
 
 quiet_cmd_install-project = INSTALL $*
 cmd_install-project = \
@@ -54,7 +62,7 @@ cmd_install-project = \
 $(sort $(subproject-target)):  $(obj)/.%.prj: $($(notdir $@)-defconfig)
 	$(eval sprj-makeflags = $($(notdir $*)-makeflags))
 	$(if $(findstring git,$($(notdir $*)-version)),,$(eval sprj-version=$($(notdir $*)-version)))
-	$(eval sprj-src =  $(addprefix $(src)/,$*$(if $(sprj-version),-$(sprj-version))))
+	$(eval sprj-src =  $(addprefix $(src)/,$*$(sprj-version:%=-%)))
 	@$(call cmd,configure-project)
 	$(eval sprj-targets = $($(notdir $*)-build-target))
 	@$(if $(sprj-targets), \
