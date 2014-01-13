@@ -194,7 +194,7 @@ $(host-cshobjs): $(hostobj)/%.o: $(src)/%.c
 
 # Link a shared library, based on position independent .o files
 # *.o -> .so shared library (host-cshlib)
-quiet_cmd_host-cshlib	= HOSTLLD -shared $@
+quiet_cmd_host-cshlib	= HOSTLD -shared $@
       cmd_host-cshlib	= $(HOSTCC) $(HOSTLDFLAGS) -shared -o $@ \
 			  $(addprefix $(hostobj)/,$(filter %.o, $($(@F:.so=-objs)))) \
 			  $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(filter -l%, $($(@F:.so=-objs)))
