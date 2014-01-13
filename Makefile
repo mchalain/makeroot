@@ -1,5 +1,7 @@
 DPRINT=@echo
 
+CURDIR=$(shell pwd)
+
 ifeq ($(BUILD_SRC),)
 # That's our default target when none is given on the command line
 PHONY := _all
@@ -34,6 +36,7 @@ sysroot=$(objtree)
 PATH:=$(PATH):$(join $(hostobjtree), bin):$(TOOLCHAIN_PATH)
 export GCC_FLAGS CROSS_COMPILE ARCH BOARD SUBARCH HFP THUMB TOOLCHAIN_PATH
 
+root		:= $(CURDIR)
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
 objtree		:= $(CURDIR)/out/target/$(if $(BOARD),$(BOARD)/)
 hostobjtree	:= $(CURDIR)/out/host/
@@ -41,7 +44,7 @@ src			:= $(srctree)
 obj			:= 
 sysroot		:= $(objtree)
 
-export srctree objtree sysroot hostobjtree
+export root srctree objtree sysroot hostobjtree
 
 # We need some generic definitions.
 $(srctree)/scripts/include.mk: ;
