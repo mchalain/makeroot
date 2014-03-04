@@ -1,29 +1,8 @@
 menu "File System Hierarchy"
 
-config TREE_PROC
-    bool
-    default y
-
-config FSTAB_PROC
-    bool "add entry in fstab for /proc"
-    depends on TREE_PROC
-
-config TREE_SYS
-    bool
-    default y
-
-config FSTAB_SYS
-    bool "add entry in fstab for /sys"
-    depends on TREE_SYS
-
-config TREE_DEV
-    bool
-    default y
-
 choice
     prompt "device node populating"
     default DEV_STATIC
-    depends on TREE_DEV
 
     config DEV_STATIC
         bool "static device nodes"
@@ -46,9 +25,48 @@ endchoice
 config DEV_TMPDEV
     bool
 
+config FHS_BOOT
+    bool
+    default y
+
+config FHS_USERS
+    bool "add users groups files database"
+    default y
+
+config USR_LOCAL
+    bool "add /usr/local directory ans sub-directories"
+
+config VARSUBDIRS
+    bool "add /var sub-directories"
+
+config MEDIADIRS
+    bool "add /media directory ans sub-directories"
+
+config MNTDIRS
+    bool "add /mnt directory ans sub-directories"
+
+config TMPFS
+    bool "create /tmp virtual files system"
+
+config FSTAB
+	bool "install /etc/fstab file"
+	default y
+
+menu "Files System Table"
+	depends on FSTAB
+config FSTAB_PROC
+    bool "add entry in fstab for /proc"
+
+config FSTAB_SYS
+    bool "add entry in fstab for /sys"
+
 config FSTAB_DEV
     bool "add entry in fstab for /dev"
     depends on DEV_TMPDEV
+
+config FSTAB_TMP
+    bool "add entry in fstab for /tmp"
+    depends on TMPFS
 
 config FSTAB_DEVPTS
     bool "add entry in fstab for /dev/pts"
@@ -61,37 +79,12 @@ config FSTAB_DEVSHM
 config FSTAB_DEVSHM_SIZE
     int "size of the shm file system"
     default 33554432
-    depends on TFSTAB_DEVSHM
-
-config TREE_BOOT
-    bool
-    default y
+    depends on FSTAB_DEVSHM
 
 config FSTAB_BOOTVFAT
     bool "add entry in fstab for /boot to see the boot partition"
-    depends on TREE_BOOT
+    depends on FHS_BOOT
 
-config TREE_TMP
-    bool "add /tmp directory"
-
-config FSTAB_TMP
-    bool "add entry in fstab for /tmp"
-    depends on TREE_TMP
-
-config TREE_VAR
-    bool "add /var directory ans sub-directories"
-
-config TREE_MEDIA
-    bool "add /media directory ans sub-directories"
-
-config TREE_MNT
-    bool "add /mnt directory ans sub-directories"
-
-config TREE_LOCAL
-    bool "add /usr/local directory ans sub-directories"
-
-config MTAB_SYMLINK
-    bool "create a symbolic link from /etc/mtab to /tmp/mtab"
-    default y if ROOT_RDONLY
+endmenu
 
 endmenu

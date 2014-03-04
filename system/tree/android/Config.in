@@ -34,11 +34,6 @@ choice
 
 endchoice
 
-config SYSTEM
-    string
-    default "fhs" if FHS_LINUX
-    default "android" if FHS_ANDROID
-
 config TREE_BOOT
     bool
 

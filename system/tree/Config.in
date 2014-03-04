@@ -4,8 +4,10 @@ choice
     default FHS_LINUX
 
     prompt "System Hierarchy"
-    config FHS_LINUX
-        bool "Linux standard"
+    config FHS_LSB
+        bool "Linux Standard Base"
+		help
+			Linux Standard Base defines the hierarchy
 
     config FHS_ANDROID
         bool "Android system"
@@ -14,10 +16,10 @@ endchoice
 
 config SYSTEM
     string
-    default "fhs" if FHS_LINUX
+    default "lsb" if FHS_LSB
     default "android" if FHS_ANDROID
 
-if FHS_LINUX
+if FHS_LSB
 source "system/tree/fhs/Config.in"
 endif
 

@@ -1,43 +1,33 @@
 root:=
 
-ifeq ($(wildcard $(objtree)/.fhs.tree),)
-install-$(CONFIG_FHS_LINUX)+=etc/fstab home root opt var 
-install-$(CONFIG_TREE_PROC)+=proc 
-install-$(CONFIG_TREE_SYS)+=sys 
-install-$(CONFIG_TREE_DEV)+=dev 
+install-$(CONFIG_FHS_LSB)+=bin lib sbin home opt var proc sys dev tmp etc
+bin lib sbin home root opt var proc sys dev tmp etc: dir=y
+install-$(CONFIG_FHS_LSB)+=usr/lib usr/bin usr/sbin
+usr/lib usr/bin usr/sbin: dir=y
+install-$(CONFIG_USR_LOCAL)+=usr/local/bin usr/local/lib
+usr/local/bin usr/local/lib: dir=y
+install-$(CONFIG_FHS_BOOT)+=boot
+boot: dir=y
+
+install-$(CONFIG_MEDIADIRS)+=media/floppy media/cdrom media/usb
+install-$(CONFIG_MNTDIRS)+=mnt/floppy mnt/cdrom mnt/usb
+
+#users database files
+install-$(CONFIG_FHS_USERS)+=etc/group etc/passwd etc/shadow
+etc/group: copy=$(srctree)/$(src)/etc/group
+etc/passwd: copy=$(srctree)/$(src)/etc/passwd
+etc/shadow: copy=$(srctree)/$(src)/etc/shadow
+
+#network configuration directory
+etc/network: dir=y
+
+#filesystem table file
+install-$(CONFIG_FSTAB)+=etc/fstab
 install-$(CONFIG_FSTAB_DEVPTS)+=dev/pts
 install-$(CONFIG_FSTAB_DEVSHM)+=dev/shm
-install-$(CONFIG_TREE_BOOT)+=boot
-install-$(CONFIG_TREE_TMP)+=tmp
-install-$(CONFIG_TREE_MEDIA)+=media/floppy media/cdrom media/usb
-install-$(CONFIG_TREE_MNT)+=mnt/floppy mnt/cdrom mnt/usb
-install-$(CONFIG_TREE_VAR)+=var/log var/mail var/spool var/opt var/cache var/lib/misc var/lib/locate var/run/lock
-install-$(CONFIG_TREE_LOCAL)+=local/bin local/lib
-install-$(CONFIG_MTAB_SYMLINK)+=etc/mtab tmp/mtab
-install-y+=.fhs.tree
-
-endif
-
-etc: dir=y
-sys: dir=y
-proc: dir=y
-dev: dir=y
-dev/pts: dir=y
-dev/shm: dir=y
-boot: dir=y
-tmp: dir=y
-home root opt var: dir=y
-var/log var/mail var/spool var/opt var/cache var/lib/misc var/lib/locate var/run/lock: dir=y
-media/floppy media/cdrom media/usb: dir=y
-mnt/floppy mnt/cdrom mnt/usb: dir=y
-local/bin local/lib: dir=y
-etc/mtab: link=tmp/mtab
-tmp/mtab: touch=y
-
-etc/fstab: copy=$(srctree)/tree/fhs/etc/fstab
-etc/fstab: $(srctree)/tree/fhs/etc/fstab
-
-$(srctree)/tree/fhs/etc/fstab: FORCE
+etc/fstab: generate=/tmp/fstab
+etc/fstab: /tmp/fstab
+/tmp/fstab: FORCE
 	@echo '/dev/root	/	auto	defaults	0	0' > $@
 	@$(if $(CONFIG_FSTAB_DEV), echo 'devtmpfs	/dev	devtmpfs	mode=0755$(comma)rw	0	0' >> $@ )
 	@$(if $(CONFIG_FSTAB_DEVPTS), echo 'devpts		/dev/pts	devpts	gid=5$(comma)mode=620	0	0' >> $@)
@@ -46,7 +36,31 @@ $(srctree)/tree/fhs/etc/fstab: FORCE
 	@$(if $(CONFIG_FSTAB_SYS), echo 'sysfs		/sys	sysfs	nosuid$(comma)noexec$(comma)nodev	0	0' >> $@)
 	@$(if $(CONFIG_FSTAB_TMP), echo 'tmpfs		/tmp	tmpfs	defaults	0	0' >> $@)
 	@$(if $(CONFIG_FSTAB_BOOTVFAT), echo 'LABEL=boot	/boot	vfat	rw$(comma)quiet$(comma)showexec$(comma)iocharset=utf8	0	0' >> $@)
+dev/pts: dir=y
+dev/shm: dir=y
 
-.fhs.tree: touch=y
+install-$(CONFIG_VARSUBDIRS)+=var/log var/mail var/spool var/opt var/cache var/lib/misc var/lib/locate
+ifeq ($(CONFIG_TMPFS), y)
+install-$(CONFIG_TMPFS)+=etc/init.d/treeconfig
+etc/init.d/treeconfig: copy=$(srctree)/$(src)/etc/init.d/treeconfig
+
+var/log: link=../tmp/var/log
+var/cache: link=../tmp/var/cache
+var/run: link=../tmp/var/run
+var/mail var/spool var/opt var/lib/misc var/lib/locate: dir=y
+#mount file
+install-$(CONFIG_TMPFS)+=etc/mtab
+etc/mtab: link=../tmp/mtab
+else
+var/log var/mail var/spool var/opt var/cache var/lib/misc var/lib/locate var/run/lock: dir=y
+endif
+
+media/floppy media/cdrom media/usb: dir=y
+mnt/floppy mnt/cdrom mnt/usb: dir=y
+
+install-$(CONFIG_DEV_MDEV)+=etc/init.d/mdev
+etc/init.d/mdev:
+	@echo '#!/bin/sh' > $@
+	@echo 'echo /bin/mdev >/proc/sys/kernel/hotplug' >> $@
 
 FORCE: ;
