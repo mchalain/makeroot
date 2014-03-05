@@ -3,22 +3,14 @@ menu "Kernel Configuration"
 config LINUX
     bool
 
-config LINUX_LINARO
-    bool
-
 choice
     prompt "Kernel version"
     config LINUX_STD
         bool "Linux standard"
         select LINUX
 
-    config LINUX_LINARO_RELEASE
+    config LINUX_LINARO
         bool "Linux from Linaro Team"
-        select LINUX
-        select LINUX_LINARO
-
-    config LINUX_LINARO_TRACKING
-        bool "Linux from Linaro Team git repository"
         select LINUX
         select LINUX_LINARO
 
@@ -29,26 +21,54 @@ choice
     config LINUX_CUSTOM
         bool "customized Linux "
         select LINUX
+endchoice
 
+choice
+    prompt "Linaro version"
+    depends on LINUX_LINARO
+
+	config LINUX_LINARO_RELEASE_LATEST
+		bool "latest release"
+
+	config LINUX_LINARO_TRACKING
+		bool "git tracking"
+
+	config LINUX_LINARO_RELEASE_13_02
+		bool "13.02"
+
+	config LINUX_LINARO_RELEASE_13_06
+		bool "13.06 stable"
+
+	config LINUX_LINARO_RELEASE_14_01
+		bool "14.01"
 endchoice
 
 config KERNEL_VERSION
-    string "version"
+    string
     depends on LINUX
     default "3.7.1" if LINUX_STD
-    default "3.8" if LINUX_LINARO_RELEASE
+    default "" if LINUX_IGLOO
+    prompt "kernel version number" if LINUX_LINARO_RELEASE_LATEST
+    default "git" if LINUX_LINARO_TRACKING
+    default "3.8-2013.02" if LINUX_LINARO_RELEASE_13_02
+    default "3.9-rc3-2013.03" if LINUX_LINARO_RELEASE_13_03
+    default "3.9-rc7-2013.04" if LINUX_LINARO_RELEASE_13_04
+    default "stable-3.9.6-2013.06" if LINUX_LINARO_RELEASE_13_06
+    default "3.13-2014.01" if LINUX_LINARO_RELEASE_14_01
 
-config LINUX_LINARO_RELEASE_Y
-	int "linaro release year"
-	range 12 13
-	depends on LINUX_LINARO_RELEASE
-	default 13
+config LINUX_LINARO_DIR
+    string
+    default "linux-linaro-stable-lsk-preview" if LINUX_LINARO_RELEASE_13_06
+    default "linux-linaro"
 
-config LINUX_LINARO_RELEASE_M
-	int "linaro release month"
-	range 01 12
-	depends on LINUX_LINARO_RELEASE
-	default 02
+config LINUX_LINARO_RELEASE
+    string
+    default "latest" if LINUX_LINARO_RELEASE_LATEST
+    default "13.02" if LINUX_LINARO_RELEASE_13_02
+    default "13.03" if LINUX_LINARO_RELEASE_13_03
+    default "13.04" if LINUX_LINARO_RELEASE_13_04
+    default "13.06" if LINUX_LINARO_RELEASE_13_06
+    default "14.01" if LINUX_LINARO_RELEASE_14_01
 
 config LINUX_CUSTOM_URL
     string "linux source tree URL (compressed file or git repository)"
@@ -57,8 +77,8 @@ config LINUX_CUSTOM_URL
 
 config KERNEL
     string
-    default "linux-linaro-tracking" if LINUX_LINARO_TRACKING
-    default "linux-linaro" if LINUX_LINARO_RELEASE
+    default "linux-linaro" if LINUX_LINARO
+    default "igloo-kernel" if LINUX_IGLOO
     default "linux" if LINUX
     prompt "Kernel name" if LINUX_CUSTOM
 
@@ -76,4 +96,10 @@ config BOOTDIR
     default "system/boot" if FHS_ANDROID
     default "boot" if FHS_LINUX
 
+menu "external drivers"
+config DRIVER_MALI
+	bool 
+	prompt "Mali GPU driver" if MALI
+	
+endmenu
 endmenu
