@@ -1,2 +1,3 @@
 config TOOLS_GDB
 	bool "gdb debugger"
+	select USR_LOCAL
