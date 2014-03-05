@@ -29,35 +29,33 @@ configure-cmd:=./configure \
 	--host=$(CROSS_COMPILE:%-=%) \
 	--target=$(CROSS_COMPILE:%-=%) \
 	--prefix=/usr \
-	--sysconfdir=/etc \
-	$(sprj-config-opts)
+	--sysconfdir=/etc
 quiet_cmd_configure-project = CONFIGURE $*
 cmd_configure-project = \
 	$(eval sprj-defconfig = $($(notdir $*)-defconfig)) \
 	$(eval sprj-mkconfig = $($(notdir $*)-mkconfig)) \
 	$(eval sprj-config = $($(notdir $*)-config)) \
 	$(eval sprj-config-opts = $($(notdir $*)-configure-arguments)) \
-	$(if $(wildcard $(sprj-src)/install),,ln -s /usr/bin/install $(sprj-src)/install && ) \
 	$(if $(sprj-config), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cd $(sprj-src) && $(sprj-config) ), \
 	$(if $(sprj-mkconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) configure ), \
 	$(if $(sprj-defconfig), $(if $(wildcard  $(sprj-src)/$(config_shipped)), ,cp $(sprj-defconfig) $(sprj-src)/.config; $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig), \
-	$(if $(wildcard $(sprj-src)/configure), cd $(sprj-src) && $(configure-cmd), \
-	$(if $(wildcard $(sprj-src)/configure.ac), cd $(sprj-src) && autoreconf --force -i && $(configure-cmd), echo "no configuration found";) ) ) ) )
+	$(if $(wildcard $(sprj-src)/configure), cd $(sprj-src) && $(configure-cmd) $(sprj-config-opts), \
+	$(if $(wildcard $(sprj-src)/configure.ac), cd $(sprj-src) && autoreconf --force -i && $(configure-cmd) $(sprj-config-opts), echo "no configuration found";) ) ) ) )
 
 quiet_cmd_build-project = BUILD $* $(target)
 cmd_build-project = \
 	$(eval sprj-build = $($(notdir $*)-build)) \
 	$(if $(sprj-build), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,cd $(sprj-src) && $(sprj-build) ), \
-	$(if $(sprj-mkbuild), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) $(if $(target), $(target),build)), \
-	$(if $(wildcard  $(sprj-src)/Makefile), $(MAKE) $(sprj-makeflags) MAKEFLAGS= -C $(sprj-src) $(target);, \
+	$(if $(sprj-mkbuild), $(if $(wildcard  $(sprj-src)/$(build_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkbuild) $(if $(target), $(target),build)), \
+	$(if $(wildcard  $(sprj-src)/Makefile), $(MAKE) $(sprj-makeflags) MAKEFLAGS= -C $(sprj-src) $(target), \
 	$(if $(wildcard  $(sprj-src)/Android.mk), $(call android-tools) && $(MAKE) $(sprj-makeflags) MAKEFLAGS= $(android-build)=$(sprj-src)/Android.mk, echo "no build script found";) )))
 
 quiet_cmd_install-project = INSTALL $*
 cmd_install-project = \
 	$(eval sprj-install = $($(notdir $*)-install)) \
 	$(if $(sprj-install), $(if $(wildcard  $(sprj-src)/$(install_shipped)), ,cd $(sprj-src) && $(sprj-install) ), \
-	$(if $(sprj-mkinstall), $(if $(wildcard  $(sprj-src)/$(install_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) install), \
-	$(MAKE)  $(sprj-makeflags) INSTALL=$(hostbin:%=%/)install MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) DSTROOT=$(objtree) -C $(sprj-src) install))
+	$(if $(sprj-mkinstall), $(if $(wildcard  $(sprj-src)/$(install_shipped)), ,$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkinstall) install), \
+	$(if $(wildcard  $(sprj-src)/Makefile), $(MAKE)  $(sprj-makeflags) INSTALL=$(hostbin:%=%/)install MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) DSTROOT=$(objtree) -C $(sprj-src) install)))
 
 $(sort $(subproject-target)):  $(obj)/.%.prj: $($(notdir $@)-defconfig)
 	$(eval sprj-makeflags = $($(notdir $*)-makeflags))

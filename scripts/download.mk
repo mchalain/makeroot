@@ -6,7 +6,7 @@ download-short=$(if $(wildcard $(addprefix $(BUILD_DOWNLOAD_PATH)/, $(notdir $(1
 quiet_cmd_download-url = DOWNLOAD $* from $($(notdir $*)-url:"%"=%)
 cmd_download-url = \
 	$(eval url = $($(notdir $*)-url:"%"=%)) \
-	$(if $(findstring .gz, $(suffix $(url))), \
+	$(if $(findstring .gz, $(suffix $(url))) $(findstring .tgz, $(suffix $(url))), \
 		$(call download-short, $(url)) | tar -xzf - -C $(src), \
 	$(if $(findstring .bz2, $(suffix $(url))), \
 		$(call download-short, $(url)) | tar -xjf - -C $(src), \

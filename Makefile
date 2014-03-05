@@ -81,23 +81,19 @@ all: toolchain $(SUBDIRS)
 toolchain:
 	$(Q)$(MAKE) $(build)=tools/gcc
 else
-all: tools tree kernel libc base init system image
+all: tools $(SUBDIRS)
 endif
 
-tree:
-	$(Q)$(MAKE) $(build)=system/tree
-
-libc:
-	$(Q)$(MAKE) $(build)=system/libc
-
-base:
-	$(Q)$(MAKE) $(build)=system/base
-
-init:
-	$(Q)$(MAKE) $(build)=system/init
-
-egl:
-	$(Q)$(MAKE) $(build)=system/lowlevel/graphics/egl
+tree: system/tree
+	$(Q)$(MAKE) $(build)=$<
+libc: system/libc
+	$(Q)$(MAKE) $(build)=$<
+base: system/base
+	$(Q)$(MAKE) $(build)=$<
+init: system/init
+	$(Q)$(MAKE) $(build)=$<
+egl: system/lowlevel/graphics/egl
+	$(Q)$(MAKE) $(build)=$<
 
 bootloader: FORCE
 	$(Q)$(MAKE) $(build)=$@
