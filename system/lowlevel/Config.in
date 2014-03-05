@@ -1,0 +1,11 @@
+menu "lowlevel managers"
+
+source "system/lowlevel/manager/Config.in"
+source "system/lowlevel/network/Config.in"
+
+comment  "Graphics screen support"
+source "system/lowlevel/graphics/Config.in"
+
+comment "Audio support"
+source "system/lowlevel/audio/Config.in"
+endmenu

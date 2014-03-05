@@ -1,13 +1,7 @@
 menu "devices manager"
-choice
-	default UDEV_DEAMON
-
-	prompt "device nodes manager"
 	config UDEV_DEAMON
-		bool "udev Deamon manager"
-		depends on DEV_UDEV
-
-endchoice
+		bool
+		default y if DEV_UDEV
 
 	config MTDEV_DEAMON
 		bool "mtdev multitouch device protocol"
