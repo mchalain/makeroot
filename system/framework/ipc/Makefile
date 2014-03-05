@@ -4,9 +4,7 @@ wayland-version=$(CONFIG_WAYLAND_VERSION:"%"=%)
 subproject-$(CONFIG_WAYLAND_LIB)+=wayland
 wayland-git="git://anongit.freedesktop.org/wayland/wayland.git"
 wayland-url="http://wayland.freedesktop.org/releases/wayland-$(wayland-version).tar.xz"
-wayland-mkconfig=system/graphics/system/config/wayland.mk
-#wayland-config=$(MAKE) clean; ./configure CC="$(CONFIG_CROSS_COMPILE:"%"=%)-gcc" --prefix=$(WLD) --includedir=/usr/include --host=$(CONFIG_CROSS_COMPILE:"%"=%) --disable-scanner --disable-documentation
-wayland-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+wayland-configure-arguments= --disable-documentation --disable-scanner
 wayland-directory=$(if $(findstring git,$(wayland-version)),wayland,wayland$(wayland-version:%=-%))
 
 ifneq ($(wildcard $(wayland-directory)),)
