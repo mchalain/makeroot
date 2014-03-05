@@ -1,0 +1,19 @@
+config ALSA
+	bool "ALSA userland library"
+	default y
+
+config ALSA_UTILS
+	bool "ALSA userland utils : amixer"
+	depends on ALSA && NCURSES
+	default n
+	help
+		need libncurses
+config ALSA_TOOLS
+	bool "ALSA specials tools"
+	depends on ALSA
+	default n
+
+config PULSEAUDIO
+	bool "PulseAudio the sound daemon"
+	depends on ALSA
+	default n
