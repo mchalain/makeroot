@@ -10,7 +10,7 @@ etc/network/eth0.conf: /tmp/eth0.conf
 	@echo -n > $@
 	@echo ip="$(CONFIG_IPADDR)" >> $@
 	@echo subnet="$(CONFIG_NETMASK)" >> $@
-	@echo hostname="$(CONFIG_HOSTNAME)" >> $@
+	@echo hostname="$(CONFIG_CONFIGNAME)" >> $@
 	@echo router="$(CONFIG_GATEWAY)" >> $@
 	@echo dns="$(CONFIG_NAMESERVER1)" "$(CONFIG_NAMESERVER2)" >> $@
 etc/init.d/inetconfig: copy=$(srctree)/$(src)/inetscripts/inetconfig
