@@ -260,8 +260,3 @@ multi-objs-m	:= $(addprefix $(obj)/,$(multi-objs-m))
 subdir-ym	:= $(addprefix $(obj)/,$(subdir-ym))
 obj-dirs	:= $(addprefix $(obj)/,$(obj-dirs))
 #subproject-y := $(addprefix $(obj)/,$(subproject-y))
-
-ifneq ($(strip $(root)),)
-objtree:=$(addsuffix $(root),$(objtree))
-hostobjtree:=$(addsuffix $(root),$(hostobjtree))
-endif
