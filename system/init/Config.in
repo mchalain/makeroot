@@ -35,6 +35,7 @@ config INIT_SYSTEMV
 
 config INIT_LSB
     bool "Linux Standard Base"
+    default y if LSB
     default n
     help
 		init-functions script
