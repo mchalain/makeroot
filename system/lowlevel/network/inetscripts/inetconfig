@@ -1,0 +1,88 @@
+#! /bin/sh
+MODPROBE=/sbin/modprobe
+IFCONFIG=/sbin/ifconfig
+HOSTNAMEBIN=/bin/hostname
+ROUTE=/sbin/route
+HOSTS="/tmp/hosts"
+
+if grep lo: /proc/net/dev 1> /dev/null ; then
+  if ! /sbin/ifconfig | grep "^lo" 1> /dev/null ; then
+    interface=lo
+    ip=127.0.0.1
+    subnet=255.0.0.0
+    hostname=localhost
+    $IFCONFIG $interface $ip
+    if [ ! "$ROUTE" = "" ]; then
+      $ROUTE add -net 127.0.0.0 netmask $subnet $interface
+    fi
+    echo $ip $hostname > $HOSTS
+  fi
+fi
+
+case "$1" in
+  "deconfig")
+    /sbin/ifconfig $interface 0.0.0.0
+    exit 0
+    ;;
+
+  "renew"|"bound")
+    ;;
+  "nak")
+    exit 0
+    ;;
+  "")
+    interface=eth0
+    . /etc/network/$interface.conf
+    [ ! -n "$hostname" ] && hostname=$(cat /etc/HOSTNAME)
+    ;;
+esac
+
+if [ ! "$module" = "" ]; then
+  $MODPROBE $module
+fi
+if [ ! "$hwaddr" = "" ]; then
+  $IFCONFIG $interface hw ether $hwaddr
+fi
+if [ ! "$mtu" = "" ]; then
+  $IFCONFIG $interface mtu $mtu
+fi
+
+case "$ip" in
+  "dhcpcd")
+    DHCPOPTS=" -t -10"
+    [ $hostname ] && DHCPOPTS="$DHCPOPTS -h $hostname"
+    /sbin/dhcpcd $DHCPOPTS $interface
+    ;;
+  "udhcpc")
+    DHCPOPTS="-b -s $0"
+    [ $hostname ] && DHCPOPTS="$DHCPOPTS -H $hostname"
+    /sbin/uhcpc $DHCPOPTS -i $interface
+    ;;
+  *)
+    [ -n "$subnet" ] && NETMASK="netmask $subnet"
+    if [ -n "$broadcast" ]; then
+      BROADCAST="broadcast $broadcast"
+    elif [ ! "$IPMASK" = "" ]; then
+      BROADCAST=`$IPMASK $subnet $ip | cut -f1 -d' '`
+      BROADCAST="broadcast $BROADCAST"
+    fi
+    echo $IFCONFIG $interface $ip $BROADCAST $NETMASK
+    $IFCONFIG $interface $ip $BROADCAST $NETMASK
+    $HOSTNAMEBIN $hostname
+    echo $ip $hostname >> $HOSTS
+  ;;
+esac
+
+if [ ! "$router" = "" -a ! "$ROUTE" = "" ]; then
+  for route in $router ; do
+    $ROUTE add default gw $route dev $interface metric 1
+  done
+fi
+
+RESOLV_CONF="/tmp/resolv.conf"
+echo -n > $RESOLV_CONF
+[ -n "$domain" ] && echo search $domain >> $RESOLV_CONF
+for i in $dns ; do
+  echo adding dns $i
+  echo nameserver $i >> $RESOLV_CONF
+done

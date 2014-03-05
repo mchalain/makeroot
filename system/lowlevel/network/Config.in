@@ -1,0 +1,58 @@
+menu "network manager"
+
+	config ETHERNETCONFIG
+		bool
+
+	config ETHTOOL
+		bool "kernel ethernet configuration tool"
+
+    config INETSCRIPTS
+		bool "simple ethernet configuration file"
+		select ETHERNETCONFIG
+
+choice
+	prompt "ethernet configuration type"
+	depends on ETHERNETCONFIG
+	default IPUDHCPC if BUSYBOX
+	default IPSTATIC
+
+	config IPSTATIC
+		bool "Static IP address"
+	config IPDHCPCD
+		bool "Dynamic IP address by GNU dhcpcd"
+	config IPUDHCPC
+		bool "Dynamic IP address by Busybox dhcpc"
+		depends on BUSYBOX
+endchoice
+
+config IPADDRESS
+	string
+	prompt "IP address" if IPSTATIC
+	default "dhcpcd" if IPDHCPCD
+	default "udhcpc" if IPUDHCPC
+	default "0.0.0.0"
+
+config NETMASK
+	string
+	prompt "INet mask" if IPSTATIC
+	default "255.255.255.255" if IPSTATIC
+	default ""
+
+config GATEWAY
+	string
+	prompt "Gateway" if IPSTATIC
+	default "255.255.255.255" if IPSTATIC
+	default ""
+
+config NAMESERVER1
+	string "domain name server 1"
+config NAMESERVER2
+	string "domain name server 2"
+	
+config ETHMODULE
+	string "kernel module name"
+	depends on INETSCRIPTS
+	help
+		leave empty if kernel support inside
+
+endmenu

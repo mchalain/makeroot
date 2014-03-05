@@ -1,0 +1,50 @@
+
+menu "system initialization"
+choice 
+    prompt "init tool"
+    default INIT_BUSYBOX if BUSYBOX
+    default SYSTEMD if FHS_ANDROID
+    default INIT_GNU
+
+    config INIT_BUSYBOX
+        bool "busybox init"
+        depends on BUSYBOX
+        select INITTAB
+
+    config INIT_GNU
+        bool "linux utils init"
+        depends on GNU
+        select INITTAB
+
+    config SYSTEMD
+        bool "new systemd start system"
+
+endchoice
+
+config INITTAB
+    bool
+
+config INITTAB_FILE
+    string "inittab file"
+    default "inittab.default"
+    depends on INITTAB
+    
+config INIT_SYSTEMV
+    bool "systemV startup system"
+    depends on INITTAB
+
+config INIT_LSB
+    bool "Linux Standard Base"
+    default n
+    help
+		init-functions script
+		see linuxbase.org
+
+if INIT_SYSTEMV
+    config RCS_FILE
+        string "rcS starting file path"
+        default "rcS.default"
+
+endif
+
+endmenu
