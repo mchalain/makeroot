@@ -2,6 +2,7 @@ menu "files compressor libraries and utilities"
 config ZLIB
     bool
     prompt "zip compression library" if SHOW_ALL
+    default y if LSB
     help
         http://zlib.net/
 

@@ -20,6 +20,9 @@ config SYSTEM
     default "android" if FHS_ANDROID
 
 if FHS_LSB
+config LSB
+	bool "Complete support of Linux Standard Base"
+	default n
 source "system/tree/fhs/Config.in"
 endif
 
