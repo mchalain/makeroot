@@ -9,6 +9,11 @@ config PROFTP
 	help
 		http://www.proftpd.org
 
+config NFS
+	bool "NFS Network File System client/server"
+	help
+		http://linux-nfs.org
+
 config LIBDLNA
 	bool "DLNA library framework"
 	help

@@ -33,6 +33,13 @@ proftpd-version=1.3.4d
 subproject-$(CONFIG_PROFTP)+=proftpd
 proftpd-url=ftp://ftp.proftpd.org/distrib/source/proftpd-$(proftpd-version).tar.gz
 
+tcp_wrappers-url:=ftp://ftp.cn.debian.org/gentoo/distfiles/tcp_wrappers_7.6.tar.gz
+
+nfs-utils-version=git
+subproject-$(CONFIG_NFS)+=nfs-utils
+nfs-utils-git:="git://git.linux-nfs.org/projects/steved/nfs-utils.git"
+nfs-confiugre-arguments:=--disable-tirpc
+
 subproject-$(LIBUPNP_OLD)+=libupnp
 
 # the git reposiroty stores the cod inside pupnp directory,
