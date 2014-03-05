@@ -15,13 +15,13 @@ usr/include: copy=$(toolchain)/$(arch)/libc/usr/include
 usr/include: $(toolchain)/$(arch)/libc/usr/include
 
 install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/include/bits
-usr/include/bits: link=usr/include/$(cross_compile)/bits
+usr/include/bits: link=$(cross_compile)/bits
 usr/include/bits: $(objtree)/usr/include/$(cross_compile)/bits
 
 install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/include/sys
-usr/include/sys: link=usr/include/$(cross_compile)/sys
+usr/include/sys: link=$(cross_compile)/sys
 usr/include/sys: $(objtree)/usr/include/$(cross_compile)/sys
 
 install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/include/gnu
-usr/include/gnu: link=usr/include/$(cross_compile)/gnu
+usr/include/gnu: link=$(cross_compile)/gnu
 usr/include/gnu: $(objtree)/usr/include/$(cross_compile)/gnu
