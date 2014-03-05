@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Busybox version: 1.22.0.git
-# Fri May 17 16:28:46 2013
+# Mon Mar  3 16:41:05 2014
 #
 CONFIG_HAVE_DOT_CONFIG=y
 
@@ -821,7 +821,7 @@ CONFIG_NSLOOKUP=y
 CONFIG_NTPD=y
 CONFIG_FEATURE_NTPD_SERVER=y
 CONFIG_PSCAN=y
-# CONFIG_ROUTE is not set
+CONFIG_ROUTE=y
 CONFIG_SLATTACH=y
 CONFIG_TCPSVD=y
 CONFIG_TELNET=y
