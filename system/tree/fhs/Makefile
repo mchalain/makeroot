@@ -4,8 +4,8 @@ install-$(CONFIG_FHS_LSB)+=bin sbin home opt var proc sys dev tmp etc
 bin sbin home root opt var proc sys dev tmp etc: dir=y
 install-$(CONFIG_FHS_LSB)+=usr/bin usr/sbin
 usr/bin usr/sbin: dir=y
-install-$(CONFIG_USR_LOCAL)+=usr/local/bin usr/local/lib
-usr/local/bin usr/local/lib: dir=y
+install-$(CONFIG_USR_LOCAL)+=usr/local/bin usr/local/lib usr/local/include
+usr/local/bin usr/local/lib usr/local/include: dir=y
 install-$(CONFIG_FHS_BOOT)+=boot
 boot: dir=y
 
