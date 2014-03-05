@@ -1,13 +1,13 @@
-targets-$(CONFIG_IMAGE_MMC)+=$(CONFIG_MMC_ROOT_PATH:"%"=%)
+targets-$(CONFIG_IMAGE_MMC)+=image/mmc
 targets-$(CONFIG_IMAGE_QEMU)+=$(CONFIG_MMC_ROOT_PATH:"%"=%)
 
 device=$(CONFIG_MMC_BLOCKDEVICE:"%"=%)
 mmcboot=$(CONFIG_MMC_BOOT_PATH:"%"=%)
 mmcroot=$(CONFIG_MMC_ROOT_PATH:"%"=%)
 mmcuser=$(CONFIG_MMC_USER_PATH:"%"=%)
-p1=p$(CONFIG_MMC_BOOT_PARTITION)
-p2=p$(CONFIG_MMC_ROOT_PARTITION)
-p3=p$(CONFIG_MMC_USER_PARTITION)
+p1=$(CONFIG_MMC_BOOT_PARTITION)
+p2=$(CONFIG_MMC_ROOT_PARTITION)
+p3=$(CONFIG_MMC_USER_PARTITION)
 cylinders = $(shell echo $(CONFIG_IMAGE_SIZE)/255/63/512 | bc)
 
 $(device):
@@ -15,24 +15,34 @@ $(device):
 		qemu-img create -f raw $@ $(CONFIG_IMAGE_SIZE), \
 		echo "insert sd card inside $(device)"; false)
 
-
 $(device)$(p1) $(device)$(p2): $(device)
-	{ \
-	    echo ,9,0x0C,* ; \
-	    echo ,,,- \
-	} | sfdisk  -D -H 255 -S 63 -C $(cylinders) $(device)
+	sfdisk  -D -H 255 -S 63 -C $(cylinders) $(device) << EOF
+	,9,0x0C,*
+	,,,-
+	;
+	;
+	EOF
 
-$(mmcboot): $(device)$(p1)
+#$(mmcboot): $(device)$(p1)
+$(mmcboot): dir=y
+$(mmcboot):
 	mkdosfs -F 32 -n boot $(device)$(p1)
 	$(MKDIR) $(mmcroot)
 	mount -t vfat $(device)$(p1) $(mmcboot)
 
-$(mmcroot): $(device)$(p2)
+#$(mmcroot): $(device)$(p2)
+$(mmcroot):
 	mke2fs -L root  $(device)$(p2)
 	$(MKDIR) $(mmcroot)
 	mount -t ext2 $(device)$(p2) $(mmcroot)
 
+$(mmcboot)/: copy=$(objtree)/boot/*
+$(mmcboot)/: $(mmcboot) FORCE
+	$(call cmd,install)
+
+$(mmcroot)/: copy=$(objtree)/*
+$(mmcroot)/: $(mmcroot) FORCE
+	$(call cmd,install)
+
 PHONY+=image/mmc
-image/mmc: $(mmcboot) $(mmcroot)
-	$(CP) $(TARGET_OUT)/boot/* $(mmcboot)
-	$(CP) $(TARGET_OUT)/* $(mmcroot)
+image/mmc: $(mmcboot)/ $(mmcroot)/
