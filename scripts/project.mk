@@ -60,7 +60,7 @@ cmd_install-project = \
 $(sort $(subproject-target)):  $(obj)/.%.prj: $($(notdir $@)-defconfig)
 	$(eval sprj-makeflags = $($(notdir $*)-makeflags))
 	$(if $(findstring git,$($(notdir $*)-version)),,$(eval sprj-version=$($(notdir $*)-version)))
-	$(eval sprj-src =  $(addprefix $(src)/,$*$(sprj-version:%=-%)))
+	$(eval sprj-src =  $(sort $(wildcard $(addprefix $(src)/,$*$(sprj-version:%=-%)) $(addprefix $(src)/,$*))))
 	@$(call cmd,configure-project)
 	$(eval sprj-targets = $($(notdir $*)-build-target))
 	@$(if $(sprj-targets), \
