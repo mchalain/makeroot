@@ -28,10 +28,64 @@ config INITTAB_FILE
     string "inittab file"
     default "inittab.default"
     depends on INITTAB
-    
-config INIT_SYSTEMV
-    bool "systemV startup system"
-    depends on INITTAB
+
+if INITTAB
+choice
+	prompt "type of startup scripts"
+	
+	config INIT_SYSTEMV
+		bool "systemV startup system"
+		depends on INITTAB
+		select RCS_FILE
+
+	config INIT_MAKEROOT
+		bool "simple init scripts"
+		depends on INITTAB
+		select RCS_FILE
+		help
+			This scripts are defined for a simple configuration
+			No optimization are available
+endchoice
+endif
+
+config RCS_FILE
+	bool
+
+config RCS_FILENAME
+	string 
+	prompt "rcS starting file path" if RCS_FILE
+	default "imrscripts/rcS" if INIT_MAKEROOT
+	default "config/rcS.default"
+
+if INIT_MAKEROOT
+menu  "Select scripts"
+	
+	config INIT_MR_TREE
+		bool "create generated file inside /tmp"
+		depends on TMPFS
+		
+	config INIT_MR_UDEVD
+		bool "start udevd for devices management"
+		depends on UDEV_DAEMON
+
+	config INIT_MR_NETWORK
+		bool "init the Network"
+		select INETSCRIPTS
+
+	config INIT_MR_TELNET
+		bool "start telnet server"
+		depends on INIT_MR_NETWORK
+
+	config INIT_MR_FTPD
+		bool "start ftp server"
+		depends on INIT_MR_NETWORK
+		
+	config INIT_MR_NTPD
+		bool "start ntp server"
+		depends on INIT_MR_NETWORK
+		
+endmenu
+endif
 
 config INIT_LSB
     bool "Linux Standard Base"
@@ -40,12 +94,5 @@ config INIT_LSB
     help
 		init-functions script
 		see linuxbase.org
-
-if INIT_SYSTEMV
-    config RCS_FILE
-        string "rcS starting file path"
-        default "rcS.default"
-
-endif
 
 endmenu

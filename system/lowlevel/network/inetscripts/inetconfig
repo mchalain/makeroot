@@ -30,7 +30,7 @@ case "$1" in
   "nak")
     exit 0
     ;;
-  "")
+  ""|"start")
     interface=eth0
     . /etc/network/$interface.conf
     [ ! -n "$hostname" ] && hostname=$(cat /etc/HOSTNAME)
