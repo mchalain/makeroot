@@ -22,3 +22,39 @@ freetype-version=2.5.2
 subproject-$(CONFIG_FREETYPE)+=freetype
 freetype-url:=http://download.savannah.gnu.org/releases/freetype/freetype-$(freetype-version).tar.gz
 freetype-configure-arguments:=LIBPNG_CFLAGS=-I/usr/lib LIBPNG_LDFLAGS=-lpng16
+
+CAIRO_CONFIGURE_OPTIONS:=
+ifeq ($(CONFIG_FREETYPE),y)
+CAIRO_CONFIGURE_OPTIONS+=FREETYPE_CFLAGS="-I$(objtree)/usr/include/freetype2/"
+endif
+ifeq ($(CONFIG_EGL),y)
+#CAIRO_CONFIGURE_OPTIONS+=--enable-glesv2
+endif
+ifeq ($(CONFIG_GL),y)
+CAIRO_CONFIGURE_OPTIONS+=--enable-gl 
+endif
+ifeq ($(CONFIG_DRM),y)
+CAIRO_CONFIGURE_OPTIONS+=--enable-drm
+endif
+ifeq ($(CONFIG_DIRECTFB),y)
+CAIRO_CONFIGURE_OPTIONS+=--enable-directfb
+endif
+ifeq ($(CONFIG_QT_GUI),y)
+CAIRO_CONFIGURE_OPTIONS+=--enable-qt
+endif
+ifeq ($(CONFIG_EXPAT),y)
+CAIRO_CONFIGURE_OPTIONS+=--enable-xml
+endif
+ifeq ($(CONFIG_X11),y)
+CAIRO_CONFIGURE_OPTIONS+=--enable-xlib
+endif
+ifeq ($(CONFIG_X11_XCB),y)
+CAIRO_CONFIGURE_OPTIONS+= --enable-xlib-xcb  --enable-xcb
+endif
+ifeq ($(CONFIG_PIXMAN),y)
+CAIRO_CONFIGURE_OPTIONS+=pixman_CFLAGS="-I$(objtree)/usr/include/pixman-1 -DMESA_EGL_NO_X11_HEADERS"
+endif
+cairo-version=1.12.14
+subproject-$(CONFIG_CAIRO)+= cairo
+cairo-url=http://cairographics.org/releases/cairo-1.12.14.tar.xz
+cairo-configure-arguments:=$(CAIRO_CONFIGURE_OPTIONS)
