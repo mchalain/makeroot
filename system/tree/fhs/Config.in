@@ -70,11 +70,9 @@ config FSTAB_TMP
 
 config FSTAB_DEVPTS
     bool "add entry in fstab for /dev/pts"
-    depends on TREE_DEV
 
 config FSTAB_DEVSHM
     bool "add entry in fstab for /dev/shm"
-    depends on TREE_DEV
 
 config FSTAB_DEVSHM_SIZE
     int "size of the shm file system"
