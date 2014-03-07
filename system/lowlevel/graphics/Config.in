@@ -4,7 +4,24 @@ menuconfig GRAPHICS
 if GRAPHICS
 
 config EGL
-    bool
+    bool "Open EGL 3D graphic support"
+if EGL
+source "system/lowlevel/graphics/egl/Config.in"
+endif
+
+config FRAMEBUFFER
+    bool  "Video Framebuffer support"
+    help
+		The framebuffer is simpler video memory access to display image.
+		This feature doesn't build any library but it's kernel dependante.
+		Please check the kernel configuration for the support.
+
+config DRM
+	bool "Direct Rendering Manager"
+	depends on UDEV_DEAMON
+	help
+		The Direct Renderer Manager is a Kernel feature to enable.
+		This configuration activates the libdrm build.
 
 source "system/lowlevel/graphics/system/Config.in"
 
@@ -20,8 +37,5 @@ if WAYLAND
 source "system/lowlevel/graphics/wayland/Config.in"
 endif
 
-if EGL
-source "system/lowlevel/graphics/egl/Config.in"
-endif
 
 endif

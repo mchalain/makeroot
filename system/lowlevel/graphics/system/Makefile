@@ -1,8 +1,3 @@
-cairo-version=1.12.14
-subproject-$(CONFIG_CAIRO)+=cairo
-cairo-url=http://cairographics.org/releases/cairo-1.12.14.tar.xz
-cairo-mkconfig=$(src)/../egl/config/mesa.mk
-
 subproject-$(CONFIG_DRM)+=libdrm
 libdrm-git="git://anongit.freedesktop.org/git/mesa/drm.git"
 libdrm-mkconfig=$(src)/../egl/config/mesa.mk
@@ -21,12 +16,15 @@ mali_drv-config=./configure CFLAGS="$(CFLAGS) -I$(objtree)/usr/include/pixman-1"
 endif
 
 xkbcommon-version=0.3.0
-subproject-$(CONFIG_LIBXKBCOMMON)+=xkbcommon
+ifeq ($(xkbcommon-version),git)
+xkbcommon=libxkbcommon
+else
+xkbcommon=xkbcommon
+endif
+subproject-$(CONFIG_LIBXKBCOMMON)+=$(xkbcommon)
 xkbcommon-url="http://cgit.freedesktop.org/xorg/lib/libxkbcommon/snapshot/xkbcommon-$(xkbcommon-version).tar.gz"
 libxkbcommon-git="git://github.com/xkbcommon/libxkbcommon.git"
-xkbcommon-mkconfig=graphics/system/config/wayland.mk
-xkbcommon-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
-#xkbcommon-config= 
+$(xkbcommon)-configure-arguments= --with-xkb-config-root=/usr/share/xkb
 
 DirectFB-version=1.6.3
 subproject-$(CONFIG_DIRECTFB)+=DirectFB

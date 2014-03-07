@@ -1,18 +1,3 @@
-config FRAMEBUFFER
-    bool
-config CAIRO
-	bool
-	prompt "Cairo graphic rendering" if SHOW_ALL
-	select FREETYPE
-
-config DRM
-	bool
-	prompt "Direct Rendering Manager" if SHOW_ALL
-	help
-		The Direct Renderer Manager is a Kernel feature to enable.
-		This configuration activates the libdrm build.
-        
-
 choice
     prompt "Graphic System"
 
@@ -26,7 +11,6 @@ choice
 
     config X11
         tristate "X11 server"
-        select FRAMEBUFFER
 
     config WAYLAND
         tristate "Wayland"
@@ -50,13 +34,9 @@ choice
     config WESTON
         bool "Weston default Wayland Compositor"
         select LIBXKBCOMMON
-        select LIBUNWIND
         select PIXMAN
         select LIBPNG
         select LIBJPEG
-        select EGL
-        select DRM
-        select FRAMEBUFFER
         select CAIRO
 
 endchoice
@@ -68,9 +48,10 @@ config WESTON_OPTIONS
 
 endif
 
-config LIBXKBCOMMON
-    bool
-    prompt  "libxkbcommon translating evdev keycodes to keysyms" if SHOW_ALL
+config CAIRO
+	bool
+	prompt "Cairo graphic rendering" if SHOW_ALL
+	select FREETYPE
 
 if DIRECTFB
 config DIRECTFB_MULTIAPPS
@@ -78,3 +59,8 @@ config DIRECTFB_MULTIAPPS
 	default y
 	select LINUX_FUSION
 endif
+
+config LIBXKBCOMMON
+    bool
+    prompt  "libxkbcommon translating evdev keycodes to keysyms" if SHOW_ALL
+

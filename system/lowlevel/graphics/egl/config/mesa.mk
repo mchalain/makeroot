@@ -39,40 +39,6 @@ configure: FORCE
 	$(Q) ./configure CC=$(CROSS_COMPILE:%-=%)-gcc CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" $(DRM_CONFIGURE_OPTIONS) $(STD_CONFIGURE_OPTIONS)
 endif
 
-CAIRO_CONFIGURE_OPTIONS:=
-ifeq ($(CONFIG_FREETYPE),y)
-CAIRO_CONFIGURE_OPTIONS+=FREETYPE_CFLAGS="-I/usr/include/freetype2/"
-endif
-ifeq ($(CONFIG_EGL),y)
-CAIRO_CONFIGURE_OPTIONS+=--enable-glesv2
-endif
-ifeq ($(CONFIG_GL),y)
-CAIRO_CONFIGURE_OPTIONS+=--enable-gl 
-endif
-ifeq ($(CONFIG_DRM),y)
-CAIRO_CONFIGURE_OPTIONS+=--enable-drm
-endif
-ifeq ($(CONFIG_DIRECTFB),y)
-CAIRO_CONFIGURE_OPTIONS+=--enable-directfb
-endif
-ifeq ($(CONFIG_QT_GUI),y)
-CAIRO_CONFIGURE_OPTIONS+=--enable-qt
-endif
-ifeq ($(CONFIG_EXPAT),y)
-CAIRO_CONFIGURE_OPTIONS+=--enable-xml
-endif
-ifeq ($(CONFIG_X11),y)
-CAIRO_CONFIGURE_OPTIONS+=--enable-xlib
-endif
-ifeq ($(CONFIG_X11_XCB),y)
-CAIRO_CONFIGURE_OPTIONS+= --enable-xlib-xcb  --enable-xcb
-endif
-ifeq ($(findstring cairo, $(notdir $(CURDIR))),cairo)
-configure: FORCE
-	$(Q)$(if $(wildcard configure),,autoreconf --force -v --install)
-	$(Q) ./configure CFLAGS="$(CFLAGS) -I$(objtree)/usr/include/pixman-1 -DMESA_EGL_NO_X11_HEADERS" LDFLAGS="$(LDFLAGS)" --prefix=/usr --includedir=/usr/include --host=$(CROSS_COMPILE:%-=%) $(CAIRO_CONFIGURE_OPTIONS)
-endif
-
 MESA_CONFIGURE_OPTIONS:=
 ifeq ($(CONFIG_DRM),y)
 egl-platforms:=drm
