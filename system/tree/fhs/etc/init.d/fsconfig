@@ -2,7 +2,7 @@
 
 MKDIR="/bin/mkdir -p"
 LN="/bin/ln -s"
-MOUNT="/sbin/mount"
+MOUNT="/bin/mount"
 RM="/bin/rm"
 
 $MOUNT /dev 
