@@ -43,6 +43,7 @@ install-$(CONFIG_VARSUBDIRS)+=var/log var/mail var/spool var/opt var/cache var/l
 ifeq ($(CONFIG_TMPFS), y)
 install-$(CONFIG_TMPFS)+=etc/init.d/treeconfig
 etc/init.d/treeconfig: copy=$(srctree)/$(src)/etc/init.d/treeconfig
+etc/init.d/treeconfig: chmod:=744
 
 var/log: link=../tmp/var/log
 var/cache: link=../tmp/var/cache
