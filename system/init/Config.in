@@ -72,17 +72,25 @@ menu  "Select scripts"
 		bool "init the Network"
 		select INETSCRIPTS
 
+menuconfig INIT_MR_BUSYBOX_SERVER
+	bool "Busybox servers"
+	depends on INIT_MR_NETWORK && BUSYBOX
+
 	config INIT_MR_TELNET
 		bool "start telnet server"
-		depends on INIT_MR_NETWORK
+		depends on INIT_MR_BUSYBOX_SERVER
 
 	config INIT_MR_FTPD
 		bool "start ftp server"
-		depends on INIT_MR_NETWORK
+		depends on INIT_MR_BUSYBOX_SERVER
+		
+	config INIT_MR_HTTPD
+		bool "start ftp server"
+		depends on INIT_MR_BUSYBOX_SERVER
 		
 	config INIT_MR_NTPD
 		bool "start ntp server"
-		depends on INIT_MR_NETWORK
+		depends on INIT_MR_BUSYBOX_SERVER
 		
 endmenu
 endif
