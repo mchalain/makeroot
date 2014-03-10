@@ -1,0 +1,11 @@
+#!/bin/sh
+
+echo image build by Makeroot
+
+rcFiles=$(/bin/ls /etc/rc.d/*.rc 2> /dev/null)
+
+for file in $rcFiles; do
+    if [ -e $file ]; then
+        $file start
+    fi
+done
