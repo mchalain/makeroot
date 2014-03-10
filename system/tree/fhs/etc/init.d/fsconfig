@@ -2,14 +2,19 @@
 
 MKDIR="/bin/mkdir -p"
 LN="/bin/ln -s"
-RM=/bin/rm
+MOUNT="/sbin/mount"
+RM="/bin/rm"
 
+$MOUNT /dev 
+$MOUNT /proc
+$MOUNT /sys
 DYNDIRS="/dev/pts /dev/shm"
 for DIR in $DYNDIRS ; do
   if [ ! -d $DIR ]; then
     $MKDIR $DIR
   fi
 done
+$MOUNT -a
 for DIR in $($LS /var) ; do
    if [ -l $DIR ]; then
     $MKDIR /tmp/$DIR

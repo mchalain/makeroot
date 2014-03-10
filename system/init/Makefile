@@ -10,7 +10,7 @@ etc/init.d/rcS: chmod:=744
 etc/init.d/rcS: $(srctree)/$(src)/$(CONFIG_RCS_FILENAME:"%"=%)
 
 install-$(CONFIG_INIT_MR_TREE)+=etc/rc.d/01_tree.rc
-etc/rc.d/01_tree.rc: link=../init.d/treeconfig
+etc/rc.d/01_tree.rc: link=../init.d/fsconfig
 install-$(CONFIG_INIT_MR_UDEVD)+=etc/rc.d/03_udevd.rc
 etc/rc.d/03_udevd.rc: link=../../usr/sbin/udevd
 install-$(CONFIG_INIT_MR_NETWORK)+=etc/rc.d/05_inet.rc
