@@ -8,7 +8,7 @@ etc/network/eth0.conf: generate=/tmp/eth0.conf
 etc/network/eth0.conf: /tmp/eth0.conf
 /tmp/eth0.conf: FORCE
 	@echo -n > $@
-	@echo ip="$(CONFIG_IPADDR)" >> $@
+	@echo ip="$(CONFIG_IPADDRESS)" >> $@
 	@echo subnet="$(CONFIG_NETMASK)" >> $@
 	@echo hostname="$(CONFIG_CONFIGNAME)" >> $@
 	@echo router="$(CONFIG_GATEWAY)" >> $@
