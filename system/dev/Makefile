@@ -9,3 +9,6 @@ subproject-$(CONFIG_TOOLS_GDB)+=gdb
 gdb-url=http://ftp.gnu.org/gnu/gdb/gdb-$(gdb-version).tar.gz
 gdb-config=./configure  --target=$(CROSS_COMPILE:%-=%) --host=$(CROSS_COMPILE:%-=%) CC=$(CROSS_COMPILE:%-=%)-gcc --prefix=/usr/local
 
+strace-version=4.8
+subproject-$(CONFIG_TOOLS_GDB)+=strace
+strace-url:=http://sourceforge.net/projects/strace/files/strace/$(strace-version)/strace-$(strace-version).tar.xz
