@@ -14,6 +14,7 @@ export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS
 # CHGRPPROG CHMODPROG CHOWNPROG MKDIRPROG MVPROG RMPROG
 CPPROG:=$(CROSS_COMPILE)cpp
 STRIPPROG:=$(CROSS_COMPILE)strip
+INSTALL=$(hostbin:%=%/)install
 export STRIPPROG CPPROG
 
 PKG_CONFIG_LIBDIR=$(objtree)/usr/lib/pkgconfig
@@ -25,9 +26,13 @@ config_shipped:=.config_shipped.prj
 build_shipped:=.build_shipped.prj
 install_shipped:=.install_shipped.prj
 
-configure-cmd:=./configure \
+configure-cmd:= \
+	ac_cv_func_malloc_0_nonnull=yes \
+	ac_cv_func_realloc_0_nonnull=yes \
+	./configure \
 	--host=$(CROSS_COMPILE:%-=%) \
 	--target=$(CROSS_COMPILE:%-=%) \
+	--build=x86 \
 	--prefix=/usr \
 	--sysconfdir=/etc
 quiet_cmd_configure-project = CONFIGURE $*
