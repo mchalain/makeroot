@@ -9,6 +9,10 @@ config FUSIONDALE
 	default y if DIRECTFB
 	select LINUX_FUSION
 
+config LIBEVENT
+	bool
+	prompt "libevent – an event notification library " if SHOW_ALL
+
 config LINUX_FUSION
 	bool
 	prompt "fusion linux's driver" if SHOW_ALL
