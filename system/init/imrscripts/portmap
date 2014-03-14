@@ -1,0 +1,5 @@
+#!/bin/sh
+
+/sbin/rpcbind
+
+/usr/sbin/rpc.statd
