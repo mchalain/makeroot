@@ -9,6 +9,10 @@ etc/init.d/rcS: copy:=$(srctree)/$(src)/$(CONFIG_RCS_FILENAME:"%"=%)
 etc/init.d/rcS: chmod:=744
 etc/init.d/rcS: $(srctree)/$(src)/$(CONFIG_RCS_FILENAME:"%"=%)
 
+install-$(CONFIG_TMPFS)+=etc/init.d/fsconfig
+etc/init.d/fsconfig: copy=$(srctree)/$(src)/etc/init.d/fsconfig
+etc/init.d/fsconfig: chmod:=744
+
 install-$(CONFIG_INIT_MR_TREE)+=etc/rc.d/01_tree.rc
 etc/rc.d/01_tree.rc: link=../init.d/fsconfig
 install-$(CONFIG_INIT_MR_UDEVD)+=etc/rc.d/03_udevd.rc

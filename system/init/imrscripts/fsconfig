@@ -2,6 +2,7 @@
 
 MKDIR="/bin/mkdir -p"
 LN="/bin/ln -s"
+LS="/bin/ls"
 MOUNT="/bin/mount"
 RM="/bin/rm"
 
@@ -16,7 +17,8 @@ for DIR in $DYNDIRS ; do
 done
 $MOUNT -a
 for DIR in $($LS /var) ; do
-   if [ -l $DIR ]; then
-    $MKDIR /tmp/$DIR
+   if [ -L /var/$DIR ]; then
+    echo $MKDIR /tmp/var/$DIR
+    $MKDIR /tmp/var/$DIR
    fi
 done

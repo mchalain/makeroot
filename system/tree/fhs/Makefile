@@ -41,10 +41,6 @@ dev/shm: dir=y
 
 install-$(CONFIG_VARSUBDIRS)+=var/log var/mail var/spool var/opt var/cache var/lib/misc var/lib/locate
 ifeq ($(CONFIG_TMPFS), y)
-install-$(CONFIG_TMPFS)+=etc/init.d/fsconfig
-etc/init.d/fsconfig: copy=$(srctree)/$(src)/etc/init.d/fsconfig
-etc/init.d/fsconfig: chmod:=744
-
 var/log: link=../tmp/var/log
 var/cache: link=../tmp/var/cache
 var/run: link=../tmp/var/run
