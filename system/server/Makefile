@@ -1,5 +1,5 @@
 cups-version=1.7.0
-subproject-$(CONFIG_CUPS)+=cups
+subproject-$(CONFIG_SERVER_CUPS)+=cups
 cups-url="http://www.cups.org/software/$(cups-version)/cups-$(cups-version)-source.tar.bz2"
 cups-configure-arguments:=--disable-unit-tests --enable-libusb 
 hostprogs-y+=mantohtml
@@ -30,67 +30,141 @@ mantohtml-cflags:=-I$(src)/cups$(cups-version:%=-%)/
 #genstrings-cflags:=-I$(src)/cups$(cups-version:%=-%)/
 
 proftpd-version=1.3.4d
-subproject-$(CONFIG_PROFTP)+=proftpd
+subproject-$(CONFIG_SERVER_PROFTP)+=proftpd
 proftpd-url=ftp://ftp.proftpd.org/distrib/source/proftpd-$(proftpd-version).tar.gz
+proftpd-configure-arguments:=--enable-dso --enable-nls --disable-ipv6
+ifneq ($(CONFIG_SECURITY_PAM),y)
+proftpd-configure-arguments+=--disable-auth-pam
+endif
+ifeq ($(CONFIG_SECURITY_OPENSSL),y)
+proftpd-configure-arguments+=--enable-openssl
+endif
+ifneq ($(CONFIG_SECURITY_CAP),y)
+proftpd-configure-arguments+=--disable-cap --disable-facl
+endif
+ifneq ($(CONFIG_NCURSES),y)
+proftpd-configure-arguments+=--disable-curses --disable-ncurses
+endif
 
-tcp_wrappers-url:=ftp://ftp.cn.debian.org/gentoo/distfiles/tcp_wrappers_7.6.tar.gz
+tcp_wrappers-version:=7.6
+subproject-$(CONFIG_SERVER_TCPW)+=tcp_wrappers
+tcp_wrappers-url:=ftp://ftp.cn.debian.org/gentoo/distfiles/tcp_wrappers_$(tcp_wrappers-version).tar.gz
+tcp_wrappers-build-target:=all
+tcp_wrappers-CFLAGS:=-fPIC -DPIC -D_REENTRANT -DSYS_ERRLIST_DEFINED -DBROKEN_SO_LINGER
+tcp_wrappers-CFLAGS+=-Dss_family=__ss_family -Dss_len=__ss_len -DHAVE_WEAKSYMS
+ifeq ($(CONFIG_INET6),y)
+tcp_wrappers-CFLAGS+=-DINET6=1
+endif
+tcp_wrappers-makeflags:=\
+	REAL_DAEMON_DIR=/tmp/tcp_wrappers \
+	ARFLAGS=rv \
+	LIBS=-lnsl \
+	AUX_OBJ=weak_symbols.o \
+	NETGROUP="-DNETGROUP"  \
+	EXTRA_CFLAGS="$(tcp_wrappers-CFLAGS) $(CFLAGS)"
+tcp_wrappers-install:=cp libwrap.a $(objtree)/usr/lib && \
+	cp libwrap.so* $(objtree)/usr/lib && \
+	cp tcpd.h $(objtree)/usr/include && \
+	cp safe_finger tcpd tcpdchk tcpdmatch try-from $(objtree)/usr/bin
+
+libtirpc-version:=0.2.4
+subproject-$(CONFIG_SERVER_RCP)+=libtirpc
+libtirpc-url:=http://downloads.sourceforge.net/project/libtirpc/libtirpc/$(libtirpc-version)/libtirpc-$(libtirpc-version).tar.bz2
+libtirpc-configure-arguments:=--disable-static
+ifneq ($(CONFIG_SECURITY_GSS),y)
+libtirpc-configure-arguments+=--disable-gssapi
+endif
+
+rpcbind-version:=0.2.1
+subproject-$(CONFIG_SERVER_RCP)+=rpcbind
+rpcbind-url:=sourceforge.net/projects/rpcbind/files/rpcbind/$(rpcbind-version)/rpcbind-$(rpcbind-version).tar.bz2
+rpcbind-configure-arguments:=--bindir=/sbin --with-rpcuser=root  TIRPC_CFLAGS=-I$(objtree)/usr/include/tirpc
+ifeq ($(CONFIG_SERVER_TCPW),y)
+nfs-utils-configure-arguments+=--enable-libwrap
+endif
+
+libnfsidmap-version:=0.25
+subproject-$(CONFIG_SERVER_NFS)+=libnfsidmap
+libnfsidmap-url:=http://www.citi.umich.edu/projects/nfsv4/linux/libnfsidmap/libnfsidmap-$(libnfsidmap-version).tar.gz
 
 nfs-utils-version=git
-subproject-$(CONFIG_NFS)+=nfs-utils
-nfs-utils-git:="git://git.linux-nfs.org/projects/steved/nfs-utils.git"
-nfs-confiugre-arguments:=--disable-tirpc
+subproject-$(CONFIG_SERVER_NFS)+=nfs-utils
+nfs-utils-url:=http://downloads.sourceforge.net/nfs/nfs-utils-1.2.9.tar.bz2
+nfs-utils-git:=git://git.linux-nfs.org/projects/steved/nfs-utils.git
+nfs-utils-configure-arguments:=LIBS=-lnsl --disable-nfsv41
+ifneq ($(CONFIG_SERVER_TCPW),y)
+nfs-utils-configure-arguments+=--without-tcp-wrappers
+endif
+ifneq ($(CONFIG_SECURITY_GSS),y)
+nfs-utils-configure-arguments+=--disable-gss --disable-uuid --disable-nfsdcltrack
+endif
 
-subproject-$(LIBUPNP_OLD)+=libupnp
+cifs-utils-version=6.3
+subproject-$(CONFIG_SERVER_SMB)+=cifs-utils
+cifs-utils-url:=http://ftp.samba.org/pub/linux-cifs/cifs-utils/cifs-utils-$(cifs-utils-version).tar.bz2
+cifs-utils-configure-arguments:=
+ifneq ($(CONFIG_SECURITY_PAM),y)
+cifs-utils-configure-arguments+=--disable-pam
+endif
+ifneq ($(CONFIG_SYSTEMD),y)
+cifs-utils-configure-arguments+=--disable-systemd
+endif
+ifneq ($(CONFIG_SECURITY_CAP),y)
+cifs-utils-configure-arguments+=--with-libcap-ng=no --with-libcap=no 
+endif
+
+subproject-$(CONFIG_SERVER_LIBUPNP_OLD)+=libupnp
 
 # the git reposiroty stores the cod inside pupnp directory,
 # the official release stores the code inside libupnp
 libupnp-version=1.6.19
-subproject-$(CONFIG_LIBUPNP)+=$(if $(findstring git,$(libupnp-version)), pupnp, libupnp)
+subproject-$(CONFIG_SERVER_LIBUPNP)+=$(if $(findstring git,$(libupnp-version)), pupnp, libupnp)
 libupnp-url:=http://downloads.sourceforge.net/pupnp/libupnp-$(pupnp-version).tar.bz2
 pupnp-git:= git://gitorious.org/pupnp/pupnp.git
+libupnp-configure-arguments:=--enable-samples --enable-debug
 
 libdlna-version=0.2.4
-subproject-$(CONFIG_LIBUPNP)+=libdlna
+subproject-$(CONFIG_SERVER_LIBUPNP)+=libdlna
 libdlna-url= http://libdlna.geexbox.org/releases/libdlna-$(libdlna-version).tar.bz2
 libdlna-hg=http://hg.geexbox.org/libdlna
 libdlna-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --prefix=/usr
 
 ushare-version=1.1a
-subproject-$(CONFIG_USHARE)+=ushare
+subproject-$(CONFIG_SERVER_USHARE)+=ushare
 ushare-url=http://ushare.geexbox.org/releases/ushare-$(ushare-version).tar.bz2
 ushare-hg=http://hg.geexbox.org/ushare
-ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --prefix=/usr --sysconfdir=/etc
+ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --prefix=/usr --sysconfdir=/etc --disable-strip --enable-debug
 ifeq ($(LIBDLNA),y)
 ushare-config+=--enable-dlna
 endif
 
 mediatomb-version=0.12.1
-subproject-$(CONFIG_MEDIATOMB)+=mediatomb
+subproject-$(CONFIG_SERVER_MEDIATOMB)+=mediatomb
 mediatomb-url=http://downloads.sourceforge.net/mediatomb/mediatomb-$(mediatomb-version).tar.gz
 mediatomb-git=git://mediatomb.git.sourceforge.net/gitroot/mediatomb/mediatomb
 
 libsoup-version=2.45.3
 libsoup-mainversion=2.45
 #libsoup-version=git
-subproject-$(CONFIG_LIBSOUP)+=libsoup
+subproject-$(CONFIG_SERVER_LIBSOUP)+=libsoup
 libsoup-url=https://download.gnome.org/sources/libsoup/$(libsoup-mainversion)/libsoup-$(libsoup-version).tar.xz
 libsoup-git=git://git.gnome.org/libsoup
 
 gssdp-version=0.14.6
 gssdp-mainversion=0.14
-subproject-$(CONFIG_GUPNP)+=gssdp
+subproject-$(CONFIG_SECURITY_GSSDP)+=gssdp
 gssdp-url=https://download.gnome.org/sources/gupnp/$(gssdp-mainversion)/gssdp-$(gssdp-version).tar.xz
 gssdp-git=git://git.gnome.org/gssdp.git
 
 gupnp-version=0.20.9
 gupnp-mainversion=0.20
-subproject-$(CONFIG_GUPNP)+=gupnp
+subproject-$(CONFIG_SERVER_GUPNP)+=gupnp
 gupnp-url=https://download.gnome.org/sources/gupnp/$(gupnp-mainversion)/gupnp-$(gupnp-version).tar.xz
 gupnp-git=git://git.gnome.org/gupnp.git
 
 gupnp-dlna-version=0.10.2
 gupnp-dlna-mainversion=0.10
-subproject-$(CONFIG_GUPNP)+=gupnp-dlna
+subproject-$(CONFIG_SERVER_GUPNP)+=gupnp-dlna
 gupnp-dlna-url=https://download.gnome.org/sources/gupnp/$(gupnp-dlna-mainversion)/gupnp-dlna-$(gupnp-dlna-version).tar.xz
 gupnp-dlna-git=git://git.gnome.org/gupnp-dlna.git
 
