@@ -1,0 +1,9 @@
+
+#!/bin/sh
+
+
+VERSION=$(uname -r)
+PATH=$(find "/lib/modules/$VERSION/kernel" -name $1.ko)
+
+/sbin/insmod $PATH
+
