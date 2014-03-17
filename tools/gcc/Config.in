@@ -20,6 +20,8 @@ endchoice
 if LINARO
 choice
 	prompt "Linaro release"
+	config LINARO_R_2013_06
+		bool "2013.06"
 	config LINARO_R_2013_04
 		bool "2013.04"
 	config LINARO_R_2013_03
@@ -33,6 +35,7 @@ endchoice
 config TOOLCHAIN_LINARO_VERSION
     string
     prompt "Linaro Compiler version" if LINARO_R_OTHER
+    default "2013.06" if LINARO_R_2013_06
     default "2013.04-20130415" if LINARO_R_2013_04
     default "2013.03-20130313" if LINARO_R_2013_03
     default "2012.03-20120326" if LINARO_R_2012_03
@@ -41,12 +44,14 @@ endif
 
 config TOOLCHAIN_GCC_VERSION
     string "C Compiler version"
+    default "4.8" if LINARO_R_2013_06
     default "4.7" if LINARO_R_2013_04
     default "" if LINARO_R_2012_03
     default "4.6"
 
 config CROSS_COMPILE
     string "Cross Compilation tools suffix"
+    default "arm-linux-gnueabihf" if LINARO_R_2013_06
     default "arm-linux-gnueabihf" if LINARO_R_2013_04
     default "arm-linux-gnueabi" if LINARO_R_2012_03
     default "arm-none-linux-gnueabi"
