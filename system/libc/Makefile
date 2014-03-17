@@ -11,9 +11,14 @@ uClibc-url:=http://www.uclibc.org/downloads/uClibc-$(CONFIG_LIBC_UCLIBC_VERSION:
 uClibc-git:=git://git.busybox.net/uClibc.git
 uClibc-defconfig:=$(CONFIG_LIBC_UCLIBC_DEFCONFIG:"%"=%)
 
-newlib-version=$(strip $(if $(CONFIG_LIBC_NEWLIB_VERSION:"%"=%),$(CONFIG_LIBC_NEWLIB_VERSION:"%"=%)))
+newlib-version=$(strip $(CONFIG_LIBC_NEWLIB_VERSION:"%"=%))
 subproject-$(CONFIG_LIBC_NEWLIB)+=newlib
+ifeq ($(findstring linaro, $(newlib-version)),linaro)
+newlib-url:=https://releases.linaro.org/14.02/components/toolchain/newlib-linaro/newlib-$(newlib-version).tar.bz2
+newlib-git:=git://git.linaro.org/toolchain/newlib.git
+else
 newlib-url:=ftp://sourceware.org/pub/newlib/newlib$(newlib-version).tar.gz
+endif
 newlib-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
 newlib-configure:=$(CONFIG_LIBC_NEWLIB_CONFIGURE:"%"=%)
 
@@ -38,6 +43,8 @@ usr/lib/$(CONFIG_CROSS_COMPILE:"%"=%)/: copy=$(srctree)/$(src)/gcc-linaro$(gcc-l
 usr/lib/$(CONFIG_CROSS_COMPILE:"%"=%)/: $(srctree)/$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/usr/lib/$(CONFIG_CROSS_COMPILE:"%"=%)/ FORCE
 
 patchelf-version=0.6
-subproject-y+=patchelf
+subproject-$(CONFIG_PATCHELF)+=patchelf
 patchelf-url=http://hydra.nixos.org/build/1524660/download/3/patchelf-0.6.tar.gz
 patchelf-config=./configure --host=$(CROSS_COMPILE:%-=%)
+
+pthread-git:=http://git.savannah.gnu.org/cgit/hurd/libpthread.git/

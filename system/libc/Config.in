@@ -21,7 +21,7 @@ choice
 endchoice
 
 config LINARO_RUNTIME
-	bool
+	bool "Linaro Runtime libraries"
 	default y if LINARO && LIBC_TOOLCHAIN
 
 config LIBC_GLIBC_VERSION
@@ -46,12 +46,13 @@ config LIBC_UCLIBC_DEFCONFIG
 
 config LIBC_NEWLIB_VERSION
     string "version"
+    default linaro-2.1.0-2014.02 if LINARO
     default 2.0.0
     depends on LIBC_NEWLIB
 
 config LIBC_NEWLIB_CONFIGURE
     string "configure options"
-    default "--target arm-none-eabi --disable-newlib-supplied-syscalls"
+    default "--disable-newlib-supplied-syscalls"
     depends on LIBC_NEWLIB
 
 config PATCHELF
