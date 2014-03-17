@@ -8,7 +8,10 @@ mmcuser=$(CONFIG_MMC_USER_PATH:"%"=%)
 p1=$(CONFIG_MMC_BOOT_PARTITION)
 p2=$(CONFIG_MMC_ROOT_PARTITION)
 p3=$(CONFIG_MMC_USER_PARTITION)
-cylinders = $(shell echo $(CONFIG_IMAGE_SIZE)/255/63/512 | bc)
+heads=255
+sectors=63
+sector_size=512
+cylinders = $(shell echo $(CONFIG_IMAGE_SIZE)/$(heads)/$(sectors)/$(sector_size) | bc)
 
 $(device):
 	@$(if $(findstring y, $(CONFIG_IMAGE_QEMU)), \
@@ -16,7 +19,7 @@ $(device):
 		echo "insert sd card inside $(device)"; false)
 
 $(device)$(p1) $(device)$(p2): $(device)
-	sfdisk  -D -H 255 -S 63 -C $(cylinders) $(device) << EOF
+	sfdisk  -D -H $(heads) -S $(sectors) -C $(cylinders) $(device) << EOF
 	,9,0x0C,*
 	,,,-
 	;
