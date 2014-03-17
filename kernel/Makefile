@@ -8,19 +8,18 @@ uImage:=arch/$(ARCH)/boot/uImage
 makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 target=$(CONFIG_KERNEL:"%"=%)
-subproject-$(CONFIG_LINUX)+=$(target)
+subproject-y+=$(target)
 $(target)-version:=$(CONFIG_KERNEL_VERSION:"%"=%)
 
 linux-linaro-git:=git://git.linaro.org/kernel/linux-linaro-tracking.git
 linux-linaro-url:=http://releases.linaro.org/$(CONFIG_LINUX_LINARO_RELEASE)/components/kernel/$(CONFIG_LINUX_LINARO_DIR)/linux-linaro$(linux-linaro-version:%=-%).tar.bz2
-igloo-kernel-git:=git://igloocommunity.org/git/kernel/igloo-kernel.git
 
 ifeq ($(CONFIG_LINUX_STD), y)
 linux-url:=http://www.kernel.org/pub/linux/kernel/v3.0/linux$(linux-version:%=-%).tar.bz2
 endif
 ifneq ($(CONFIG_LINUX_CUSTOM_URL), "")
-linux-url:=$(filter-out %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter-out git:%, $(CONFIG_LINUX_CUSTOM_URL:"%"=%))
-linux-git:=$(filter %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter git:%, $(CONFIG_LINUX_CUSTOM_URL:"%"=%))
+$(target)-url:=$(filter-out %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter-out git:%, $(CONFIG_LINUX_CUSTOM_URL:"%"=%))
+$(target)-git:=$(filter %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter git:%, $(CONFIG_LINUX_CUSTOM_URL:"%"=%))
 endif
 
 #sed -e "/unwanted /d" -i scripts/Makefile.headersinst
