@@ -14,10 +14,6 @@ choice
         select LINUX
         select LINUX_LINARO
 
-    config LINUX_IGLOO
-        bool "igloo community Linux source for Snowball board"
-        select LINUX
-
     config LINUX_CUSTOM
         bool "customized Linux "
         select LINUX
@@ -43,12 +39,18 @@ choice
 		bool "14.01"
 endchoice
 
+config KERNEL
+    string
+    default "linux-linaro" if LINUX_LINARO
+    default "linux" if LINUX
+    prompt "Kernel name" if LINUX_CUSTOM
+
 config KERNEL_VERSION
     string
     depends on LINUX
-    default "3.7.1" if LINUX_STD
-    default "" if LINUX_IGLOO
     prompt "kernel version number" if LINUX_LINARO_RELEASE_LATEST
+    prompt "kernel version number" if LINUX_CUSTOM
+    default "3.7.1" if LINUX_STD
     default "git" if LINUX_LINARO_TRACKING
     default "3.8-2013.02" if LINUX_LINARO_RELEASE_13_02
     default "3.9-rc3-2013.03" if LINUX_LINARO_RELEASE_13_03
@@ -56,31 +58,26 @@ config KERNEL_VERSION
     default "stable-3.9.6-2013.06" if LINUX_LINARO_RELEASE_13_06
     default "3.13-2014.01" if LINUX_LINARO_RELEASE_14_01
 
-config LINUX_LINARO_DIR
-    string
-    default "linux-linaro-stable-lsk-preview" if LINUX_LINARO_RELEASE_13_06
-    default "linux-linaro"
+if LINUX_LINARO
+	config LINUX_LINARO_DIR
+		string
+		default "linux-linaro-stable-lsk-preview" if LINUX_LINARO_RELEASE_13_06
+		default "linux-linaro"
 
-config LINUX_LINARO_RELEASE
-    string
-    default "latest" if LINUX_LINARO_RELEASE_LATEST
-    default "13.02" if LINUX_LINARO_RELEASE_13_02
-    default "13.03" if LINUX_LINARO_RELEASE_13_03
-    default "13.04" if LINUX_LINARO_RELEASE_13_04
-    default "13.06" if LINUX_LINARO_RELEASE_13_06
-    default "14.01" if LINUX_LINARO_RELEASE_14_01
+	config LINUX_LINARO_RELEASE
+		string
+		default "latest" if LINUX_LINARO_RELEASE_LATEST
+		default "13.02" if LINUX_LINARO_RELEASE_13_02
+		default "13.03" if LINUX_LINARO_RELEASE_13_03
+		default "13.04" if LINUX_LINARO_RELEASE_13_04
+		default "13.06" if LINUX_LINARO_RELEASE_13_06
+		default "14.01" if LINUX_LINARO_RELEASE_14_01
+endif
 
 config LINUX_CUSTOM_URL
     string "linux source tree URL (compressed file or git repository)"
     default "git://git.kernel.org/linux/kernel/git/arm/arm-soc.git"
     depends on LINUX_CUSTOM
-
-config KERNEL
-    string
-    default "linux-linaro" if LINUX_LINARO
-    default "igloo-kernel" if LINUX_IGLOO
-    default "linux" if LINUX
-    prompt "Kernel name" if LINUX_CUSTOM
 
 config KERNEL_DEFCONFIG
     string "default configuration file"
