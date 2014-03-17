@@ -113,6 +113,36 @@ ifneq ($(CONFIG_SECURITY_CAP),y)
 cifs-utils-configure-arguments+=--with-libcap-ng=no --with-libcap=no 
 endif
 
+samba-version=3.6.23
+subproject-$(CONFIG_SERVER_SMB)+=samba
+samba-url:=http://ftp.samba.org/pub/samba/stable/samba-$(samba-version).tar.gz
+samba-config:=cd source3 && ./configure --host=$(CROSS_COMPILE:%-=%) --target=$(CROSS_COMPILE:%-=%)
+#samba-config:=./source3/configure --cross-compile --cross-execute=$(CROSS_COMPILE:%-=%)-  --abi-check
+samba-config+= --prefix=/usr --sysconfdir=/etc --with-configdir=/etc/samba
+samba-configure-arguments+= --without-ads
+samba-configure-arguments+= --enable-swat=no --with-winbind=no
+samba-configure-arguments+= samba_cv_CC_NEGATIVE_ENUM_VALUES=yes
+samba-configure-arguments+= libreplace_cv_HAVE_GETADDRINFO=no
+samba-configure-arguments+= ac_cv_file__proc_sys_kernel_core_pattern=yes
+ifneq ($(CONFIG_GLIB_AVAHI),y)
+samba-configure-arguments+=--disable-avahi
+endif
+ifneq ($(CONFIG_SECURITY_LDAP),y)
+samba-configure-arguments+= --without-ldap
+endif
+ifneq ($(CONFIG_SECURITY_KRB5),y)
+samba-configure-arguments+= --without-krb5 
+endif
+ifneq ($(CONFIG_SECURITY_PAM),y)
+samba-configure-arguments+=--without-pam
+endif
+ifneq ($(CONFIG_SERVER_CUPS),y)
+samba-configure-arguments+=--disable-cups
+endif
+samba-config+=$(samba-configure-arguments)
+samba-build:=cd source3 && make
+samba-install:=cd source3 && make DESTDIR=$(objtree) install
+
 subproject-$(CONFIG_SERVER_LIBUPNP_OLD)+=libupnp
 
 # the git reposiroty stores the cod inside pupnp directory,
