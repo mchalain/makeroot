@@ -64,14 +64,14 @@ cmd_install-project = \
 	$(if $(wildcard  $(sprj-src)/Makefile), $(MAKE)  $(sprj-makeflags) INSTALL=$(hostbin:%=%/)install MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) DSTROOT=$(objtree) -C $(sprj-src) install, \
 	echo "no build script found inside $(sprj-src)" && exit 1)))
 
-$(sort $(subproject-target)):  $(obj)/.%.prj: $($(notdir $@)-defconfig)
-	$(eval sprj-makeflags = $($(notdir $*)-makeflags))
-	$(if $(findstring git,$($(notdir $*)-version)),,$(eval sprj-version=$($(notdir $*)-version)))
-	$(eval sprj-src =  $(firstword $(wildcard $(addprefix $(src)/,$*$(sprj-version:%=-%)) $(addprefix $(src)/,$*))))
+.SECONDEXPANSION:
+.ONESHELL:
+$(sort $(subproject-target)):  $(obj)/.%.prj: $$(eval sprj-makeflags:=$$($$*-makeflags))
+$(sort $(subproject-target)):  $(obj)/.%.prj: $$(eval sprj-targets:=$$($$*-targets))
+$(sort $(subproject-target)):  $(obj)/.%.prj: $$(eval sprj-version:=$$($$*-version))
+$(sort $(subproject-target)):  $(obj)/.%.prj: $$(if $$($$*-version),$(src)/%-$$($$*-version),$(src)/%)
+	$(eval sprj-src=$<)
 	@$(call cmd,configure-project)
-	$(eval sprj-targets = $($(notdir $*)-build-target))
-	@$(if $(sprj-targets), \
-		$(foreach target, $(sprj-targets), $(call cmd,build-project)), \
-		$(call cmd,build-project))
+	@$(foreach target, $(sprj-targets), $(call cmd,build-project))
 	@$(call cmd,install-project)
 	@touch $@
