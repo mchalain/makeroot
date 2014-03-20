@@ -64,6 +64,10 @@ cmd_install-project = \
 	$(if $(wildcard  $(sprj-src)/Makefile), $(MAKE)  $(sprj-makeflags) INSTALL=$(hostbin:%=%/)install MAKEFLAGS= PREFIX=$(objtree) DESTDIR=$(objtree) DSTROOT=$(objtree) -C $(sprj-src) install, \
 	echo "no build script found inside $(sprj-src)" && exit 1)))
 
+$(src)/%:
+	$(if $(findstring -,$*),$(eval dwl-version=$(lastword $(subst -, ,$*))) $(eval dwl-target=$(firstword $(subst -, ,$*))))
+	@$(call cmd_download,$(dwl-target),$(dwl-version));
+
 .SECONDEXPANSION:
 .ONESHELL:
 $(sort $(subproject-target)):  $(obj)/.%.prj: $$(eval sprj-makeflags:=$$($$*-makeflags))
