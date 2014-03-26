@@ -1,6 +1,9 @@
 weston-version=$(CONFIG_WAYLAND_VERSION:"%"=%)
 subproject-$(CONFIG_WESTON)+=weston
-WESTON_CONFIGURE_OPTIONS+= --enable-wayland-compositor --disable-libunwind
+WESTON_CONFIGURE_OPTIONS+= --enable-wayland-compositor --enable-demo-clients-install
+ifneq ($(CONFIG_LIBUNWIND),y)
+WESTON_CONFIGURE_OPTIONS+= --disable-libunwind
+endif
 ifneq ($(CONFIG_X11),y)
 WESTON_CONFIGURE_OPTIONS+=--disable-xwayland --disable-x11-compositor
 CFLAGS+=-DMESA_EGL_NO_X11_HEADERS
@@ -48,5 +51,5 @@ WESTON_CONFIGURE_OPTIONS+=--disable-colord
 endif
 weston-url="http://wayland.freedesktop.org/releases/weston-$(weston-version).tar.xz"
 weston-git="git://anongit.freedesktop.org/wayland/weston.git"
-weston-configure-arguments=$(WESTON_CONFIGURE_OPTIONS)
-
+weston-configure-arguments=$(WESTON_CONFIGURE_OPTIONS) LDFLAGS="$(LDFLAGS) -lrt"
+weston-makeflags:=

@@ -1,18 +1,4 @@
-WLD:=/usr
-
-wayland-version=$(CONFIG_WAYLAND_VERSION:"%"=%)
-subproject-$(CONFIG_WAYLAND_LIB)+=wayland
-wayland-git="git://anongit.freedesktop.org/wayland/wayland.git"
-wayland-url="http://wayland.freedesktop.org/releases/wayland-$(wayland-version).tar.xz"
-wayland-configure-arguments= --disable-documentation --disable-scanner
-wayland-directory=$(if $(findstring git,$(wayland-version)),wayland,wayland$(wayland-version:%=-%))
-
-ifneq ($(wildcard $(wayland-directory)),)
-hostprogs-$(CONFIG_WAYLAND)+=wayland-scanner
-wayland-scanner-url=$(wayland-url)
-wayland-scanner-objs=$(wayland-directory)/src/scanner.o $(wayland-directory)/src/wayland-util.o -lexpat
-wayland-scanner-install=wayland-scanner
-endif
+include $(src)/wayland.mk
 
 linux-fusion-version=9.0.0
 subproject-$(CONFIG_LINUX_FUSION)+=linux-fusion
