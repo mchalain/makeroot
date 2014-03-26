@@ -146,7 +146,7 @@ flags = $(foreach o,$($(1)),$(if $(filter -I%,$(o)),$(call addtree,$(o)),$(o)))
 # echo command.
 # Short version is used, if $(quiet) equals `quiet_', otherwise full one.
 echo-cmd = $(if $($(quiet)cmd_$(1)),\
-	echo '  $(call escsq,$($(quiet)cmd_$(1)))$(echo-why)';)
+	echo '  $(call escsq,$($(quiet)cmd_$(1)))$(echo-why)' &&)
 
 # printing commands
 cmd = $(echo-cmd) $(cmd_$(1))
