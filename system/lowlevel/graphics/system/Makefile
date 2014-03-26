@@ -12,7 +12,7 @@ b2r2lib-makeflags=CC=$(CROSS_COMPILE:"%"=%)gcc CFLAGS="$(CFLAGS) -I./include" LD
 ifeq ($(CONFIG_X11),y)
 subproject-$(CONFIG_BOARD_SNOWBALL)+=mali_drv
 mali_drv-git=git://igloocommunity.org/git/bsp/xorg-x11-drv-ste.git
-mali_drv-config=./configure CFLAGS="$(CFLAGS) -I$(objtree)/usr/include/pixman-1" LDFLAGS="$(LDFLAGS)" --prefix=/usr --includedir=/usr/include --host=$(CROSS_COMPILE:%-=%)
+mali_drv-configure-arguments=CFLAGS="$(CFLAGS) -I$(sysroot)/usr/include/pixman-1"
 endif
 
 xkbcommon-version=0.3.0
@@ -30,4 +30,3 @@ DirectFB-version=1.6.3
 subproject-$(CONFIG_DIRECTFB)+=DirectFB
 DirectFB-git=git://git.directfb.org/git/directfb/core/DirectFB.git
 DirectFB-url=http://directfb.org/downloads/Core/DirectFB-1.6/DirectFB-$(DirectFB-version).tar.gz
-DirectFB-mkconfig=$(src)/config/DirectFB.mk
