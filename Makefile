@@ -43,8 +43,10 @@ hostobjtree	:= $(CURDIR)/out/host/
 src			:= $(srctree)
 obj			:= 
 sysroot		:= $(objtree)
-
+packagesdir	:= $(objtree)
+rootfs		:= $(objtree)
 export root srctree objtree sysroot hostobjtree
+export packagesdir rootfs
 
 # We need some generic definitions.
 $(srctree)/scripts/include.mk: ;
