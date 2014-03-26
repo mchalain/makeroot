@@ -1,27 +1,28 @@
-toolchain:=$(if $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CONFIG_TOOLCHAIN_PATH:"%"=%),$(join $(hostobjtree),toolchain))
-cross_compile:=$(strip $(CONFIG_CROSS_COMPILE:"%"=%))
+cross_compile:=$(strip $(CROSS_COMPILE:%-=%))
+toolchain:=$(join $(dir $(sort $(foreach dir,$(subst :, ,$(PATH)),$(realpath $(wildcard $(dir)/$(cross_compile)-gcc))))),..)
 arch:=$(strip $(if $(wildcard $(join $(toolchain),/$(cross_compile))),$(cross_compile), $(if $(wildcard $(join $(toolchain),/$(cross_compile)hf)),$(cross_compile)hf)))
 
-install-$(CONFIG_LIBC_TOOLCHAIN)+=lib/
-lib/: copy=$(toolchain)/$(arch)/libc/lib/
-lib/: $(toolchain)/$(arch)/libc/lib/
+directories:=/lib /usr/lib /usr/include
+directories:=$(addprefix $(DESTDIR),$(directories))
+$(directories):
+	@mkdir -p $@
 
-install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/lib/
-usr/lib/: copy=$(toolchain)/$(arch)/libc/usr/lib/
-usr/lib/: $(toolchain)/$(arch)/libc/usr/lib/
+.PHONY:install-header
+install-header:  $(toolchain)/$(arch)/libc/usr/include
+	@rm $(toolchain)/$(arch)/libc/usr/include/bits
+	@ln -s $(cross_compile)/bits $(toolchain)/$(arch)/libc/usr/include/bits
+	@rm $(toolchain)/$(arch)/libc/usr/include/sys
+	@ln -s $(cross_compile)/sys $(toolchain)/$(arch)/libc/usr/include/sys
+	@rm $(toolchain)/$(arch)/libc/usr/include/gnu
+	@ln -s $(cross_compile)/gnu $(toolchain)/$(arch)/libc/usr/include/gnu
+	@cp -r $(toolchain)/$(arch)/libc/usr/include/* $(DESTDIR)/usr/include
 
-install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/include
-usr/include: copy=$(toolchain)/$(arch)/libc/usr/include
-usr/include: $(toolchain)/$(arch)/libc/usr/include
+.PHONY:install-lib
+install-lib: $(toolchain)/$(arch)/libc/lib/ $(toolchain)/$(arch)/libc/usr/lib/
+	@cp -r $(toolchain)/$(arch)/libc/lib/* $(DESTDIR)/lib
+	@cp -r $(toolchain)/$(arch)/libc/usr/lib/* $(DESTDIR)/usr/lib
 
-install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/include/bits
-usr/include/bits: link=$(cross_compile)/bits
-usr/include/bits: $(sysroot)/usr/include/$(cross_compile)/bits
+.PHONY:install
+install: $(directories) install-lib install-header
 
-install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/include/sys
-usr/include/sys: link=$(cross_compile)/sys
-usr/include/sys: $(sysroot)/usr/include/$(cross_compile)/sys
-
-install-$(CONFIG_LIBC_TOOLCHAIN)+=usr/include/gnu
-usr/include/gnu: link=$(cross_compile)/gnu
-usr/include/gnu: $(sysroot)/usr/include/$(cross_compile)/gnu
+all:

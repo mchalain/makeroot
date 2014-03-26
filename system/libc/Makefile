@@ -2,7 +2,8 @@ CROSS_COMPILE := $(CONFIG_CROSS_COMPILE:"%"=%-)
 ARCH := $(CONFIG_ARCH:"%"=%)
 export CROSS_COMPILE ARCH
 
-subdir-$(CONFIG_LIBC_TOOLCHAIN):=$(src)/toolchain
+subproject-$(CONFIG_LIBC_TOOLCHAIN):=toolchain
+toolchain-config:=echo configuration 
 
 uclibc-version=$(strip $(if $(CONFIG_LIBC_UCLIBC_VERSION:"%"=%),$(CONFIG_LIBC_UCLIBC_VERSION:"%"=%)))
 subproject-$(CONFIG_LIBC_UCLIBC)+=uClibc
