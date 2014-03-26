@@ -55,7 +55,7 @@ endif
 # Do not include host rules unles needed
 ifneq ($(hostprogs-y)$(hostprogs-m),)
 include scripts/host.mk
-host-target := $(host-csingle) $(host-cmulti) $(host-cxxmulti) $(host-cshlib)
+host-target := $(host-csingle) $(host-cmulti) $(host-cxxmulti) $(host-cshlib) $(sdk-pkgconfig)
 download-y+=$(foreach prog,$(hostprogs-y)$(hostprogs-m),$(if $($(prog)-url),$(prog)))
 endif
 
@@ -161,7 +161,7 @@ endif
 
 __build: $(subdir-ym) $(targets) $(extra-y) \
 	 $(download-target) $(host-target) $(toolchain-target) \
-	 $(subproject-target) $(install-y)
+	 $(install-y) $(subproject-y)
 	@:
 
 # Declare the contents of the .PHONY variable as phony.  We keep that
