@@ -45,8 +45,11 @@ obj			:=
 sysroot		:= $(objtree)/sysroot
 packagesdir	:= $(objtree)/packages
 rootfs		:= $(objtree)/rootfs
+hostbin		:= $(hostobjtree)/bin
+toolchain	:= $(CONFIG_TOOLCHAIN_PATH:"%"=%)
+toolchain	?= $(join $(hostobjtree),toolchain)
 export root srctree objtree sysroot hostobjtree
-export packagesdir rootfs
+export packagesdir rootfs hostbin toolchain
 
 # We need some generic definitions.
 $(srctree)/scripts/include.mk: ;
@@ -77,7 +80,7 @@ $(objtree)/auto.conf: $(CONFIG_FILE)
 	$(Q)mkdir -p $(dir $@)
 	$(Q)cp $(CONFIG_FILE) $@
 
-SUBDIRS +=tools kernel system image
+SUBDIRS +=tools bootloader kernel system image
 ifeq ($(CONFIG_TOOLCHAIN_INSTALL),y)
 all: toolchain $(SUBDIRS)
 toolchain:
@@ -100,7 +103,11 @@ egl: system/lowlevel/graphics/egl
 bootloader: FORCE
 	$(Q)$(MAKE) $(build)=$@
 
-PHONY += $(SUBDIRS)
+.PHONY:test
+test:
+	$(Q)$(MAKE) $(build)=$@
+
+PHONY += $(SUBDIRS)  test
 $(SUBDIRS): FORCE
 	$(Q)$(MAKE) $(build)=$@
 
