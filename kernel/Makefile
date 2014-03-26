@@ -7,6 +7,9 @@ uImage:=arch/$(ARCH)/boot/uImage
 
 makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
+$(bootdir):
+	mkdir -r $@
+
 target=$(CONFIG_KERNEL:"%"=%)
 subproject-y+=$(target)
 $(target)-version:=$(CONFIG_KERNEL_VERSION:"%"=%)
@@ -22,14 +25,16 @@ $(target)-url:=$(filter-out %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter-ou
 $(target)-git:=$(filter %.git, $(CONFIG_LINUX_CUSTOM_URL:"%"=%)) $(filter git:%, $(CONFIG_LINUX_CUSTOM_URL:"%"=%))
 endif
 
+$(target)-dependances:=$(bootdir)
+
 #sed -e "/unwanted /d" -i scripts/Makefile.headersinst
 $(target)-defconfig:=$(CONFIG_KERNEL_DEFCONFIG:"%"=%)
-$(target)-makeflags:=$(makeflags) INSTALL_PATH=$(bootdir) INSTALL_MOD_PATH=$(objtree) INSTALL_HDR_PATH=$(objtree)/usr/
+$(target)-makeflags:=$(makeflags) INSTALL_PATH=$(bootdir) INSTALL_MOD_PATH=$(rootfs) INSTALL_HDR_PATH=$(sysroot)/usr/
 ifneq (,$(findstring y,$(CONFIG_U_IMAGE)))
-	$(target)-build-target:= uImage modules modules_install headers_install
+	$(target)-targets:= uImage modules modules_install headers_install
 	$(target)-install:= $(MAKE) $($(target)-makeflags) INSTALL_PATH=$(bootdir) INSTALLKERNEL:=noinstallkernel uinstall
 else
-	$(target)-build-target:= modules $(CONFIG_KERNEL_IMAGE:"%"=%) modules_install headers_install
+	$(target)-targets:= modules $(CONFIG_KERNEL_IMAGE:"%"=%) modules_install headers_install
 	$(target)-install:= $(MAKE) $($(target)-makeflags) INSTALL_PATH=$(bootdir) INSTALLKERNEL:=noinstallkernel install
 endif
 
