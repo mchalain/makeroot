@@ -42,9 +42,9 @@ objtree		:= $(CURDIR)/out/target/$(if $(BOARD),$(BOARD)/)
 hostobjtree	:= $(CURDIR)/out/host/
 src			:= $(srctree)
 obj			:= 
-sysroot		:= $(objtree)
-packagesdir	:= $(objtree)
-rootfs		:= $(objtree)
+sysroot		:= $(objtree)/sysroot
+packagesdir	:= $(objtree)/packages
+rootfs		:= $(objtree)/rootfs
 export root srctree objtree sysroot hostobjtree
 export packagesdir rootfs
 
