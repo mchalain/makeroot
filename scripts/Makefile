@@ -55,7 +55,7 @@ endif
 # Do not include host rules unles needed
 ifneq ($(hostprogs-y)$(hostprogs-m),)
 include scripts/host.mk
-host-target := $(host-csingle) $(host-cmulti) $(host-cxxmulti) $(host-cshlib) $(sdk-pkgconfig)
+host-target := $(host-csingle) $(host-cmulti) $(host-cxxmulti) $(host-cshlib) $(sdk-pkgconfig) $(sdk-csingle) $(sdk-cmulti) $(sdk-cxxmulti) $(sdk-cshlib)
 download-y+=$(foreach prog,$(hostprogs-y)$(hostprogs-m),$(if $($(prog)-url),$(prog)))
 endif
 
