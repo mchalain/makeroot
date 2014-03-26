@@ -30,7 +30,12 @@
 # libkconfig.so as the executable conf.
 # Note: Shared libraries consisting of C++ files are not supported
 
-__hostprogs := $(sort $(hostprogs-y) $(hostprogs-m))
+__hostlibs := $(sort $(filter %.so,$(hostprogs-y) $(hostprogs-m)))
+__hostprogs := $(sort $(filter-out %.so,$(hostprogs-y) $(hostprogs-m)))
+
+# pkgconfig file
+host-pkgconfig	:= $(sort $(filter %.pc, $(__hostprogs)))
+__hostprogs := $(sort $(filter-out %.pc, $(__hostprogs)))
 
 # C code
 # Executables compiled from a single .c file
@@ -59,12 +64,12 @@ host-cxxobjs	:= $(sort $(foreach m,$(host-cxxmulti),$($(m)-cxxobjs)))
 # Shared libaries (only .c supported)
 # Shared libraries (.so) - all .so files referenced in "xxx-objs"
 host-cshlib	:= $(sort $(filter %.so, $(host-cobjs)))
-sdk-cshlib	:= $(foreach m,$(host-cshlib),$(if $($(m)-install),$(m)))
+sdk-cshlib	:= $(sort $(foreach m,$(host-cshlib),$(if $($(m)-install),$(m))) $(filter %.so, $(__hostlibs)))
 host-cshlib	:= $(foreach m,$(host-cshlib),$(if $($(m)-install),,$(m)))
 
 # Static libaries (only .c supported)
 # Static libraries (.a) - all .a files referenced in "xxx-objs"
-host-cstlib	:= $(sort $(filter %.a, $(host-cobjs)))
+host-cstlib	:= $(sort $(filter %.a, $(host-cobjs) $(__hostlibs)))
 
 # Remove .so files from "xxx-objs"
 host-cobjs	:= $(filter-out -l%,$(filter-out %.so,$(host-cobjs)))
@@ -90,19 +95,20 @@ host-objdirs += $(foreach f,$(host-cxxmulti),                  \
 host-objdirs := $(strip $(sort $(filter-out ./,$(host-objdirs))))
 
 host-csingle	:= $(addprefix $(obj)/,$(notdir $(host-csingle)))
-host-csingle	+= $(addprefix $(hostbin)/,$(notdir $(sdk-csingle)))
-host-cmulti	:= $(addprefix $(obj)/,$(notdir $(host-cmulti)))
-host-cmulti	+= $(addprefix $(hostbin)/,$(notdir $(sdk-cmulti)))
+sdk-csingle		:= $(addprefix $(hostbin)/,$(notdir $(sdk-csingle)))
+host-cmulti		:= $(addprefix $(obj)/,$(notdir $(host-cmulti)))
+sdk-cmulti		:= $(addprefix $(hostbin)/,$(notdir $(sdk-cmulti)))
 host-cobjs		:= $(addprefix $(hostobj)/,$(host-cobjs))
 host-cxxmulti	:= $(addprefix $(obj)/,$(notdir $(host-cxxmulti)))
-host-cxxmulti	+= $(addprefix $(hostbin)/,$(notdir $(sdk-cxxmulti)))
+sdk-cxxmulti	:= $(addprefix $(hostbin)/,$(notdir $(sdk-cxxmulti)))
 host-cxxobjs	:= $(addprefix $(hostobj)/,$(host-cxxobjs))
-host-cshlib	:= $(addprefix $(obj)/,$(notdir $(host-cshlib)))
-host-cshlib	+= $(addprefix $(hostlib)/,$(notdir $(sdk-cshlib)))
+host-cshlib		:= $(addprefix $(obj)/,$(notdir $(host-cshlib)))
+sdk-cshlib		:= $(addprefix $(hostlib)/,$(notdir $(sdk-cshlib)))
 host-cshobjs	:= $(addprefix $(hostobj)/,$(host-cshobjs))
 host-cstobjs	:= $(addprefix $(hostobj)/,$(host-cstobjs))
 host-srcdirs    := $(addprefix $(src)/,$(host-objdirs))
 host-objdirs    := $(addprefix $(hostobj)/,$(host-objdirs))
+sdk-pkgconfig	:= $(addprefix $(hostlib)/pkgconfig/,$(notdir $(host-pkgconfig)))
 
 obj-dirs += $(host-objdirs)
 
@@ -130,8 +136,11 @@ hostcxx_flags  = -Wp,-MD,$(depfile) $(__hostcxx_flags)
 quiet_cmd_hostcopy = HOSTCOPY $@
       cmd_hostcopy = cp $< $@
 
-$(host-objdirs) $(hostbin) $(hostlib):
+$(host-objdirs) $(hostbin) $(hostlib) $(hostlib)/pkgconfig:
 	mkdir -p $@
+
+$(sdk-pkgconfig): $(hostlib)/pkgconfig/%: $(hostlib)/pkgconfig %
+	mv $* $@
 
 # Create executable from a single .c file
 # host-csingle -> Executable
@@ -141,7 +150,7 @@ quiet_cmd_host-csingle 	= HOSTCC $@
 		-L$(hostlib) $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(host-shlib)
 $(host-csingle): $(obj)/%: $(src)/%.c
 	$(call if_changed_dep,host-csingle)
-$(host-csingle): $(hostbin)/%: $(src)/%.c
+$(sdk-csingle): $(hostbin)/%: $(src)/%.c
 	$(call if_changed_dep,host-csingle)
 
 # Link an executable based on list of .o files, all plain c
@@ -151,7 +160,7 @@ quiet_cmd_host-cmulti	= HOSTLD  $@
 		$(HOSTCC) $(HOSTLDFLAGS) -o $@ \
 		$(addprefix $(hostobj)/,$(filter %.o,$($(@F)-objs))) \
 		-L$(hostlib) $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(filter -l%,$($(@F)-objs))
-$(host-cmulti): $(hostbin) $(host-cobjs) $(host-cshlib)
+$(host-cmulti) $(sdk-cmulti): $(hostbin) $(host-cobjs) $(host-cshlib)
 	$(call if_changed,host-cmulti)
 
 
@@ -170,7 +179,7 @@ quiet_cmd_host-cxxmulti	= HOSTLD  $@
       cmd_host-cxxmulti	= $(HOSTCXX) $(HOSTLDFLAGS) -o $@ \
 			  $(foreach o,objs cxxobjs, $(addprefix $(hostobj)/,$(filter %.o,$($(@F)-$(o))))) \
 			  -L$(hostlib) $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(foreach o,objs cxxobjs, $(filter -l%, $($(@F)-$(o))))
-$(host-cxxmulti): $(hostbin) $(host-cobjs) $(host-cxxobjs) $(host-cshlib)
+$(host-cxxmulti) $(sdk-cxxmulti): $(hostbin) $(host-cobjs) $(host-cxxobjs) $(host-cshlib)
 	$(call if_changed,host-cxxmulti)
 
 # Create .o file from a single .cc (C++) file
@@ -197,15 +206,17 @@ $(host-cshobjs): $(hostobj)/%.o: $(src)/%.c
 quiet_cmd_host-cshlib	= HOSTLD -shared $@
       cmd_host-cshlib	= $(HOSTCC) $(HOSTLDFLAGS) -shared -o $@ \
 			  $(addprefix $(hostobj)/,$(filter %.o, $($(@F:.so=-objs)))) \
-			  $(HOST_LOADLIBES) $(HOSTLOADLIBES_$(@F)) $(filter -l%, $($(@F:.so=-objs)))
-$(hosto-cshlib): $(host-cshobjs)
+			  $(HOST_LOADLIBS) $(HOSTLOADLIBS_$(@F)) $(filter -l%, $($(@F:.so=-objs)))
+$(host-cshlib) $(sdk-cshlib): $(host-cshobjs)
 	$(call if_changed,host-cshlib)
 
-targets += $(host-csingle)  $(host-cmulti) $(host-cobjs)\
-	   $(host-cxxmulti) $(host-cxxobjs) $(host-cshlib) $(host-cshobjs) 
+targets += $(host-csingle) $(host-cmulti) $(host-cobjs)\
+	   $(host-cxxmulti) $(host-cxxobjs) $(host-cshlib) $(host-cshobjs) \
+	   $(sdk-pkgconfig) $(sdk-csingle) $(sdk-cmulti) $(sdk-cxxmulti) $(sdk-cshlib)
 
 .y.c:
 	$(YACC) $(AM_YFLAGS) $(YFLAGS) $< && mv y.tab.c $*.c
 	if test -f y.tab.h; then \
 	if cmp -s y.tab.h $*.h; then rm -f y.tab.h; else mv y.tab.h $*.h; fi; \
 	else :; fi
+	
