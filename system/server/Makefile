@@ -49,7 +49,6 @@ endif
 tcp_wrappers-version:=7.6
 subproject-$(CONFIG_SERVER_TCPW)+=tcp_wrappers
 tcp_wrappers-url:=ftp://ftp.cn.debian.org/gentoo/distfiles/tcp_wrappers_$(tcp_wrappers-version).tar.gz
-tcp_wrappers-build-target:=all
 tcp_wrappers-CFLAGS:=-fPIC -DPIC -D_REENTRANT -DSYS_ERRLIST_DEFINED -DBROKEN_SO_LINGER
 tcp_wrappers-CFLAGS+=-Dss_family=__ss_family -Dss_len=__ss_len -DHAVE_WEAKSYMS
 ifeq ($(CONFIG_INET6),y)
