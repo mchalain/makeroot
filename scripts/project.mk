@@ -38,90 +38,130 @@ configure-cmd:= \
 	--prefix=/usr \
 	--sysconfdir=/etc
 quiet_cmd_configure-project = CONFIGURE $(sprj)
-cmd_configure-project = \
-	$(eval sprj-makeflags:=$($(sprj)-makeflags)) \
-	$(eval sprj-defconfig = $($(sprj)-defconfig)) \
-	$(eval sprj-mkconfig = $($(sprj)-mkconfig)) \
-	$(eval sprj-config = $($(sprj)-config)) \
-	$(eval sprj-config-opts = $($(sprj)-configure-arguments)) \
-	$(if $(sprj-config), cd $(sprj-src) && $(sprj-config), \
-	$(if $(sprj-mkconfig), $(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) configure , \
-	$(if $(sprj-defconfig), cp $(sprj-defconfig) $(sprj-src)/.config && $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig, \
-	$(if $$(wildcard $(sprj-src)/configure), cd $(sprj-src) && $(configure-cmd) $(sprj-config-opts), \
-	$(if $$(wildcard $(sprj-src)/configure.ac), cd $(sprj-src) && autoreconf --force -i && $(configure-cmd) $(sprj-config-opts), \
-	echo "no configuration found inside $(sprj-src)" && exit 1) ) ) ) )
+define cmd_configure-project
+	$(eval sprj-makeflags:=$($(sprj)-makeflags))
+	$(eval sprj-defconfig = $($(sprj)-defconfig))
+	$(eval sprj-mkconfig = $($(sprj)-mkconfig))
+	$(eval sprj-config = $($(sprj)-config))
+	$(eval sprj-config-opts = $($(sprj)-configure-arguments))
+	$(if $(sprj-config),
+		@cd $(sprj-src) && $(sprj-config),
+		$(if $(sprj-mkconfig),
+			@$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) configure ,
+			$(if $(sprj-defconfig),
+				@cp $(sprj-defconfig) $(sprj-src)/.config && $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig,
+				$(if $$(wildcard $(sprj-src)/configure),
+					@cd $(sprj-src) && $(configure-cmd) $(sprj-config-opts),
+					$(if $$(wildcard $(sprj-src)/configure.ac),
+						@cd $(sprj-src) && autoreconf --force -i && $(configure-cmd) $(sprj-config-opts),
+						@echo "no configuration found inside $(sprj-src)" && exit 1
+					)
+				)
+			)
+		)
+	)
+endef
 
 quiet_cmd_build-project = BUILD $(sprj) $(target)
-cmd_build-project = \
-	$(eval sprj-makeflags:=$($(sprj)-makeflags)) \
-	$(eval sprj-build = $($(sprj)-build)) \
-	$(if $(sprj-build), cd $(sprj-src) && $(sprj-build), \
-	$(if $(sprj-mkbuild), $(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkbuild) $(if $(target),$(target),build), \
-	$(if $$(wildcard  $(sprj-src)/Makefile), $(MAKE) $(sprj-makeflags) MAKEFLAGS= -C $(sprj-src) $(target), \
-	$(if $$(wildcard  $(sprj-src)/Android.mk), $(call android-tools) && $(MAKE) $(sprj-makeflags) MAKEFLAGS= $(android-build)=$(sprj-src)/Android.mk, \
-	echo "no build script found inside $(sprj-src)" && exit 1) )))
+define cmd_build-project
+	$(eval sprj-makeflags:=$($(sprj)-makeflags))
+	$(eval sprj-build = $($(sprj)-build))
+	$(if $(sprj-build),
+		@cd $(sprj-src) && $(sprj-build),
+		$(if $(sprj-mkbuild),
+			@$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkbuild) $(if $(target),$(target),build),
+			$(if $$(wildcard  $(sprj-src)/Makefile),
+				@$(MAKE) $(sprj-makeflags) MAKEFLAGS= -C $(sprj-src) $(target),
+				$(if $$(wildcard  $(sprj-src)/Android.mk),
+					@$(call android-tools) && $(MAKE) $(sprj-makeflags) MAKEFLAGS= $(android-build)=$(sprj-src)/Android.mk,
+					@echo "no build script found inside $(sprj-src)" && exit 1
+				)
+			)
+		)
+	)
+endef
 
 install_tool=$(addprefix $(hostbin:%=%/),install)
 quiet_cmd_install-project = INSTALL $(sprj)
-cmd_install-project = \
-	$(eval sprj-makeflags:=$($(sprj)-makeflags)) \
-	$(eval sprj-destdir = $(packagesdir)/$(sprj)$($(sprj)-version:%=-%)) \
-	$(eval sprj-install = $($(sprj)-install)) \
-	$(if $(sprj-install), cd $(sprj-src) && $(sprj-install), \
-	$(if $(sprj-mkinstall), $(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkinstall) install, \
-	$(if $$(wildcard  $(sprj-src)/Makefile), $(MAKE)  $(sprj-makeflags) INSTALL=$(install_tool) MAKEFLAGS= PREFIX=$(sprj-destdir) DESTDIR=$(sprj-destdir) DSTROOT=$(sprj-destdir) -C $(sprj-src) install, \
-	echo "no build script found inside $(sprj-src)" && exit 1)))
+define cmd_install-project
+	$(eval sprj-makeflags:=$($(sprj)-makeflags))
+	$(eval sprj-destdir = $(packagesdir)/$(sprj)$($(sprj)-version:%=-%))
+	$(eval sprj-install = $($(sprj)-install))
+	$(if $(sprj-install), 
+		@cd $(sprj-src) && $(sprj-install),
+		$(if $(sprj-mkinstall),
+			@$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkinstall) install,
+			$(if $$(wildcard  $(sprj-src)/Makefile),
+				@$(MAKE)  $(sprj-makeflags) INSTALL=$(install_tool) MAKEFLAGS= PREFIX=$(sprj-destdir) DESTDIR=$(sprj-destdir) DSTROOT=$(sprj-destdir) -C $(sprj-src) install,
+				@echo "no build script found inside $(sprj-src)" && exit 1
+			)
+		)
+	)
+endef
 
-cmd_post-install-project = \
+quiet_cmd_post-install-project = SYSROOT $(sprj)
+define cmd_post-install-project
 	$(eval sprj-destdir = $(packagesdir)/$(sprj)$($(sprj)-version:%=-%)) \
-	$(foreach install-target, lib/ usr/lib/ usr/include, \
-		echo install-target $(addprefix $(sprj-destdir)/,$(install-target)) &&\
-		$(if $(wildcard $(addprefix $(sprj-destdir)/,$(install-target))), \
-			$(eval install-dest = $(sysroot)) \
-			$(eval copy = $(addprefix $(sprj-destdir)/,$(install-target)/*)) \
-			echo copy $(copy) to $(install-dest)/$(install-target) && \
-			$(call cmd,install) &&)) \
+	$(foreach install-target, lib/ usr/lib/ usr/include/, \
+		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
+			$(eval install-dest = $(join $(sysroot)/,$(install-target)))
+			$(call copyfile,$(join $(sprj-destdir)/,$(install-target)),$(install-dest))
+		)
+	)
 	$(foreach install-target, lib/ bin/ usr/lib/ usr/bin/ usr/libexec/, \
-		$(if $(wildcard $(addprefix $(sprj-destdir)/,$(install-target))), \
-			$(eval install-dest = $(rootfs)) \
-			$(eval copy = $(addprefix $(sprj-destdir)/,$(install-target)/*)) \
-			echo copy $(copy) to $(install-dest)/$(install-target) \
-			$(call cmd,install) &&)) \
-	echo done
-
+		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
+			$(eval install-dest = $(join $(rootfs)/,$(install-target)))
+			$(call copyfile,$(join $(sprj-destdir)/,$(install-target)),$(install-dest))
+		)
+	)
+endef
 #$(src)/%:
 #	$(if $(findstring -,$*),$(eval dwl-version=$(lastword $(subst -, ,$*))) $(eval dwl-target=$(firstword $(subst -, ,$*))))
 #	@$(call cmd_download,$(dwl-target),$(dwl-version));
 
 define do-project
+$(if $($(strip $(1)-version)),$(join $(src)/,$(strip $(1)-$($(strip $(1)-version)))),$(join $(src)/,$(1))):
+	@$(call cmd_download,$(1),$($(strip $(1)-version)))
+
+.SECONDEXPANSION:
 .PHONY:$(1)-configure
-$(1)-configure: $(sprj-src)
+$(1)-configure: $($(1)-dependances)
 	$(eval sprj:=$(1))
-	$(eval sprj-version:=$($(strip $(1)-version)))
-	$(eval sprj-src:=$(if $($(strip $(1)-version)),$(join $(src)/,$(strip $(1)-$($(strip $(1)-version)))),$(join $(src)/,$(1))))
-	@$(call cmd,configure-project)
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
+	$(eval sprj-src:=$(if $(sprj-version),$(join $(src)/,$(strip $(1)-$(sprj-version))),$(join $(src)/,$(1))))
+	@$(call multicmd,configure-project)
 
 .SECONDEXPANSION:
 .PHONY:$(1)-build
 $(1)-build: $(1)-configure
 	$(eval sprj:=$(1))
-	$(eval sprj-version:=$($(strip $(1)-version)))
-	$(eval sprj-src:=$(if $($(strip $(1)-version)),$(join $(src)/,$(strip $(1)-$($(strip $(1)-version)))),$(join $(src)/,$(1))))
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
+	$(eval sprj-src:=$(if $(sprj-version),$(join $(src)/,$(strip $(1)-$(sprj-version))),$(join $(src)/,$(1))))
 	$(eval sprj-targets:=$(if $($(strip $(1)-targets)),$($(strip $(1)-targets)),all))
-	@$(foreach target, $(if $(sprj-targets),$(sprj-targets),all), $(call cmd,build-project))
+	$(foreach target, $(sprj-targets),
+		@$(call multicmd,build-project) )
 
 .SECONDEXPANSION:
 .PHONY:$(1)-install
 $(1)-install: $(1)-build
 	$(eval sprj:=$(1))
-	$(eval sprj-version:=$($(strip $(1)-version)))
-	$(eval sprj-src:=$(if $($(strip $(1)-version)),$(join $(src)/,$(strip $(1)-$($(strip $(1)-version)))),$(join $(src)/,$(1))))
-	@$(call cmd,install-project)
-	@$(call cmd_post-install-project)
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
+	$(eval sprj-src:=$(if $(sprj-version),$(join $(src)/,$(strip $(1)-$(sprj-version))),$(join $(src)/,$(1))))
+	@$(call multicmd,install-project)
+
+.ONESHELL:$(1)-post-install
+.SECONDEXPANSION:
+.PHONY:$(1)-post-install
+$(1)-post-install: $(1)-install
+	$(eval sprj:=$(1))
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
+	$(eval sprj-destdir = $(if $(sprj-version),$(join $(packagesdir)/,$(strip $(1)-$(sprj-version))),$(join $(packagesdir)/,$(1))))
+	@$(call multicmd,post-install-project)
+			 
 
 .SECONDEXPANSION:
 .PHONY:$(1)
-$(1): $(if $(wildcard $(addprefix $(obj)/.,$(1).prj)),,$(1)-install)
+$(1): $(if $(wildcard $(addprefix $(obj)/.,$(1).prj)),,$(1)-post-install)
 	@touch $(addprefix $(obj)/.,$(1).prj)
 endef
 $(foreach subproject, $(subproject-y),$(eval $(call do-project, $(subproject))))
