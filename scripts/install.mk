@@ -5,7 +5,17 @@ quiet_cmd_mkdir = MKDIR $@
 cmd_mkdir = $(if $(wildcard $(install-target)), ,mkdir -p $(install-target))
 cmd_mksubdir = cd $(install-dest) && $(cmd_mkdir)
 
-cmd_copy = cp -r $(copy) $(install-target)
+define copyfile
+	$(foreach d,$(wildcard $(1)*),
+		$(call copyfile,$(d)/,$(2)/$(notdir $(d)))
+		$(if $(filter-out %/,$(wildcard $(d)/)),
+			$(if $(wildcard $(dir $(2)/)),,@mkdir -p $(dir $(2)/))
+			@cp $(filter %,$(d)) $(2)/
+			$(if $(findstring strip,$(3)), $(CROSS_COMPILE)strip $(2)/$(notdir $(d)))
+		)
+	)
+endef
+
 cmd_move = mv $(move) $(install-target)
 quiet_cmd_link = LINK $(link)
 cmd_link = ln -s $(link) $(install-target)
@@ -22,7 +32,7 @@ cmd_install = $(eval install-target = $@) \
 	cd $(install-dest) && \
 	$(if $(findstring y,$(dir)), $(cmd_mkdir)) \
 	$(if $(move), $(cmd_move)) \
-	$(if $(copy), $(cmd_copy)) \
+	$(if $(copy), $(call copyfile,$(copy),$(install-target))) \
 	$(if $(link), $(cmd_link)) \
 	$(if $(findstring y,$(touch)), $(cmd_touch)) \
 	$(if $(generate), $(cmd_generate)) \
