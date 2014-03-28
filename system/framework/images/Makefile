@@ -2,30 +2,33 @@ libpng-version=1.6.2
 subproject-$(CONFIG_LIBPNG)+=libpng
 libpng-url="http://downloads.sourceforge.net/libpng/libpng$(libpng-version:%=-%).tar.xz"
 libpng-git="git://git.code.sf.net/p/libpng/code"
-libpng-config=./configure CC="$(CROSS_COMPILE)gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig --host=$(CROSS_COMPILE:%-=%) --prefix=/usr --disable-static
-libpng-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CPPFLAGS="$(CFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+libpng-configure-arguments:=--disable-static
+#libpng-config=./configure CC="$(CROSS_COMPILE)gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig --host=$(CROSS_COMPILE:%-=%) --prefix=/usr --disable-static
+#libpng-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CPPFLAGS="$(CFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 libjpeg-turbo-version=1.2.1
 subproject-$(CONFIG_LIBJPEG)+=libjpeg-turbo
 libjpeg-turbo-url="http://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo$(libjpeg-turbo-version:%=-%).tar.gz"
-libjpeg-turbo-config=./configure CC="$(CROSS_COMPILE)gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig --host=$(CROSS_COMPILE:%-=%) --prefix=/usr --disable-static
-libjpeg-turbo-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CPPFLAGS="$(CFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+libjpeg-configure-arguments:=--disable-static
+#libjpeg-turbo-config=./configure CC="$(CROSS_COMPILE)gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig --host=$(CROSS_COMPILE:%-=%) --prefix=/usr --disable-static
+#libjpeg-turbo-makeflags=CROSS_COMPILE="$(CROSS_COMPILE)" CPPFLAGS="$(CFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 pixman-version:=0.30.0
 subproject-$(CONFIG_PIXMAN)+=pixman
 pixman-url:="http://cairographics.org/releases/pixman$(pixman-version:%=-%).tar.gz"
 pixman-git:="http://cgit.freedesktop.org/pixman/pixman.git"
-pixman-config:=./configure CC="$(CROSS_COMPILE)gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig --host=$(CROSS_COMPILE:%-=%) --prefix=/usr
-pixman-makeflags:=CROSS_COMPILE="$(CROSS_COMPILE)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+pixman-configure-arguments:=
+#pixman-config:=./configure CC="$(CROSS_COMPILE)gcc" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" PKG_CONFIG_PATH=$(objtree)/usr/lib/pkgconfig --host=$(CROSS_COMPILE:%-=%) --prefix=/usr
+#pixman-makeflags:=CROSS_COMPILE="$(CROSS_COMPILE)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 freetype-version=2.5.2
 subproject-$(CONFIG_FREETYPE)+=freetype
 freetype-url:=http://download.savannah.gnu.org/releases/freetype/freetype-$(freetype-version).tar.gz
-freetype-configure-arguments:=LIBPNG_CFLAGS=-I/usr/lib LIBPNG_LDFLAGS=-lpng16
+freetype-configure-arguments:=LIBPNG_CFLAGS=-I$(sysroot)/usr/lib LIBPNG_LDFLAGS=-lpng16
 
 CAIRO_CONFIGURE_OPTIONS:=
 ifeq ($(CONFIG_FREETYPE),y)
-CAIRO_CONFIGURE_OPTIONS+=FREETYPE_CFLAGS="-I$(objtree)/usr/include/freetype2/"
+CAIRO_CONFIGURE_OPTIONS+=
 endif
 ifeq ($(CONFIG_EGL),y)
 #CAIRO_CONFIGURE_OPTIONS+=--enable-glesv2
@@ -52,7 +55,7 @@ ifeq ($(CONFIG_X11_XCB),y)
 CAIRO_CONFIGURE_OPTIONS+= --enable-xlib-xcb  --enable-xcb
 endif
 ifeq ($(CONFIG_PIXMAN),y)
-CAIRO_CONFIGURE_OPTIONS+=pixman_CFLAGS="-I$(objtree)/usr/include/pixman-1 -DMESA_EGL_NO_X11_HEADERS"
+CAIRO_CONFIGURE_OPTIONS+=
 endif
 cairo-version=1.12.14
 subproject-$(CONFIG_CAIRO)+= cairo

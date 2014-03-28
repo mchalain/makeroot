@@ -61,10 +61,12 @@ tcp_wrappers-makeflags:=\
 	AUX_OBJ=weak_symbols.o \
 	NETGROUP="-DNETGROUP"  \
 	EXTRA_CFLAGS="$(tcp_wrappers-CFLAGS) $(CFLAGS)"
-tcp_wrappers-install:=cp libwrap.a $(objtree)/usr/lib && \
-	cp libwrap.so* $(objtree)/usr/lib && \
-	cp tcpd.h $(objtree)/usr/include && \
-	cp safe_finger tcpd tcpdchk tcpdmatch try-from $(objtree)/usr/bin
+tcp_wrappers-install:=cp libwrap.a $(sysroot)/usr/lib && \
+	cp libwrap.so* $(sysroot)/usr/lib && \
+	cp tcpd.h $(sysroot)/usr/include && \
+	cp libwrap.a $(rootfs)/usr/lib && \
+	cp libwrap.so* $(rootfs)/usr/lib && \
+	cp safe_finger tcpd tcpdchk tcpdmatch try-from $(rootfs)/usr/bin
 
 libtirpc-version:=0.2.4
 subproject-$(CONFIG_SERVER_RCP)+=libtirpc
@@ -77,7 +79,7 @@ endif
 rpcbind-version:=0.2.1
 subproject-$(CONFIG_SERVER_RCP)+=rpcbind
 rpcbind-url:=sourceforge.net/projects/rpcbind/files/rpcbind/$(rpcbind-version)/rpcbind-$(rpcbind-version).tar.bz2
-rpcbind-configure-arguments:=--bindir=/sbin --with-rpcuser=root  TIRPC_CFLAGS=-I$(objtree)/usr/include/tirpc
+rpcbind-configure-arguments:=--bindir=/sbin --with-rpcuser=root
 ifeq ($(CONFIG_SERVER_TCPW),y)
 nfs-utils-configure-arguments+=--enable-libwrap
 endif
@@ -113,7 +115,8 @@ cifs-utils-configure-arguments+=--with-libcap-ng=no --with-libcap=no
 endif
 
 samba-version=3.6.23
-subproject-$(CONFIG_SERVER_SMB)+=samba
+#subproject-$(CONFIG_SERVER_SMB)+=samba
+subproject-n+=samba
 samba-url:=http://ftp.samba.org/pub/samba/stable/samba-$(samba-version).tar.gz
 samba-config:=cd source3 && ./configure --host=$(CROSS_COMPILE:%-=%) --target=$(CROSS_COMPILE:%-=%)
 #samba-config:=./source3/configure --cross-compile --cross-execute=$(CROSS_COMPILE:%-=%)-  --abi-check
@@ -140,7 +143,7 @@ samba-configure-arguments+=--disable-cups
 endif
 samba-config+=$(samba-configure-arguments)
 samba-build:=cd source3 && make
-samba-install:=cd source3 && make DESTDIR=$(objtree) install
+samba-install:=cd source3 && make DESTDIR=$(destdir) install
 
 subproject-$(CONFIG_SERVER_LIBUPNP_OLD)+=libupnp
 
