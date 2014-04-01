@@ -38,13 +38,15 @@ export GCC_FLAGS CROSS_COMPILE ARCH BOARD SUBARCH HFP THUMB TOOLCHAIN_PATH
 
 root		:= $(CURDIR)
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
-objtree		:= $(CURDIR)/out/target/$(if $(BOARD),$(BOARD)/)
-hostobjtree	:= $(CURDIR)/out/host/
+objtree		:= out/target/$(if $(BOARD),$(BOARD)/)
+hostobjtree	:= out/host/
 src			:= $(srctree)
 obj			:= 
 sysroot		:= $(objtree)/sysroot
 packagesdir	:= $(objtree)/packages
 rootfs		:= $(objtree)/rootfs
+objtree		:= $(join $(root)/,$(objtree))
+hostobjtree	:= $(join $(root)/,$(hostobjtree))
 hostbin		:= $(hostobjtree)/bin
 toolchain	:= $(CONFIG_TOOLCHAIN_PATH:"%"=%)
 toolchain	?= $(join $(hostobjtree),toolchain)
