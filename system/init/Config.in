@@ -68,30 +68,46 @@ menu  "Select scripts"
 		bool "start udevd for devices management"
 		depends on UDEV_DAEMON
 
-	config INIT_MR_NETWORK
+	menuconfig INIT_MR_NETWORK
 		bool "init the Network"
 		select INETSCRIPTS
 
-menuconfig INIT_MR_BUSYBOX_SERVER
-	bool "Busybox servers"
-	depends on INIT_MR_NETWORK && BUSYBOX
+		menuconfig INIT_MR_BUSYBOX_SERVER
+			bool "Busybox servers"
+			depends on INIT_MR_NETWORK && BUSYBOX
 
-	config INIT_MR_TELNET
-		bool "start telnet server"
-		depends on INIT_MR_BUSYBOX_SERVER
+			config INIT_MR_TELNET
+				bool "start telnet server"
+				depends on INIT_MR_BUSYBOX_SERVER
 
-	config INIT_MR_FTPD
-		bool "start ftp server"
-		depends on INIT_MR_BUSYBOX_SERVER
+			config INIT_MR_FTPD
+				bool "start ftp server"
+				depends on INIT_MR_BUSYBOX_SERVER
+				
+			config INIT_MR_HTTPD
+				bool "start ftp server"
+				depends on INIT_MR_BUSYBOX_SERVER
+				
+			config INIT_MR_NTPD
+				bool "start ntp server"
+				depends on INIT_MR_BUSYBOX_SERVER
 		
-	config INIT_MR_HTTPD
-		bool "start ftp server"
-		depends on INIT_MR_BUSYBOX_SERVER
-		
-	config INIT_MR_NTPD
-		bool "start ntp server"
-		depends on INIT_MR_BUSYBOX_SERVER
-		
+		config INIT_MR_RPC
+			bool "start portmap or rpcbind"
+			depends on INIT_MR_NETWORK && SERVER_RPC
+			
+		config INIT_MR_NFSD
+			bool "start nfsd"
+			depends on INIT_MR_NETWORK && SERVER_NFS
+			
+		config INIT_MR_PROFTPD
+			bool "start proftpd powerfull ftp server"
+			depends on INIT_MR_NETWORK && SERVER_PROFTP
+			
+		config INIT_MR_USHARE
+			bool "start ushare upnp/dlna server"
+			depends on INIT_MR_NETWORK && SERVER_USHARE
+			
 endmenu
 endif
 

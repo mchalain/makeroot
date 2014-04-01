@@ -1,0 +1,12 @@
+#!/bin/sh
+
+MODPROBE=/etc/init.d/modprobe
+#MODPROBE=/sbin/modprobe
+$MODPROBE sunrpc
+$MODPROBE auth_rpcgss
+$MODPROBE lockd
+$MODPROBE exportfs
+$MODPROBE nfsd
+/usr/sbin/exportfs -ra
+/usr/sbin/rpc.nfsd 8
+/usr/sbin/rpc.mountd

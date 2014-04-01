@@ -1,5 +1,5 @@
 menu "network server"
-config SERVER_RCP
+config SERVER_RPC
 	bool
 
 config SERVER_TCPW
@@ -18,7 +18,7 @@ config SERVER_PROFTP
 config SERVER_NFS
 	bool "NFS Network File System client/server"
 	select LIBEVENT
-	select SERVER_RCP
+	select SERVER_RPC
 	help
 		http://linux-nfs.org
 

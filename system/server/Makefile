@@ -67,9 +67,15 @@ tcp_wrappers-install:=cp libwrap.a $(sysroot)/usr/lib && \
 	cp libwrap.a $(rootfs)/usr/lib && \
 	cp libwrap.so* $(rootfs)/usr/lib && \
 	cp safe_finger tcpd tcpdchk tcpdmatch try-from $(rootfs)/usr/bin
+download-$(CONFIG_SERVER_TCPW)+=hosts.allow
+hosts.allow-url:=http://svnweb.freebsd.org/base/head/etc/hosts.allow?view=co
+install-$(CONFIG_SERVER_TCPW)+=etc/hosts.allow
+etc/hosts.allow:copy=$(src)/hosts.allow
+etc/hosts.allow:$(src)/hosts.allow
+
 
 libtirpc-version:=0.2.4
-subproject-$(CONFIG_SERVER_RCP)+=libtirpc
+subproject-$(CONFIG_SERVER_RPC)+=libtirpc
 libtirpc-url:=http://downloads.sourceforge.net/project/libtirpc/libtirpc/$(libtirpc-version)/libtirpc-$(libtirpc-version).tar.bz2
 libtirpc-configure-arguments:=--disable-static
 ifneq ($(CONFIG_SECURITY_GSS),y)
@@ -81,8 +87,18 @@ subproject-$(CONFIG_SERVER_RCP)+=rpcbind
 rpcbind-url:=sourceforge.net/projects/rpcbind/files/rpcbind/$(rpcbind-version)/rpcbind-$(rpcbind-version).tar.bz2
 rpcbind-configure-arguments:=--bindir=/sbin --with-rpcuser=root
 ifeq ($(CONFIG_SERVER_TCPW),y)
-nfs-utils-configure-arguments+=--enable-libwrap
+rpcbind-configure-arguments+=--enable-libwrap
 endif
+download-$(CONFIG_SERVER_RCP)+=services
+services-url:=http://svnweb.freebsd.org/base/head/etc/services?view=co
+install-$(CONFIG_SERVER_RCP)+=etc/services
+etc/services:copy=$(src)/services
+etc/services:$(src)/services
+download-$(CONFIG_SERVER_RCP)+=rpc
+rpc-url:=http://svnweb.freebsd.org/base/head/etc/rpc?view=co
+install-$(CONFIG_SERVER_RCP)+=etc/rpc
+etc/rpc:copy=$(src)/rpc
+etc/rpc:$(src)/rpc
 
 libnfsidmap-version:=0.25
 subproject-$(CONFIG_SERVER_NFS)+=libnfsidmap
