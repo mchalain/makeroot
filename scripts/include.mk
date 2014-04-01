@@ -151,7 +151,7 @@ echo-cmd = $(if $($(quiet)cmd_$(1)),\
 # printing commands
 cmd = $(echo-cmd) $(cmd_$(1))
 define multicmd
-	$(echo-cmd)
+	$(if $(quiet),$(Q)$(echo-cmd))
 	$(cmd_$(1))
 endef
 

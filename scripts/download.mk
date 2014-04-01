@@ -1,6 +1,6 @@
 download-copy= | tee $(addprefix $(BUILD_DOWNLOAD_PATH)/, $(notdir $(1)))
-download-wget=wget -O - $(1) $(if $(findstring y,$(BUILD_DOWNLOAD_KEEP_COPY)), $(download-copy))
-download-directory= cat $(addprefix $(BUILD_DOWNLOAD_PATH)/, $(notdir $(1)))
+download-wget=$(Q)wget -O - $(1) $(if $(findstring y,$(BUILD_DOWNLOAD_KEEP_COPY)), $(download-copy))
+download-directory= $(Q)cat $(addprefix $(BUILD_DOWNLOAD_PATH)/, $(notdir $(1)))
 
 download-short=$(if $(wildcard $(addprefix $(BUILD_DOWNLOAD_PATH)/, $(notdir $(1)))), $(download-directory), $(download-wget))
 quiet_cmd_download-url = DOWNLOAD $* from $(dwl-url:"%"=%)
@@ -11,7 +11,7 @@ define cmd_download-url
 			$(call download-short, $(dwl-url)) | tar -xjf - -C $(src),
 			$(if $(findstring .xz, $(suffix $(dwl-url))),
 				$(call download-short, $(dwl-url)) | tar -xJf - -C $(src),
-				$(error set $($(notdir $*)-url))
+				$(call download-short, $(dwl-url)) > $(src)/$(dwl-target)
 			)
 		)
 	)
@@ -19,15 +19,15 @@ endef
 
 quiet_cmd_download-cvs = DOWNLOAD $* from $(dwl-url:"%"=%)
 cmd_download-cvs = \
-	cvs -z 9 -d $(dwl-url) co $(dwl-target)
+	$(Q)cvs -z 9 -d $(dwl-url) co $(dwl-target)
 
 quiet_cmd_download-git = DOWNLOAD $* from $(dwl-url:"%"=%)
 cmd_download-git = \
-	git clone $(url) $(src)/$*
+	$(Q)git clone $(url) $(src)/$*
 
 quiet_cmd_download-hg = DOWNLOAD $* from $(dwl-url:"%"=%)
 cmd_download-hg = \
-	hg clone $(dwl-url) $(src)/$*
+	$(Q)hg clone $(dwl-url) $(src)/$*
 
 define cmd_download
 	$(eval dwl-target=$(1))
@@ -52,4 +52,4 @@ endef
 $(download-target): $(obj)/.%.dwl:
 	$(eval sprj-src = $(addprefix $(src)/,$*$(if $(sprj-version),-$(sprj-version)))) \
 	$(if $(wildcard  $(sprj-src)), ,$(call cmd_download,$*,$($(notdir $*)-version)))
-	@touch $@
+	$(Q)touch $@
