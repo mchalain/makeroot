@@ -45,6 +45,9 @@ endif
 ifneq ($(CONFIG_NCURSES),y)
 proftpd-configure-arguments+=--disable-curses --disable-ncurses
 endif
+install-$(CONFIG_SERVER_PROFTP)+=etc/proftpd.conf
+etc/proftpd.conf:copy=$(packagesdir)/proftpd-$(proftpd-version)/etc/proftpd.conf
+etc/proftpd.conf:$(packagesdir)/proftpd-$(proftpd-version)/etc/proftpd.conf
 
 tcp_wrappers-version:=7.6
 subproject-$(CONFIG_SERVER_TCPW)+=tcp_wrappers
