@@ -15,7 +15,7 @@ $(toolchain-y): $(hostobjtree)/toolchain
 $(hostobjtree):
 	mkdir -p $@
 
-$(hostobjtree)/toolchain: $(hostobjtree)
+$(hostobjtree)/toolchain: $(hostobjtree) $(sysroot) $(rootfs) 
 	$(eval install-target = $@)
 	$(eval tc=$(toolchain-y))
 	$(eval link = $(addprefix $(srctree)/$(src)/,$(tc)$(if $($(notdir $(tc))-version),-$($(notdir $(tc))-version:"%"=%))))
