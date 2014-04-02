@@ -4,7 +4,7 @@ etc/inittab: copy:=$(src)/config/$(CONFIG_INITTAB_FILE:"%"=%)
 etc/inittab: $(src)/config/$(CONFIG_INITTAB_FILE:"%"=%)
 
 install-$(CONFIG_RCS_FILE)+=etc/init.d/rcS
-etc/init.d/rcS: copy:=$(srctree)/$(src)/$(CONFIG_RCS_FILENAME:"%"=%)
+etc/init.d/rcS: copy:=$(src)/$(CONFIG_RCS_FILENAME:"%"=%)
 #etc/init.d/rcS: chown:=root
 etc/init.d/rcS: chmod:=744
 etc/init.d/rcS: $(src)/$(CONFIG_RCS_FILENAME:"%"=%)
