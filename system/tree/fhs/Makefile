@@ -14,9 +14,9 @@ install-$(CONFIG_MNTDIRS)+=mnt/floppy mnt/cdrom mnt/usb
 
 #users database files
 install-$(CONFIG_FHS_USERS)+=etc/group etc/passwd etc/shadow
-etc/group: copy=$(srctree)/$(src)/etc/group
-etc/passwd: copy=$(srctree)/$(src)/etc/passwd
-etc/shadow: copy=$(srctree)/$(src)/etc/shadow
+etc/group: copy=$(src)/etc/group
+etc/passwd: copy=$(src)/etc/passwd
+etc/shadow: copy=$(src)/etc/shadow
 
 #network configuration directory
 etc/network: dir=y
