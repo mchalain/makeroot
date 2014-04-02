@@ -7,13 +7,14 @@ cmd_mksubdir = cd $(install-dest) && $(cmd_mkdir)
 
 define copydir
 	$(foreach d,$(wildcard $(1)*),
-		$(call copyfile,$(d)/,$(2)/$(notdir $(d)))
+		$(if $(wildcard $(dir $(2)/)),,$(Q)mkdir -p $(dir $(2)/))
+		$(call copydir,$(d)/,$(2)/$(notdir $(d)))
 		$(if $(filter-out %/,$(wildcard $(d)/)),
-			$(if $(wildcard $(dir $(2)/)),,$(Q)mkdir -p $(dir $(2)/))
-			$(Q)cp $(filter %,$(d)) $(2)/
+			$(Q)cp -P $(filter %,$(d)) $(2)/
 			$(if $(findstring strip,$(3)), $(CROSS_COMPILE)strip $(2)/$(notdir $(d)))
 		)
 	)
+	$(if $(wildcard $(1)/.),$(if $(wildcard $(dir $(2)/)$(notdir $(1))),,$(Q)mkdir -p $(dir $(2)/)$(notdir $(1))))
 endef
 
 cmd_copy = $(Q)cp $(join $(srctree)/,$(copy)) $(join $(install-dest)/,$(install-target))

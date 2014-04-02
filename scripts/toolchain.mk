@@ -16,7 +16,7 @@ $(hostobjtree):
 	mkdir -p $@
 
 $(hostobjtree)/toolchain: $(hostobjtree)
-	@$(eval install-target = $@) \
-	$(eval tc=$(toolchain-y)) \
-	$(eval link = $(addprefix $(srctree)/$(src)/,$(tc)$(if $($(notdir $(tc))-version),-$($(notdir $(tc))-version:"%"=%)))) \
-	$(if $(wildcard $(install-target)), , $(if $(wildcard $(link)), $(call cmd,link)))
+	$(eval install-target = $@)
+	$(eval tc=$(toolchain-y))
+	$(eval link = $(addprefix $(srctree)/$(src)/,$(tc)$(if $($(notdir $(tc))-version),-$($(notdir $(tc))-version:"%"=%))))
+	$(if $(wildcard $(install-target)), , $(if $(wildcard $(link)), $(call multicmd,link)))
