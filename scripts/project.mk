@@ -102,19 +102,19 @@ define cmd_post-install-project
 	$(foreach install-target, lib/ usr/lib/ usr/include/, \
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
 			$(eval install-dest = $(join $(root)/$(sysroot)/,$(install-target)))
-			$(call copydir,$(join $(sprj-destdir)/,$(install-target)),$(install-dest))
+			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(root)/$(sysroot)/$(install-target); fi
 		)
 	)
 	$(foreach install-target, lib/ bin/ usr/lib/ usr/bin/ usr/libexec/, \
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
 			$(eval install-dest = $(join $(root)/$(rootfs)/,$(install-target)))
-			$(call copydir,$(join $(sprj-destdir)/,$(install-target)),$(install-dest))
+			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(root)/$(rootfs)/$(install-target); fi
 		)
 	)
 	$(foreach install-target, $(filter-out man doc %doc aclocal info pkgconfig,$(wildcard usr/share/*)),
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
 			$(eval install-dest = $(join $(root)/$(rootfs)/,$(install-target)))
-			$(call copydir,$(join $(sprj-destdir)/,$(install-target)),$(install-dest))
+			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(root)/$(rootfs)/$(install-target); fi
 		)
 	)
 endef
