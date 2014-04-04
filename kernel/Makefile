@@ -2,7 +2,6 @@ CROSS_COMPILE := $(CONFIG_CROSS_COMPILE:"%"=%-)
 ARCH := $(CONFIG_ARCH:"%"=%)
 export CROSS_COMPILE ARCH
 
-bootdir:=$(objtree)/boot
 uImage:=arch/$(ARCH)/boot/uImage 
 
 makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
@@ -29,13 +28,13 @@ $(target)-dependances:=$(bootdir)
 
 #sed -e "/unwanted /d" -i scripts/Makefile.headersinst
 $(target)-defconfig:=$(CONFIG_KERNEL_DEFCONFIG:"%"=%)
-$(target)-makeflags:=$(makeflags) INSTALL_PATH=$(bootdir) INSTALL_MOD_PATH=$(rootfs) INSTALL_HDR_PATH=$(sysroot)/usr/
+$(target)-makeflags:=$(makeflags) INSTALL_PATH=$(bootdir) INSTALL_MOD_PATH=$(rootfs) INSTALL_HDR_PATH=$(sysroot)/usr/ INSTALLKERNEL:=noinstallkernel
 ifneq (,$(findstring y,$(CONFIG_U_IMAGE)))
-	$(target)-targets:= uImage modules modules_install headers_install
-	$(target)-install:= $(MAKE) $($(target)-makeflags) INSTALL_PATH=$(bootdir) INSTALLKERNEL:=noinstallkernel uinstall
+	$(target)-targets:= uImage modules modules_install headers_install uinstall
+	$(target)-install:= find $(rootfs)/lib/modules/ -name build -delete && find $(rootfs)/lib/modules/ -lname source -delete
 else
-	$(target)-targets:= modules $(CONFIG_KERNEL_IMAGE:"%"=%) modules_install headers_install
-	$(target)-install:= $(MAKE) $($(target)-makeflags) INSTALL_PATH=$(bootdir) INSTALLKERNEL:=noinstallkernel install
+	$(target)-targets:= modules $(CONFIG_KERNEL_IMAGE:"%"=%) modules_install headers_install install
+	$(target)-install:= find $(rootfs)/lib/modules/ -lname build -delete && find $(rootfs)/lib/modules/ -lname source -delete
 endif
 
 KDIR:=$(srctree)/$(src)/$(target)$($(target)-version:%=-%)
