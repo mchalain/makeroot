@@ -162,7 +162,7 @@ endif
 
 __build: $(subdir-ym) $(targets) $(extra-y) \
 	 $(download-target) $(host-target) $(toolchain-target) \
-	 $(install-y) $(subproject-y) $(image-target)
+	 $(subproject-y) $(install-y) $(image-target)
 	@:
 
 $(rootfs) $(packagesdir) $(sysroot) $(bootdir) $(hostbin):
