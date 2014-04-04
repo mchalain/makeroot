@@ -131,7 +131,7 @@ $(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version
 $(1)-configure: $($(1)-dependances)
 	$(eval sprj:=$(1))
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
-	$(eval sprj-src:=$(join $(src)/,$(if $($(1)-version),$(1)-$($(1)-version),$(1))))
+	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
 	$(Q)$(call multicmd,configure-project)
 
 .SECONDEXPANSION:
@@ -139,8 +139,8 @@ $(1)-configure: $($(1)-dependances)
 $(1)-build: $(1)-configure
 	$(eval sprj:=$(1))
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
-	$(eval sprj-src:=$(join $(src)/,$(if $(sprj-version),$(1)-$(sprj-version),$(1))))
-	$(eval sprj-targets:=$(if $($(strip $(1)-targets)),$($(strip $(1)-targets)),all))
+	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
+	$(eval sprj-targets:=$(if $($(1)-targets),$($(1)-targets),all))
 	$(foreach target, $(sprj-targets),
 		$(Q)$(call multicmd,build-project) )
 
