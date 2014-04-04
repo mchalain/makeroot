@@ -202,6 +202,7 @@ static struct option const long_options[] =
   {"no-dereference", no_argument, NULL, 'P'},
   {"preserve-timestamps", no_argument, NULL, 'p'},
   {"backup", no_argument, NULL, 'b'},
+  {"recursive", no_argument, NULL, 'r'},
   {"suffix", required_argument, NULL, 'S'},
   {"version-control", required_argument, NULL, 'V'},
   {"verbose", no_argument, NULL, 'v'},
@@ -278,7 +279,7 @@ main (int argc, char **argv)
     simple_backup_suffix = version;
   version = getenv ("VERSION_CONTROL");
 
-  while ((optc = getopt_long (argc, argv, "bcsDdzg:m:o:PpvV:S:", long_options,
+  while ((optc = getopt_long (argc, argv, "bcsDdzg:m:o:PpvV:rS:", long_options,
 			      &longind)) != -1)
     {
     switch (optc)
@@ -320,6 +321,9 @@ main (int argc, char **argv)
           x.preserve_chmod_bits = 1;
           x.set_mode = 0;
           x.umask_kill = 0775;
+	  break;
+        case 'r':
+          x.recursive = 1;
 	  break;
 	case 'S':
 	  simple_backup_suffix = optarg;
@@ -512,7 +516,7 @@ copy_file (const char *from, const char *to, const struct cp_options *x)
   /* Allow installing from non-regular files like /dev/null.
      Charles Karney reported that some Sun version of install allows that
      and that sendmail's installation process relies on the behavior.  */
-  if (isdir (from))
+  if (!x->recursive && isdir (from))
     {
       error (0, 0, _("`%s' is a directory"), from);
       return 1;
@@ -740,6 +744,7 @@ In the third format, create all components of the given DIRECTORY(ies).\n\
                         to corresponding destination files\n\
                        apply access/modification times of SOURCE files\n\
                         to corresponding destination files\n\
+  -r, --recursive     copy directories recursively\n\
   -s, --strip         strip symbol tables, only for 1st and 2nd formats\n\
   -S, --suffix=SUFFIX override the usual backup suffix\n\
       --verbose       print the name of each directory as it is created\n\

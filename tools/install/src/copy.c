@@ -856,8 +856,11 @@ copy_internal (const char *src_path, const char *dst_path,
 
   if (x->set_mode)
     {
+      int mode = x->mode;
+      if (S_ISDIR (src_type))
+        mode |= S_IXUSR;
       /* This is so install's -m MODE option works.  */
-      if (!S_ISLNK (src_type) && chmod (dst_path, x->mode))
+      if (!S_ISLNK (src_type) && chmod (dst_path, mode))
 	{
 	  error (0, errno, _("setting permissions for %s"), dst_path);
 	  return 1;
