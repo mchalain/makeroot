@@ -562,7 +562,8 @@ change_attributes (const char *path)
 
   if (chmod (path, mode))
     err = errno;
-  if (err)
+  /* error ENOENT should be impossible except for symlink */
+  if (err && err != ENOENT)
     {
       error (0, err, "%s", path);
       return 1;
