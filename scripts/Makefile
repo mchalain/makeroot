@@ -161,6 +161,9 @@ __build: $(subdir-ym) $(targets) $(extra-y) \
 	 $(install-y) $(subproject-y)
 	@:
 
+$(rootfs) $(packagesdir) $(sysroot) $(bootdir) $(hostbin):
+	mkdir -p $@
+
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable se we can use it in if_changed and friends.
 
