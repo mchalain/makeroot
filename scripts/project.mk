@@ -2,10 +2,10 @@
 # create directories on the target system
 
 flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) -march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
-CFLAGS:=--sysroot=$(sysroot) $(flags_extend) $(GCC_FLAGS)
+CFLAGS:=--sysroot=$(root)/$(sysroot) $(flags_extend) $(GCC_FLAGS)
 CPPFLAGS:=$(CFLAGS)
 CXXFLAGS:=$(CFLAGS)
-LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath-link=$(sysroot)/usr/lib/:$(sysroot)/lib/:$(join $(sysroot)/lib/,$(CROSS_COMPILE:%-=%)) $(flags_extend) $(GCC_FLAGS)
+LDFLAGS:=--sysroot=$(root)/$(sysroot) -Wl,-rpath-link=$(root)/$(sysroot)/usr/lib/:$(root)/$(sysroot)/lib/:$(join $(root)/$(sysroot)/lib/,$(CROSS_COMPILE:%-=%)) $(flags_extend) $(GCC_FLAGS)
 DSOFLAGS:=$(LDFLAGS)
 export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS
 
@@ -18,9 +18,9 @@ INSTALL=$(hostbin:%=%/)install
 export STRIPPROG CPPROG
 
 PKG_CONFIG=pkg-config
-PKG_CONFIG_LIBDIR:=$(sysroot)/usr/lib/pkgconfig $(hostlib)/pkgconfig
-PKG_CONFIG_PATH:=$(sysroot)/usr/lib/pkgconfig:$(hostlib)/pkgconfig
-PKG_CONFIG_SYSROOT_DIR:=$(sysroot)
+PKG_CONFIG_LIBDIR:=$(root)/$(sysroot)/usr/lib/pkgconfig $(root)/$(hostlib)/pkgconfig
+PKG_CONFIG_PATH:=$(root)/$(sysroot)/usr/lib/pkgconfig:$(root)/$(hostlib)/pkgconfig
+PKG_CONFIG_SYSROOT_DIR:=$(root)/$(sysroot)
 export PKG_CONFIG PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR
 
 config_shipped:=.config_shipped.prj
@@ -30,8 +30,6 @@ install_shipped:=.install_shipped.prj
 configure-cmd:= \
 	ac_cv_func_malloc_0_nonnull=yes \
 	ac_cv_func_realloc_0_nonnull=yes \
-	PKG_CONFIG_PATH=$(sysroot)/usr/lib/pkgconfig:$(hostlib)/pkgconfig \
-	PKG_CONFIG_SYSROOT_DIR=$(sysroot) \
 	./configure \
 	--host=$(CROSS_COMPILE:%-=%) \
 	--target=$(CROSS_COMPILE:%-=%) \
@@ -85,8 +83,8 @@ install_tool=$(addprefix $(hostbin:%=%/),install)
 quiet_cmd_install-project = INSTALL $(sprj)
 define cmd_install-project
 	$(eval sprj-makeflags:=$($(sprj)-makeflags))
-	$(eval sprj-destdir = $(packagesdir)/$(sprj)$($(sprj)-version:%=-%))
 	$(eval sprj-install = $($(sprj)-install))
+	$(if $(wildcard $(sprj-destdir)),, $(Q)mkdir -p $(sprj-destdir))
 	$(if $(sprj-install), 
 		$(Q)cd $(sprj-src) && $(sprj-install),
 		$(if $(sprj-mkinstall),
@@ -101,22 +99,21 @@ endef
 
 quiet_cmd_post-install-project = SYSROOT $(sprj)
 define cmd_post-install-project
-	$(eval sprj-destdir = $(packagesdir)/$(sprj)$($(sprj)-version:%=-%)) \
 	$(foreach install-target, lib/ usr/lib/ usr/include/, \
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
-			$(eval install-dest = $(join $(sysroot)/,$(install-target)))
+			$(eval install-dest = $(join $(root)/$(sysroot)/,$(install-target)))
 			$(call copydir,$(join $(sprj-destdir)/,$(install-target)),$(install-dest))
 		)
 	)
 	$(foreach install-target, lib/ bin/ usr/lib/ usr/bin/ usr/libexec/, \
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
-			$(eval install-dest = $(join $(rootfs)/,$(install-target)))
+			$(eval install-dest = $(join $(root)/$(rootfs)/,$(install-target)))
 			$(call copydir,$(join $(sprj-destdir)/,$(install-target)),$(install-dest))
 		)
 	)
-	$(foreach install-target, $(filter-out man doc %doc aclocal info pkgconfig,$(wildcard usr/share/*)), \
+	$(foreach install-target, $(filter-out man doc %doc aclocal info pkgconfig,$(wildcard usr/share/*)),
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
-			$(eval install-dest = $(join $(rootfs)/,$(install-target)))
+			$(eval install-dest = $(join $(root)/$(rootfs)/,$(install-target)))
 			$(call copydir,$(join $(sprj-destdir)/,$(install-target)),$(install-dest))
 		)
 	)
@@ -126,23 +123,23 @@ endef
 #	@$(call cmd_download,$(dwl-target),$(dwl-version));
 
 define do-project
-$(if $($(strip $(1)-version)),$(join $(src)/,$(strip $(1)-$($(strip $(1)-version)))),$(join $(src)/,$(1))):
-	$(Q)$(call cmd_download,$(1),$($(strip $(1)-version)))
+$(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))):
+	$(Q)$(call cmd_download,$(1),$($(1)-version))
 
 .SECONDEXPANSION:
 .PHONY:$(1)-configure
 $(1)-configure: $($(1)-dependances)
 	$(eval sprj:=$(1))
-	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
-	$(eval sprj-src:=$(if $(sprj-version),$(join $(src)/,$(strip $(1)-$(sprj-version))),$(join $(src)/,$(1))))
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
+	$(eval sprj-src:=$(join $(src)/,$(if $($(1)-version),$(1)-$($(1)-version),$(1))))
 	$(Q)$(call multicmd,configure-project)
 
 .SECONDEXPANSION:
 .PHONY:$(1)-build
 $(1)-build: $(1)-configure
 	$(eval sprj:=$(1))
-	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
-	$(eval sprj-src:=$(if $(sprj-version),$(join $(src)/,$(strip $(1)-$(sprj-version))),$(join $(src)/,$(1))))
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
+	$(eval sprj-src:=$(join $(src)/,$(if $(sprj-version),$(1)-$(sprj-version),$(1))))
 	$(eval sprj-targets:=$(if $($(strip $(1)-targets)),$($(strip $(1)-targets)),all))
 	$(foreach target, $(sprj-targets),
 		$(Q)$(call multicmd,build-project) )
@@ -150,24 +147,27 @@ $(1)-build: $(1)-configure
 .SECONDEXPANSION:
 .PHONY:$(1)-install
 $(1)-install: $(1)-build
+
+$(join $(root)/$(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))): $(1)-build
 	$(eval sprj:=$(1))
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
-	$(eval sprj-src:=$(if $(sprj-version),$(join $(src)/,$(strip $(1)-$(sprj-version))),$(join $(src)/,$(1))))
+	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
+	$(eval sprj-destdir:=$(join $(root)/$(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
 	$(Q)$(call multicmd,install-project)
 
 .ONESHELL:$(1)-post-install
 .SECONDEXPANSION:
 .PHONY:$(1)-post-install
-$(1)-post-install: $(1)-install
+$(1)-post-install: $(join $(root)/$(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1)))
 	$(eval sprj:=$(1))
-	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
-	$(eval sprj-destdir = $(if $(sprj-version),$(join $(packagesdir)/,$(strip $(1)-$(sprj-version))),$(join $(packagesdir)/,$(1))))
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
+	$(eval sprj-destdir:=$(join $(root)/$(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
 	$(Q)$(call multicmd,post-install-project)
 			 
 
 .SECONDEXPANSION:
 .PHONY:$(1)
-$(1): $(if $(wildcard $(addprefix $(obj)/.,$(1).prj)),,$(1)-post-install)
+$(1): $(packagesdir) $(sysroot) $(rootfs) $(bootdir) $(if $(wildcard $(addprefix $(obj)/.,$(1).prj)),,$(1)-post-install)
 	$(Q)touch $(addprefix $(obj)/.,$(1).prj)
 endef
-$(foreach subproject, $(subproject-y),$(eval $(call do-project, $(subproject))))
+$(foreach subproject, $(subproject-y),$(eval $(call do-project,$(subproject))))

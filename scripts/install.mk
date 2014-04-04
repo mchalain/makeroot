@@ -2,7 +2,7 @@
 # create directories on the target system
 
 quiet_cmd_mkdir = MKDIR $@
-cmd_mkdir = $(if $(wildcard $(install-target)), ,mkdir -p $(install-target))
+cmd_mkdir = $(if $(wildcard $(join $(install-dest)/,$(install-target))), ,mkdir -p $(join $(install-dest)/,$(install-target)))
 cmd_mksubdir = cd $(install-dest) && $(cmd_mkdir)
 
 define copydir
@@ -17,13 +17,13 @@ define copydir
 	$(if $(wildcard $(1)/.),$(if $(wildcard $(dir $(2)/)$(notdir $(1))),,$(Q)mkdir -p $(dir $(2)/)$(notdir $(1))))
 endef
 
-cmd_copy = $(Q)cp $(join $(srctree)/,$(copy)) $(join $(install-dest)/,$(install-target))
-cmd_move = $(Q)mv $(join $(srctree)/,$(move)) $(join $(install-dest)/,$(install-target))
+cmd_copy = $(Q)cp $(if $(wildcard $(copy)),$(copy),$(join $(srctree)/,$(copy))) $(join $(install-dest)/,$(install-target))
+cmd_move = $(Q)mv $(if $(wildcard $(move)),$(move),$(join $(srctree)/,$(move))) $(join $(install-dest)/,$(install-target))
 quiet_cmd_link = LINK $(link)
 cmd_link = 	$(Q)cd $(install-dest) && ln -s $(link) $(install-target)
-cmd_touch = $(Q)cd $(install-dest) && touch $(install-target)
+cmd_touch = $(Q)touch $(join $(install-dest)/,$(install-target))
 quiet_cmd_generate = GEN $(generate)
-cmd_generate = $(Q)mv $(generate) $(install-target)
+cmd_generate = $(Q)mv $(generate) $(join $(install-dest)/,$(install-target))
 
 cmd_chown = $(Q)cd $(install-dest) && chown $(chown) $(install-target)
 cmd_chmod = $(Q)cd $(install-dest) && chmod $(chmod) $(install-target)
@@ -36,6 +36,7 @@ define cmd_install
 		$(cmd_mkdir),
 		$(call copydir,$(join $(srctree)/,$(dir)),$(dir $(join $(install-dest)/,$(install-target),$(findstring y,$(strip))))))
 	)
+	$(if $(wildcard $(dir $(join $(install-dest)/,$(install-target)))),,$(Q)mkdir -p $(dir $(join $(install-dest)/,$(install-target))))
 	$(if $(copy), $(cmd_copy))
 	$(if $(move), $(cmd_move))
 	$(if $(link), $(cmd_link))
@@ -46,13 +47,10 @@ define cmd_install
 	$(if $(chown), $(cmd_chown))
 endef
 
-$(rootfs):
-	mkdir -p $@
-
 install-subdirs:=$(sort $(filter-out $(addsuffix /,$(install-y:%/=%)),$(filter-out ./,$(dir $(install-y)))))
 $(install-subdirs): $(rootfs)
 	$(eval install-dest = $(rootfs))
-	$(if $(wildcard $(rootfs)/$@),,$(eval install-target = $@) $(call cmd,mksubdir))
+	$(if $(wildcard $(rootfs)/$@),,$(eval install-target = $@) $(call cmd,mkdir))
 
 $(sort $(install-y)): $(install-subdirs)
 	$(eval install-dest = $(rootfs))
