@@ -315,8 +315,11 @@ main (int argc, char **argv)
           x.dereference = 0;
           x.xstat = lstat;
           break;
-	case 'p':
-	  x.preserve_timestamps = 1;
+        case 'p':
+ 	  x.preserve_timestamps = 1;
+          x.preserve_chmod_bits = 1;
+          x.set_mode = 0;
+          x.umask_kill = 0775;
 	  break;
 	case 'S':
 	  simple_backup_suffix = optarg;
@@ -732,7 +735,10 @@ In the third format, create all components of the given DIRECTORY(ies).\n\
   -m, --mode=MODE     set permission mode (as in chmod), instead of rwxr-xr-x\n\
   -o, --owner=OWNER   set ownership (super-user only)\n\
   -P, --no-dereference         never follow symbolic links in SOURCE\n\
-  -p, --preserve-timestamps   apply access/modification times of SOURCE files\n\
+  -p, --preserve       preserve the default attributes \n\
+                       apply access mode of SOURCE files\n\
+                        to corresponding destination files\n\
+                       apply access/modification times of SOURCE files\n\
                         to corresponding destination files\n\
   -s, --strip         strip symbol tables, only for 1st and 2nd formats\n\
   -S, --suffix=SUFFIX override the usual backup suffix\n\
