@@ -199,6 +199,7 @@ static struct option const long_options[] =
   {"group", required_argument, NULL, 'g'},
   {"mode", required_argument, NULL, 'm'},
   {"owner", required_argument, NULL, 'o'},
+  {"no-dereference", no_argument, NULL, 'P'},
   {"preserve-timestamps", no_argument, NULL, 'p'},
   {"backup", no_argument, NULL, 'b'},
   {"suffix", required_argument, NULL, 'S'},
@@ -277,7 +278,7 @@ main (int argc, char **argv)
     simple_backup_suffix = version;
   version = getenv ("VERSION_CONTROL");
 
-  while ((optc = getopt_long (argc, argv, "bcsDdzg:m:o:pvV:S:", long_options,
+  while ((optc = getopt_long (argc, argv, "bcsDdzg:m:o:PpvV:S:", long_options,
 			      &longind)) != -1)
     {
     switch (optc)
@@ -310,6 +311,10 @@ main (int argc, char **argv)
 	case 'o':
 	  owner_name = optarg;
 	  break;
+        case 'P':
+          x.dereference = 0;
+          x.xstat = lstat;
+          break;
 	case 'p':
 	  x.preserve_timestamps = 1;
 	  break;
@@ -726,6 +731,7 @@ In the third format, create all components of the given DIRECTORY(ies).\n\
   -g, --group=GROUP   set group ownership, instead of process' current group\n\
   -m, --mode=MODE     set permission mode (as in chmod), instead of rwxr-xr-x\n\
   -o, --owner=OWNER   set ownership (super-user only)\n\
+  -P, --no-dereference         never follow symbolic links in SOURCE\n\
   -p, --preserve-timestamps   apply access/modification times of SOURCE files\n\
                         to corresponding destination files\n\
   -s, --strip         strip symbol tables, only for 1st and 2nd formats\n\

@@ -857,14 +857,14 @@ copy_internal (const char *src_path, const char *dst_path,
   if (x->set_mode)
     {
       /* This is so install's -m MODE option works.  */
-      if (chmod (dst_path, x->mode))
+      if (!S_ISLNK (src_type) && chmod (dst_path, x->mode))
 	{
 	  error (0, errno, _("setting permissions for %s"), dst_path);
 	  return 1;
 	}
     }
   else if ((x->preserve_chmod_bits || new_dst)
-	   && (x->copy_as_regular || S_ISREG (src_type) || S_ISDIR (src_type)))
+	   && (x->copy_as_regular || S_ISREG (src_type) || S_ISDIR (src_type)) && !S_ISLNK (src_type))
     {
       if (chmod (dst_path, src_mode & x->umask_kill))
 	{
