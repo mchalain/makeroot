@@ -81,6 +81,10 @@ download-target:=$(addprefix $(obj)/.,$(addsuffix .dwl,$(download-y)))
 include scripts/download.mk
 endif
 
+ifneq ($(image-y),)
+image-target:=$(addsuffix .img,$(addprefix $(objtree)/,$(image-y)))
+include scripts/image.mk
+endif
 # ===========================================================================
 
 ifneq ($(BUILD_SRC),)
@@ -158,7 +162,7 @@ endif
 
 __build: $(subdir-ym) $(targets) $(extra-y) \
 	 $(download-target) $(host-target) $(toolchain-target) \
-	 $(install-y) $(subproject-y)
+	 $(install-y) $(subproject-y) $(image-target)
 	@:
 
 $(rootfs) $(packagesdir) $(sysroot) $(bootdir) $(hostbin):
