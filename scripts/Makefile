@@ -26,9 +26,6 @@ EXTRA_CFLAGS   :=
 EXTRA_CPPFLAGS :=
 EXTRA_LDFLAGS  :=
 
-PATH:=$(join $(hostobjtree),bin):$(TOOLCHAIN_PATH):$(PATH)
-export PATH
-
 # Read .config if it exist, otherwise ignore
 include $(CONFIG_FILE)
 
