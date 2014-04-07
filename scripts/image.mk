@@ -1,3 +1,4 @@
+include scripts/ubifs.mk
 DD=dd
 
 sizeKb:=1000
@@ -5,32 +6,40 @@ blocksize=512
 
 define cmd_mkfs-msdos
 	$(call multicmd,mkemptyfile)
-	$(Q)mkfs.msdos -F 32 -n $(*) -S $(blocksize) $(objtree)/$@
+	$(Q)/sbin/mkfs.msdos -F 32 -n $* -S $(blocksize) $(objtree)/$*.disk
 	$(call multicmd,fill-loop)
 endef
 
 define cmd_mkfs-vfat
 	$(call multicmd,mkemptyfile)
-	$(Q)mkfs.vfat -n $(*) -S $(blocksize) $(objtree)/$@
+	$(Q)/sbin/mkfs.vfat -n $* -S $(blocksize) $(objtree)/$*.disk
 	$(call multicmd,fill-loop)
 endef
 
 define cmd_mkfs-ext4
 	$(call multicmd,mkemptyfile)
-	$(Q)/sbin/mkfs.ext4 -F -L $(*) -q $(objtree)/$*.disk
+	$(Q)/sbin/mkfs.ext4 -F -L $* -q $(objtree)/$*.disk
 	$(call multicmd,fill-loop)
+endef
+
+define cmd_mkfs-cramfs
+	$(Q)/sbin/mkfs.cramfs -b $(mtd-pagesize) -n $* $($*-data)/ $@
 endef
 
 quiet_cmd_mkfs = MKFS $*
 define cmd_mkfs
 	$(if $(findstring vfat,$($*-fstype)),
 		$(eval mkfs-cmd=cmd_mkfs-vfat))
+	$(if $(findstring msdos,$($*-fstype)),
+		$(eval mkfs-cmd=cmd_mkfs-msdos))
 	$(if $(findstring ext4,$($*-fstype)),
 		$(eval mkfs-cmd=cmd_mkfs-ext4))
 	$(if $(findstring ubifs,$($*-fstype)),
 		$(eval mkfs-cmd=cmd_mkfs-ubifs))
 	$(if $(findstring jffs,$($*-fstype)),
 		$(eval mkfs-cmd=cmd_mkfs-jffs))
+	$(if $(findstring cramfs,$($*-fstype)),
+		$(eval mkfs-cmd=cmd_mkfs-cramfs))
 	$(call $(mkfs-cmd))
 endef
 
