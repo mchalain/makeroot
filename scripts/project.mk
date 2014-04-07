@@ -18,8 +18,8 @@ INSTALL=$(hostbin:%=%/)install
 export STRIPPROG CPPROG
 
 PKG_CONFIG=pkg-config
-PKG_CONFIG_LIBDIR:=$(root)/$(sysroot)/usr/lib/pkgconfig $(root)/$(hostlib)/pkgconfig
-PKG_CONFIG_PATH:=$(root)/$(sysroot)/usr/lib/pkgconfig:$(root)/$(hostlib)/pkgconfig
+PKG_CONFIG_LIBDIR:=$(root)/$(sysroot)/usr/lib/pkgconfig $(hostlib)/pkgconfig
+PKG_CONFIG_PATH:=$(root)/$(sysroot)/usr/lib/pkgconfig:$(hostlib)/pkgconfig
 PKG_CONFIG_SYSROOT_DIR:=$(root)/$(sysroot)
 export PKG_CONFIG PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR
 
