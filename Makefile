@@ -23,18 +23,8 @@ export CONFIG_FILE
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
 -include  $(srctree)/$(CONFIG_FILE)
 
-CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
-ARCH ?= $(CONFIG_ARCH:"%"=%)
 BOARD ?= $(CONFIG_BOARD_NAME:"%"=%)
-SUBARCH ?= $(CONFIG_SUBARCH:"%"=%)
-HFP ?= $(CONFIG_HFP_CPU:"%"=%)
-THUMB ?= $(CONFIG_THUMB:"%"=%)
-GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
-hostobjtree	:= $(CURDIR)/out/host/
-TOOLCHAIN_PATH ?=$(if $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CONFIG_TOOLCHAIN_PATH:"%"=%),$(join $(hostobjtree),toolchain))/bin
-sysroot=$(objtree)
-PATH:=$(PATH):$(join $(hostobjtree), bin):$(TOOLCHAIN_PATH)
-export GCC_FLAGS CROSS_COMPILE ARCH BOARD SUBARCH HFP THUMB TOOLCHAIN_PATH
+TOOLCHAIN_PATH ?=$(if $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CURDIR)/out/host/toolchain/bin)
 
 root		:= $(CURDIR)
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
@@ -45,13 +35,26 @@ obj			:=
 sysroot		:= $(objtree)/sysroot
 packagesdir	:= $(objtree)/packages
 rootfs		:= $(objtree)/rootfs
+bootdir		:= $(objtree)/boot
+homefs		:= $(objtree)/homefs
 objtree		:= $(join $(root)/,$(objtree))
 hostobjtree	:= $(join $(root)/,$(hostobjtree))
 hostbin		:= $(hostobjtree)/bin
-toolchain	:= $(CONFIG_TOOLCHAIN_PATH:"%"=%)
-toolchain	?= $(join $(hostobjtree),toolchain)
-export root srctree objtree sysroot hostobjtree
-export packagesdir rootfs hostbin toolchain
+hostlib		:= $(hostobjtree)/lib
+toolchain_path	:= $(TOOLCHAIN_PATH)
+toolchain_path	?= $(join $(hostobjtree),toolchain_path)
+export root srctree objtree sysroot 
+export hostobjtree hostbin toolchain_path
+export packagesdir rootfs bootdir homefs
+
+CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
+ARCH ?= $(CONFIG_ARCH:"%"=%)
+SUBARCH ?= $(CONFIG_SUBARCH:"%"=%)
+HFP ?= $(CONFIG_HFP_CPU:"%"=%)
+THUMB ?= $(CONFIG_THUMB:"%"=%)
+GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
+PATH:=$(hostbin):$(toolchain_path):$(PATH)
+export GCC_FLAGS CROSS_COMPILE ARCH BOARD SUBARCH HFP THUMB PATH
 
 # We need some generic definitions.
 $(srctree)/scripts/include.mk: ;
