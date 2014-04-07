@@ -1,61 +1,121 @@
 menu "image generation"
-choice 
-    prompt "ROOT files system type"
-    config UBIFS
-        bool "UbiFS"
-    config EXT2
-        bool "Ext2 fs"
-    config EXT4
-        bool "Ext4 fs"
-endchoice
+menuconfig BOOT_DISK
+	bool "boot disk"
 
-menu "Flash description"
-    depends on UBIFS
+	config BOOT_SIZE
+		int "fixed boot disk size in MiB"
+		depends on BOOT_DISK
+		default 50
+		
+	choice 
+		prompt "boot files system type"
+		depends on BOOT_DISK
+		config BOOT_UBIFS
+			bool "UbiFS"
+		config BOOT_VFAT
+			bool "vfat fs"
+		config BOOT_MSDOS
+			bool "msdos fs"
+	endchoice
+	config BOOT_FS
+		string
+		depends on BOOT_DISK
+		default ubifs if BOOT_UBIFS
+		default vfat if BOOT_VFAT
+		default msdos if BOOT_MSDOS
 
-    config MTD_PAGESIZE
-        int "Nand page size"
-        default 2048
+menuconfig ROOT_DISK
+	bool "root disk"
 
-    config MTD_SUBPAGESIZE
-        int "Nand subpage size"
-        default 512
+	config ROOT_SIZE
+		int "fixed root disk size in MiB"
+		depends on ROOT_DISK
+		default 1024
 
-    config MTD_PEB
-        int "Physical Erase Block (PEB) Size in KiB"
-        default 128
+	config ROOT_RO
+		bool
+		depends on ROOT_DISK
+		prompt "Root file system is read only"
+		
+	choice 
+		prompt "ROOT files system type"
+		depends on ROOT_DISK
+		config ROOT_UBIFS
+			bool "UbiFS"
+		config ROOT_EXT2
+			bool "Ext2 fs"
+		config ROOT_EXT4
+			bool "Ext4 fs"
+		config ROOT_SQUASH
+			bool "Squashfs"
+		config ROOT_YAFFS2
+			bool "Yaffs2"
+		config ROOT_CRAMFS
+			bool "cram fs"
+	endchoice
+	config ROOT_FS
+		string
+		depends on ROOT_DISK
+		default ubifs if ROOT_UBIFS
+		default ext2 if ROOT_EXT2
+		default ext4 if ROOT_EXT4
+		default squashfs if ROOT_SQUASH
+		default yaffs2 if ROOT_YAFFS2
+		default cramfs if ROOT_CRAMFS
 
-endmenu
+menuconfig HOME_DISK
+	bool "home independant fs"
 
-menu "Ubifs"
-    depends on UBIFS
-
-    config UBIFS_IMAGE_NAME
-        string "name of the image"
-        default "root"
-
-    config UBIFS_LEB
-        int "Logical Erase Block (LEB) Size in KiB"
-        default 126
-
-    config UBIFS_SIZE
-        int "file system size in MiB"
-        default 1024
-
-endmenu
-
+	config HOME_SIZE
+		int "fixed root disk size in MiB"
+		depends on HOME_DISK
+		default 1024
+	choice 
+		prompt "home files system type"
+		depends on HOME_DISK
+		config HOME_FAT32
+			bool "Fat32 fs"
+		config HOME_EXT2
+			bool "Ext2 fs"
+		config HOME_EXT4
+			bool "Ext4 fs"
+	endchoice
+	config HOME_FS
+		string
+		depends on HOME_DISK
+		default vfat if HOME_FAT32
+		default ext2 if HOME_EXT2
+		default ext4 if HOME_EXT4
+		
 choice
     prompt "Image file"
     config IMAGE_MMC
         bool "mmc for u-boot"
     config IMAGE_RAW
-        bool "raw image for flasher"
+        bool "raw image for flash memory"
     config IMAGE_QEMU
         bool "raw image for qemu"
 endchoice
 
-config IMAGE_SIZE
-    int "fixed image size in MiB"
-    default 1024
+menu "Flash description"
+    config MTD_PAGESIZE
+        int "Nand page size in bytes"
+        default 2048
+
+    config MTD_SUBPAGE
+        bool "Nand subpage support"
+        default y
+
+    config MTD_SUBPAGESIZE
+        int "Nand subpage size in bytes"
+        depends on MTD_SUBPAGE
+        default 512
+
+    config MTD_PEBSIZE
+        int "Physical Erase Block (PEB) Size in KiB"
+        default 128
+
+endmenu
 
 source "image/mmc/Config.in"
 
