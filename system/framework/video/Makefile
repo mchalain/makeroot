@@ -2,7 +2,7 @@ ffmpeg-version=2.1.1
 subproject-$(CONFIG_FFMPEG)+=ffmpeg
 ffmpeg-url=http://ffmpeg.org/releases/ffmpeg-$(ffmpeg-version).tar.bz2
 ffmpeg-git=git://source.ffmpeg.org/ffmpeg.git ffmpeg
-ffmpeg-config:=./configure --enable-cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --sysroot=$(root)/$(sysroot)
+ffmpeg-config:=./configure --enable-cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --sysroot=$(sysroot)
 ffmpeg-config+=--arch=$(CONFIG_ARCH:"%"=%) --target-os=linux --cpu=$(CONFIG_SUBARCH:"%"=%)
 ffmpeg-config+=--prefix=/usr --enable-shared --disable-doc --disable-stripping
 # currently neon optimization is not compatible with shared libraries

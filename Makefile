@@ -28,17 +28,17 @@ TOOLCHAIN_PATH ?=$(if $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CONFIG_TOOLCHAIN_PATH:"%"
 
 root		:= $(CURDIR)
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
-objtree		:= out/target/$(if $(BOARD),$(BOARD)/)
+objtree		:= $(strip out/target/$(if $(BOARD),$(BOARD)/))
 hostobjtree	:= out/host/
 src			:= $(srctree)
 obj			:= 
-sysroot		:= $(objtree)/sysroot
-packagesdir	:= $(objtree)/packages
-rootfs		:= $(objtree)/rootfs
-bootfs		:= $(objtree)/boot
-homefs		:= $(objtree)/homefs
-objtree		:= $(join $(root)/,$(objtree))
-hostobjtree	:= $(join $(root)/,$(hostobjtree))
+sysroot		:= $(root)/$(objtree)/sysroot
+packagesdir	:= $(root)/$(objtree)/packages
+rootfs		:= $(root)/$(objtree)/rootfs
+bootfs		:= $(root)/$(objtree)/boot
+homefs		:= $(root)/$(objtree)/homefs
+objtree		:= $(root)/$(objtree)
+hostobjtree	:= $(root)/$(hostobjtree)
 hostbin		:= $(hostobjtree)/bin
 hostlib		:= $(hostobjtree)/lib
 toolchain_path	:= $(TOOLCHAIN_PATH)

@@ -2,10 +2,10 @@
 # create directories on the target system
 
 flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) -march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
-CFLAGS:=--sysroot=$(root)/$(sysroot) $(flags_extend) $(GCC_FLAGS)
+CFLAGS:=--sysroot=$(sysroot) $(flags_extend) $(GCC_FLAGS)
 CPPFLAGS:=$(CFLAGS)
 CXXFLAGS:=$(CFLAGS)
-LDFLAGS:=--sysroot=$(root)/$(sysroot) -Wl,-rpath-link=$(root)/$(sysroot)/usr/lib/:$(root)/$(sysroot)/lib/:$(join $(root)/$(sysroot)/lib/,$(CROSS_COMPILE:%-=%)) $(flags_extend) $(GCC_FLAGS)
+LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath-link=$(sysroot)/usr/lib/:$(sysroot)/lib/:$(join $(sysroot)/lib/,$(CROSS_COMPILE:%-=%)) $(flags_extend) $(GCC_FLAGS)
 DSOFLAGS:=$(LDFLAGS)
 export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS
 
@@ -18,9 +18,9 @@ INSTALL=$(hostbin:%=%/)install
 export STRIPPROG CPPROG
 
 PKG_CONFIG=pkg-config
-PKG_CONFIG_LIBDIR:=$(root)/$(sysroot)/usr/lib/pkgconfig $(hostlib)/pkgconfig
-PKG_CONFIG_PATH:=$(root)/$(sysroot)/usr/lib/pkgconfig:$(hostlib)/pkgconfig
-PKG_CONFIG_SYSROOT_DIR:=$(root)/$(sysroot)
+PKG_CONFIG_LIBDIR:=$(sysroot)/usr/lib/pkgconfig $(hostlib)/pkgconfig
+PKG_CONFIG_PATH:=$(sysroot)/usr/lib/pkgconfig:$(hostlib)/pkgconfig
+PKG_CONFIG_SYSROOT_DIR:=$(sysroot)
 export PKG_CONFIG PKG_CONFIG_LIBDIR PKG_CONFIG_PATH PKG_CONFIG_SYSROOT_DIR
 
 config_shipped:=.config_shipped.prj
@@ -101,20 +101,20 @@ quiet_cmd_post-install-project = SYSROOT $(sprj)
 define cmd_post-install-project
 	$(foreach install-target, lib/ usr/lib/ usr/include/, \
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
-			$(eval install-dest = $(join $(root)/$(sysroot)/,$(install-target)))
-			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(root)/$(sysroot)/$(install-target); fi
+			$(eval install-dest = $(join $(sysroot)/,$(install-target)))
+			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(install-dest); fi
 		)
 	)
 	$(foreach install-target, lib/ bin/ sbin/ usr/lib/ usr/bin/ usr/sbin/ usr/libexec/, \
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
-			$(eval install-dest = $(join $(root)/$(rootfs)/,$(install-target)))
-			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(root)/$(rootfs)/$(install-target); fi
+			$(eval install-dest = $(join $(rootfs)/,$(install-target)))
+			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(install-dest); fi
 		)
 	)
 	$(foreach install-target, $(filter-out man doc %doc aclocal info pkgconfig,$(wildcard usr/share/*)),
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
-			$(eval install-dest = $(join $(root)/$(rootfs)/,$(install-target)))
-			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(root)/$(rootfs)/$(install-target); fi
+			$(eval install-dest = $(join $(rootfs)/,$(install-target)))
+			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(install-dest); fi
 		)
 	)
 endef
