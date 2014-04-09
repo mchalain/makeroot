@@ -33,6 +33,7 @@ proftpd-version=1.3.4d
 subproject-$(CONFIG_SERVER_PROFTP)+=proftpd
 proftpd-url=ftp://ftp.proftpd.org/distrib/source/proftpd-$(proftpd-version).tar.gz
 proftpd-configure-arguments:=--enable-dso --enable-nls --disable-ipv6
+proftpd-configure-arguments+=--localstatedir=/var
 ifneq ($(CONFIG_SECURITY_PAM),y)
 proftpd-configure-arguments+=--disable-auth-pam
 endif
@@ -119,6 +120,7 @@ nfs-utils-configure-arguments+=--disable-gss --disable-uuid --disable-nfsdcltrac
 endif
 install-$(CONFIG_SERVER_NFS)+=var/lib/nfs etc/exports
 var/lib/nfs:dir=y
+var/lib/nfs/rmtab:touch=y
 etc/exports:generate=/tmp/exports
 etc/exports:/tmp/exports
 /tmp/exports:
