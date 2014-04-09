@@ -19,7 +19,7 @@ root-device:=root.$(CONFIG_HOME_DEVICE:"%"=%)
 image-$(CONFIG_BOOT_DISK)+=boot
 boot-size:=$(CONFIG_BOOT_SIZE)
 boot-fstype:=$(CONFIG_BOOT_FS)
-boot-data:=$(bootdir)
+boot-data:=$(bootfs)
 boot-device:=boot.$(CONFIG_HOME_DEVICE:"%"=%)
 
 image-$(CONFIG_HOME_DISK)+=home
@@ -29,8 +29,7 @@ home-data:=$(homefs)
 home-device:=home.$(CONFIG_HOME_DEVICE:"%"=%)
 
 ifeq ($(CONFIG_IMAGE_MMC),y)
-install:
-	$(Q)$(MAKE) $(build)=image/mmc install
+include image/mmc/Makefile
 endif
 
 #	qflasher -w -m rx51 -x $QBOOTDIR/xloader-qemu.bin -s $QBOOTDIR/secondary-qemu.bin -k $KERNEL -r /tmp/nemo.ubi.img -o $QEMUDATADIR/$IMAGE -p k=3072 -p i=1024 -p r=257278 -v
