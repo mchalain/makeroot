@@ -111,7 +111,7 @@ define cmd_post-install-project
 			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(install-dest); fi
 		)
 	)
-	$(foreach install-target, $(filter-out man doc %doc aclocal info pkgconfig,$(wildcard usr/share/*)),
+	$(foreach install-target, usr/share/locale usr/share/$(sprj),
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
 			$(eval install-dest = $(join $(rootfs)/,$(install-target)))
 			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(install-dest); fi
