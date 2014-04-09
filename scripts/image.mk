@@ -58,7 +58,6 @@ define mount_loop
 	$(Q)mount $(2)
 endef
 define mount-dev
-	echo coucou
 	$(Q)sudo mount $(1) $(2)
 endef
 define umount
@@ -67,7 +66,7 @@ define umount
 endef
 define cmd_fill-loop
 	$(call $(cmd_mount),$($*-device),/tmp/image/)
-	$(call copydir,$($*-data)/,/tmp/image/)
+	$(Q)$(INSTALL) -DrpP $($*-data)/ /tmp/image/
 	$(call umount,/tmp/image/)
 endef
 
