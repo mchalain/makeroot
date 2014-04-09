@@ -167,7 +167,7 @@ $(1)-post-install: $(join $(root)/$(packagesdir)/,$(if $(filter-out git hg cvs,$
 
 .SECONDEXPANSION:
 .PHONY:$(1)
-$(1): $(packagesdir) $(sysroot) $(rootfs) $(bootdir) $(if $(wildcard $(addprefix $(obj)/.,$(1).prj)),,$(1)-post-install)
+$(1): $(packagesdir) $(sysroot) $(rootfs) $(bootfs) $(if $(wildcard $(addprefix $(obj)/.,$(1).prj)),,$(1)-post-install)
 	$(Q)touch $(addprefix $(obj)/.,$(1).prj)
 endef
 $(foreach subproject, $(subproject-y),$(eval $(call do-project,$(subproject))))

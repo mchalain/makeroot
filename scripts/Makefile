@@ -165,7 +165,7 @@ __build: $(subdir-ym) $(targets) $(extra-y) \
 	 $(subproject-y) $(install-y) $(image-target)
 	@:
 
-$(rootfs) $(packagesdir) $(sysroot) $(bootdir) $(homefs) $(hostbin):
+$(rootfs) $(packagesdir) $(sysroot) $(bootfs) $(homefs) $(hostbin) $(host-objdirs) $(hostlib) $(hostlib)/pkgconfig:
 	mkdir -p $@
 
 # Declare the contents of the .PHONY variable as phony.  We keep that

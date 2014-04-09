@@ -35,7 +35,7 @@ obj			:=
 sysroot		:= $(objtree)/sysroot
 packagesdir	:= $(objtree)/packages
 rootfs		:= $(objtree)/rootfs
-bootdir		:= $(objtree)/boot
+bootfs		:= $(objtree)/boot
 homefs		:= $(objtree)/homefs
 objtree		:= $(join $(root)/,$(objtree))
 hostobjtree	:= $(join $(root)/,$(hostobjtree))
@@ -45,7 +45,7 @@ toolchain_path	:= $(TOOLCHAIN_PATH)
 toolchain_path	?= $(join $(hostobjtree),toolchain_path)
 export root srctree objtree sysroot 
 export hostobjtree hostbin toolchain_path
-export packagesdir rootfs bootdir homefs
+export packagesdir rootfs bootfs homefs
 
 CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
 ARCH ?= $(CONFIG_ARCH:"%"=%)
@@ -104,6 +104,9 @@ init: system/init
 	$(Q)$(MAKE) $(build)=$<
 egl: system/lowlevel/graphics/egl
 	$(Q)$(MAKE) $(build)=$<
+
+install:
+	$(Q)$(MAKE) $(build)=image install
 
 bootloader: FORCE
 	$(Q)$(MAKE) $(build)=$@
