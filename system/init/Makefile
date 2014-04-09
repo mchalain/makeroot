@@ -17,7 +17,7 @@ install-$(CONFIG_INIT_MAKEROOT)+=etc/init.d/modprobe
 etc/init.d/modprobe: copy=$(src)/imrscripts/modprobe
 etc/init.d/modprobe: chmod:=744
 
-install-$(CONFIG_SERVER_RCP)+=etc/init.d/portmap
+install-$(CONFIG_SERVER_RPC)+=etc/init.d/portmap
 etc/init.d/portmap: copy=$(src)/imrscripts/portmap
 etc/init.d/portmap: chmod:=744
 
