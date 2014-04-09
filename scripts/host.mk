@@ -136,9 +136,6 @@ hostcxx_flags  = -Wp,-MD,$(depfile) $(__hostcxx_flags)
 quiet_cmd_hostcopy = HOSTCOPY $@
       cmd_hostcopy = cp $< $@
 
-$(host-objdirs) $(hostbin) $(hostlib) $(hostlib)/pkgconfig:
-	mkdir -p $@
-
 $(sdk-pkgconfig): $(hostlib)/pkgconfig/%: $(hostlib)/pkgconfig %
 	mv $* $@
 
