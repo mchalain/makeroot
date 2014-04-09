@@ -2,7 +2,10 @@ termcap-version=1.3.1
 subproject-$(CONFIG_TOOLS_GDB)+=termcap
 termcap-url=ftp://ftp.gnu.org/gnu/termcap/termcap-$(termcap-version).tar.gz
 termcap-config=./configure  --target=$(CROSS_COMPILE:%-=%) --host=$(CROSS_COMPILE:%-=%) CC=$(CROSS_COMPILE:%-=%)-gcc --prefix=/usr/local
-termcap-install=cp libtermcap.a $(sysroot)/usr/lib; cp libtermcap.a $(rootfs)/usr/local/lib; cp termcap.h $(sysroot)/usr/include
+termcap-install= \
+	rm -rf $(sprj-destdir)/usr && \
+	$(INSTALL) -D libtermcap.a $(sprj-destdir)/usr/lib/ && \
+	$(INSTALL) -D termcap.h $(sprj-destdir)/usr/include/
 
 gdb-version=7.6
 subproject-$(CONFIG_TOOLS_GDB)+=gdb

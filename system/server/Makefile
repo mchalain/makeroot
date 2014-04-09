@@ -64,12 +64,11 @@ tcp_wrappers-makeflags:=\
 	AUX_OBJ=weak_symbols.o \
 	NETGROUP="-DNETGROUP"  \
 	EXTRA_CFLAGS="$(tcp_wrappers-CFLAGS) $(CFLAGS)"
-tcp_wrappers-install:=cp libwrap.a $(sysroot)/usr/lib && \
-	cp libwrap.so* $(sysroot)/usr/lib && \
-	cp tcpd.h $(sysroot)/usr/include && \
-	cp libwrap.a $(rootfs)/usr/lib && \
-	cp libwrap.so* $(rootfs)/usr/lib && \
-	cp safe_finger tcpd tcpdchk tcpdmatch try-from $(rootfs)/usr/bin
+tcp_wrappers-install:= \
+	$(INSTALL) -D     libwrap.a $(sprj-destdir)/usr/lib/ && \
+	$(INSTALL) -DrpP  libwrap.so* $(sprj-destdir)/usr/lib && \
+	$(INSTALL) -D     tcpd.h $(sprj-destdir)/usr/include/tcpd.h && \
+	$(INSTALL) -D     safe_finger tcpd tcpdchk tcpdmatch try-from $(sprj-destdir)/usr/bin/safe_finger
 download-$(CONFIG_SERVER_TCPW)+=hosts.allow
 hosts.allow-url:=http://svnweb.freebsd.org/base/head/etc/hosts.allow?view=co
 install-$(CONFIG_SERVER_TCPW)+=etc/hosts.allow
@@ -118,6 +117,12 @@ endif
 ifneq ($(CONFIG_SECURITY_GSS),y)
 nfs-utils-configure-arguments+=--disable-gss --disable-uuid --disable-nfsdcltrack
 endif
+install-$(CONFIG_SERVER_NFS)+=var/lib/nfs etc/exports
+var/lib/nfs:dir=y
+etc/exports:generate=/tmp/exports
+etc/exports:/tmp/exports
+/tmp/exports:
+	@echo "/home $(CONFIG_IPADDRESS)(rw,sync)" > $@
 
 cifs-utils-version=6.3
 subproject-$(CONFIG_SERVER_SMB)+=cifs-utils
@@ -184,10 +189,12 @@ ushare-version=1.1a
 subproject-$(CONFIG_SERVER_USHARE)+=ushare
 ushare-url=http://ushare.geexbox.org/releases/ushare-$(ushare-version).tar.bz2
 ushare-hg=http://hg.geexbox.org/ushare
-ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --prefix=/usr --sysconfdir=/etc --disable-strip --enable-debug
+ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --disable-strip --enable-debug
 ifeq ($(LIBDLNA),y)
 ushare-config+=--enable-dlna
 endif
+install-$(CONFIG_SERVER_USHARE)+=etc/ushare.conf
+etc/ushare.conf:copy=$(packagesdir)/ushare-$(ushare-version)/etc/ushare.conf
 
 mediatomb-version=0.12.1
 subproject-$(CONFIG_SERVER_MEDIATOMB)+=mediatomb
