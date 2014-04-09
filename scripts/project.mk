@@ -148,20 +148,20 @@ $(1)-build: $(1)-configure
 .PHONY:$(1)-install
 $(1)-install: $(1)-build
 
-$(join $(root)/$(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))): $(1)-build
+$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))): $(1)-build
 	$(eval sprj:=$(1))
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
 	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
-	$(eval sprj-destdir:=$(join $(root)/$(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
+	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
 	$(Q)$(call multicmd,install-project)
 
 .ONESHELL:$(1)-post-install
 .SECONDEXPANSION:
 .PHONY:$(1)-post-install
-$(1)-post-install: $(join $(root)/$(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1)))
+$(1)-post-install: $(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1)))
 	$(eval sprj:=$(1))
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
-	$(eval sprj-destdir:=$(join $(root)/$(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
+	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
 	$(Q)$(call multicmd,post-install-project)
 			 
 
