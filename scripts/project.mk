@@ -105,7 +105,7 @@ define cmd_post-install-project
 			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(root)/$(sysroot)/$(install-target); fi
 		)
 	)
-	$(foreach install-target, lib/ bin/ usr/lib/ usr/bin/ usr/libexec/, \
+	$(foreach install-target, lib/ bin/ sbin/ usr/lib/ usr/bin/ usr/sbin/ usr/libexec/, \
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
 			$(eval install-dest = $(join $(root)/$(rootfs)/,$(install-target)))
 			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(root)/$(rootfs)/$(install-target); fi
