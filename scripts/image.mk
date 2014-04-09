@@ -88,6 +88,16 @@ display-devices:
 %.disk:
 	$(call multicmd,mkemptyfile)
 
+%.mmc:cmd_mount:=mount-dev
+%.mmc:
+	$(eval cmd_mount=mount-dev)
+	$(if $(wildcard $(flash_device)),,echo "$(flash_device) not found" && exit 1)
+	$(if $(wildcard $(flash_device)1),,echo "$(flash_device)1 not found" && exit 1)
+	$(if $(wildcard $(flash_device)2),,echo "$(flash_device)2 not found" && exit 1)
+	$(eval boot-device:=$(flash_device)1)
+	$(eval root-device:=$(flash_device)2)
+	$(eval home-device:=$(flash_device)3)
+
 .SECONDEXPANSION:
 $(objtree)/%.fs: $$($$*-device)
 	$(call multicmd,mkfs)
