@@ -37,6 +37,7 @@ menuconfig BOOT_DISK
 	config BOOT_DEVICE
 		string "device to create file system"
 		depends on BOOT_DISK
+		default "mmc" if IMAGE_MMC
 		default "disk" if IMAGE_RAW
 		default "request"
 
@@ -82,6 +83,7 @@ menuconfig ROOT_DISK
 	config ROOT_DEVICE
 		string "device to create file system"
 		depends on ROOT_DISK
+		default "mmc" if IMAGE_MMC
 		default "disk" if IMAGE_RAW
 		default "request"
 
