@@ -1,4 +1,14 @@
 menu "image generation"
+choice
+    prompt "Image file"
+    config IMAGE_MMC
+        bool "mmc for u-boot"
+    config IMAGE_RAW
+        bool "raw image for flash memory"
+    config IMAGE_QEMU
+        bool "raw image for qemu"
+endchoice
+
 menuconfig BOOT_DISK
 	bool "boot disk"
 
@@ -23,6 +33,12 @@ menuconfig BOOT_DISK
 		default ubifs if BOOT_UBIFS
 		default vfat if BOOT_VFAT
 		default msdos if BOOT_MSDOS
+
+	config BOOT_DEVICE
+		string "device to create file system"
+		depends on BOOT_DISK
+		default "disk" if IMAGE_RAW
+		default "request"
 
 menuconfig ROOT_DISK
 	bool "root disk"
@@ -63,6 +79,12 @@ menuconfig ROOT_DISK
 		default yaffs2 if ROOT_YAFFS2
 		default cramfs if ROOT_CRAMFS
 
+	config ROOT_DEVICE
+		string "device to create file system"
+		depends on ROOT_DISK
+		default "disk" if IMAGE_RAW
+		default "request"
+
 menuconfig HOME_DISK
 	bool "home independant fs"
 
@@ -86,16 +108,12 @@ menuconfig HOME_DISK
 		default vfat if HOME_FAT32
 		default ext2 if HOME_EXT2
 		default ext4 if HOME_EXT4
-		
-choice
-    prompt "Image file"
-    config IMAGE_MMC
-        bool "mmc for u-boot"
-    config IMAGE_RAW
-        bool "raw image for flash memory"
-    config IMAGE_QEMU
-        bool "raw image for qemu"
-endchoice
+
+	config HOME_DEVICE
+		string "device to create file system"
+		depends on HOME_DISK
+		default "disk" if IMAGE_RAW
+		default "request"
 
 menu "Flash description"
     config MTD_PAGESIZE
@@ -117,6 +135,6 @@ menu "Flash description"
 
 endmenu
 
-source "image/mmc/Config.in"
+#source "image/mmc/Config.in"
 
 endmenu

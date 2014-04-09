@@ -5,26 +5,26 @@ sizeKb:=1000
 blocksize=512
 
 define cmd_mkfs-msdos
-	$(call multicmd,mkemptyfile)
-	$(Q)/sbin/mkfs.msdos -F 32 -n $* -S $(blocksize) $(objtree)/$*.disk
+	$(Q)/sbin/mkfs.msdos -F 32 -n $* -S $(blocksize) $($*-device)
 	$(call multicmd,fill-loop)
 endef
 
 define cmd_mkfs-vfat
-	$(call multicmd,mkemptyfile)
-	$(Q)/sbin/mkfs.vfat -n $* -S $(blocksize) $(objtree)/$*.disk
+	$(Q)/sbin/mkfs.vfat -n $* -S $(blocksize) $($*-device)
 	$(call multicmd,fill-loop)
 endef
 
 define cmd_mkfs-ext4
-	$(call multicmd,mkemptyfile)
-	$(Q)/sbin/mkfs.ext4 -F -L $* -q $(objtree)/$*.disk
+	$(Q)/sbin/mkfs.ext4 -F -L $* -q $($*-device)
 	$(call multicmd,fill-loop)
 endef
 
 define cmd_mkfs-cramfs
 	$(Q)/sbin/mkfs.cramfs -b $(mtd-pagesize) -n $* $($*-data)/ $@
 endef
+
+/dev/%:PHONY+=/dev/%
+.PHONY:$(PHONY)
 
 quiet_cmd_mkfs = MKFS $*
 define cmd_mkfs
@@ -54,21 +54,45 @@ tmpdir:
 define mount_loop
 	$(Q)rm -rf /tmp/image.iso
 	$(Q)ln -s $(1) /tmp/image.iso
-	$(if $(wildcard /tmp/image),,$(Q)mkdir /tmp/image)
-	$(Q)mount /tmp/image
+	$(if $(wildcard $(2)),,$(Q)mkdir $(2))
+	$(Q)mount $(2)
+endef
+define mount-dev
+	echo coucou
+	$(Q)sudo mount $(1) $(2)
 endef
 define umount
-	$(Q)sudo umount -f /tmp/image
+	$(Q)sync
+	$(Q)sudo umount -f $(1)
 endef
 define cmd_fill-loop
-	$(call mount_loop,$(objtree)/$*.disk)
+	$(call $(cmd_mount),$($*-device),/tmp/image/)
 	$(call copydir,$($*-data)/,/tmp/image/)
-	$(call umount)
-	$(Q)mv $(objtree)/$*.disk $@
+	$(call umount,/tmp/image/)
 endef
 
-$(objtree)/%.fs:
-	$(call multicmd,mkfs)
+/dev/%:cmd_mount:=mount
+
+.PHONY:display-devices
+display-devices:
+	@echo For $*
+	$(eval devices:=$(wildcard /dev/sd[a,b,c,d,e,f]))
+	@$(foreach device,$(devices),echo '	'$(device): $(wildcard $(device)*);)
+
+%.request:cmd_mount:=mount-dev
+%.request:display-devices
+	$(eval cmd_mount=mount-dev)
+	$(eval $*-device=$(shell read -p 'select the device file descriptor for $* : ' DEVICE; echo $$DEVICE))
+
+%.disk:cmd_mount:=mount-loop
+%.disk:
+	$(call multicmd,mkemptyfile)
 
 .SECONDEXPANSION:
+$(objtree)/%.fs: $$($$*-device)
+	$(call multicmd,mkfs)
+
 $(sort $(image-target)):$(objtree)/%.img:$(objtree)/%.fs
+
+$(objtree)/device.img:
+	
