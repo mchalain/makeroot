@@ -108,9 +108,6 @@ egl: system/lowlevel/graphics/egl
 install:
 	$(Q)$(MAKE) $(build)=image install
 
-bootloader: FORCE
-	$(Q)$(MAKE) $(build)=$@
-
 .PHONY:test
 test:
 	$(Q)$(MAKE) $(build)=$@
