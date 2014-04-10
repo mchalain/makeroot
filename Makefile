@@ -85,7 +85,7 @@ $(objtree)/auto.conf: $(CONFIG_FILE)
 	$(Q)mkdir -p $(dir $@)
 	$(Q)cp $(CONFIG_FILE) $@
 
-SUBDIRS +=tools bootloader kernel system image
+SUBDIRS +=tools bootloader kernel system custom image
 ifeq ($(CONFIG_TOOLCHAIN_INSTALL),y)
 all: toolchain $(SUBDIRS)
 toolchain:
