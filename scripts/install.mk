@@ -48,10 +48,11 @@ define cmd_install
 endef
 
 install-subdirs:=$(sort $(filter-out $(addsuffix /,$(install-y:%/=%)),$(filter-out ./,$(dir $(install-y)))))
-$(install-subdirs): $(rootfs)
+$(install-subdirs): $(rootfs) FORCE
 	$(eval install-dest = $(rootfs))
 	$(if $(wildcard $(rootfs)/$@),,$(eval install-target = $@) $(call cmd,mkdir))
 
-$(sort $(install-y)): $(install-subdirs)
+force:=n
+$(sort $(install-y)): %: $(install-subdirs)
 	$(eval install-dest = $(rootfs))
-	$(if $(wildcard $(rootfs)/$@),,$(call multicmd,install))
+	$(if $(and $(wildcard $(rootfs)/$@),$(findstring n,$(force))),,$(call multicmd,install))
