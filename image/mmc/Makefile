@@ -1,1 +1,1 @@
-flash_device:=$(CONFIG_MMC_DEVICE:"%"=%)
+flash_device:=/dev/$(CONFIG_MMC_HOSTDEVICE:"%"=%)
