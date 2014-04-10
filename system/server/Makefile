@@ -86,20 +86,20 @@ libtirpc-configure-arguments+=--disable-gssapi
 endif
 
 rpcbind-version:=0.2.1
-subproject-$(CONFIG_SERVER_RCP)+=rpcbind
+subproject-$(CONFIG_SERVER_RPC)+=rpcbind
 rpcbind-url:=sourceforge.net/projects/rpcbind/files/rpcbind/$(rpcbind-version)/rpcbind-$(rpcbind-version).tar.bz2
 rpcbind-configure-arguments:=--bindir=/sbin --with-rpcuser=root
 ifeq ($(CONFIG_SERVER_TCPW),y)
 rpcbind-configure-arguments+=--enable-libwrap
 endif
-download-$(CONFIG_SERVER_RCP)+=services
+download-$(CONFIG_SERVER_RPC)+=services
 services-url:=http://svnweb.freebsd.org/base/head/etc/services?view=co
-install-$(CONFIG_SERVER_RCP)+=etc/services
+install-$(CONFIG_SERVER_RPC)+=etc/services
 etc/services:copy=$(src)/services
 etc/services:$(src)/services
-download-$(CONFIG_SERVER_RCP)+=rpc
+download-$(CONFIG_SERVER_RPC)+=rpc
 rpc-url:=http://svnweb.freebsd.org/base/head/etc/rpc?view=co
-install-$(CONFIG_SERVER_RCP)+=etc/rpc
+install-$(CONFIG_SERVER_RPC)+=etc/rpc
 etc/rpc:copy=$(src)/rpc
 etc/rpc:$(src)/rpc
 
