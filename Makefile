@@ -1,3 +1,6 @@
+MAKEROOT_NAME:=makeroot
+export MAKEROOT_NAME
+
 DPRINT=@echo
 
 CURDIR=$(shell pwd)
