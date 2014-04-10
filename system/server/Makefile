@@ -84,6 +84,8 @@ libtirpc-configure-arguments:=--disable-static
 ifneq ($(CONFIG_SECURITY_GSS),y)
 libtirpc-configure-arguments+=--disable-gssapi
 endif
+install-$(CONFIG_SERVER_RPC)+=etc/netconfig
+etc/netconfig:copy=$(packagesdir)/libtirpc-$(libtirpc-version)/etc/netconfig
 
 rpcbind-version:=0.2.1
 subproject-$(CONFIG_SERVER_RPC)+=rpcbind
