@@ -30,6 +30,13 @@ case "$1" in
   "nak")
     exit 0
     ;;
+  "check")
+    ifconfig eth0 | grep "inet addr" > /dev/null
+    if [ ! $? ]; then
+      sleep 5
+    fi
+    exit 0
+    ;;
   ""|"start")
     interface=eth0
     . /etc/network/$interface.conf
@@ -54,9 +61,10 @@ case "$ip" in
     /sbin/dhcpcd $DHCPOPTS $interface
     ;;
   "udhcpc")
+    [ $hostname ] && $HOSTNAMEBIN $hostname
     DHCPOPTS="-b -s $0"
-    [ $hostname ] && DHCPOPTS="$DHCPOPTS -H $hostname"
-    /sbin/uhcpc $DHCPOPTS -i $interface
+    [ $hostname ] && DHCPOPTS="$DHCPOPTS -x hostname:$hostname"
+    /sbin/udhcpc $DHCPOPTS -i $interface
     ;;
   *)
     [ -n "$subnet" ] && NETMASK="netmask $subnet"
@@ -66,10 +74,13 @@ case "$ip" in
       BROADCAST=`$IPMASK $subnet $ip | cut -f1 -d' '`
       BROADCAST="broadcast $BROADCAST"
     fi
-    echo $IFCONFIG $interface $ip $BROADCAST $NETMASK
     $IFCONFIG $interface $ip $BROADCAST $NETMASK
-    $HOSTNAMEBIN $hostname
-    echo $ip $hostname >> $HOSTS
+    if [ "$hostname" == "" ]; then
+      hostname=`$HOSTNAMEBIN`
+    else
+      $HOSTNAMEBIN $hostname
+    fi
+    echo $ip `$HOSTNAMEBIN` >> $HOSTS
   ;;
 esac
 
