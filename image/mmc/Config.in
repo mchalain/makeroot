@@ -1,6 +1,9 @@
+menu "mmc iformation"
+	
 config MMC_HOSTDEVICE
     string "mmc device path onto host"
     default "mmcblk0"
-config_MMC_DEVICE
+config MMC_DEVICE
     string "mmc device path onto target"
     default "mmcblk1"
+endmenu
