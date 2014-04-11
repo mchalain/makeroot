@@ -194,7 +194,7 @@ subproject-$(CONFIG_SERVER_USHARE)+=ushare
 ushare-url=http://ushare.geexbox.org/releases/ushare-$(ushare-version).tar.bz2
 ushare-hg=http://hg.geexbox.org/ushare
 ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --disable-strip --enable-debug
-ifeq ($(LIBDLNA),y)
+ifeq ($(CONFIG_SERVER_LIBDLNA),y)
 ushare-config+=--enable-dlna
 endif
 install-$(CONFIG_SERVER_USHARE)+=etc/ushare.conf
