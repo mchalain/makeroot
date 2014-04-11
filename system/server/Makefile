@@ -33,7 +33,7 @@ proftpd-version=1.3.4d
 subproject-$(CONFIG_SERVER_PROFTP)+=proftpd
 proftpd-url=ftp://ftp.proftpd.org/distrib/source/proftpd-$(proftpd-version).tar.gz
 proftpd-configure-arguments:=--enable-dso --enable-nls --disable-ipv6
-proftpd-configure-arguments+=--localstatedir=/var
+proftpd-configure-arguments+=--localstatedir=/var/run
 ifneq ($(CONFIG_SECURITY_PAM),y)
 proftpd-configure-arguments+=--disable-auth-pam
 endif
