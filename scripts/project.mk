@@ -90,7 +90,7 @@ define cmd_install-project
 		$(if $(sprj-mkinstall),
 			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkinstall) install,
 			$(if $$(wildcard  $(sprj-src)/Makefile),
-				$(Q)$(MAKE)  $(sprj-makeflags) INSTALL=$(install_tool) MAKEFLAGS= PREFIX=$(sprj-destdir) DESTDIR=$(sprj-destdir) DSTROOT=$(sprj-destdir) -C $(sprj-src) install,
+				$(Q)$(MAKE)  $(sprj-makeflags) INSTALL=$(install_tool) MAKEFLAGS= DESTDIR=$(sprj-destdir) DSTROOT=$(sprj-destdir) -C $(sprj-src) install,
 				$(Q)echo "no build script found inside $(sprj-src)" && exit 1
 			)
 		)
