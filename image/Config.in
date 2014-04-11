@@ -1,9 +1,19 @@
 menu "image generation"
+config MMC_INFO
+	bool
+config FLASH_INFO
+	bool
 choice
     prompt "Image file"
     config IMAGE_MMC
         bool "mmc for u-boot"
+        select MMC_INFO
+    config IMAGE_EMMC
+        bool "embedded mmc for u-boot"
+        select FLASH_INFO
+        select MMC_INFO
     config IMAGE_RAW
+        select FLASH_INFO
         bool "raw image for flash memory"
     config IMAGE_QEMU
         bool "raw image for qemu"
@@ -11,6 +21,11 @@ endchoice
 
 menuconfig BOOT_DISK
 	bool "boot disk"
+
+	config BOOT_DISK_PARTNUM
+		int "boot partition number"
+		depends on BOOT_DISK
+		default 1
 
 	config BOOT_SIZE
 		int "fixed boot disk size in MiB"
@@ -37,12 +52,17 @@ menuconfig BOOT_DISK
 	config BOOT_DEVICE
 		string "device to create file system"
 		depends on BOOT_DISK
-		default "mmc" if IMAGE_MMC
 		default "disk" if IMAGE_RAW
+		default "mmc" if IMAGE_MMC
 		default "request"
 
 menuconfig ROOT_DISK
 	bool "root disk"
+
+	config ROOT_DISK_PARTNUM
+		int "root partition number"
+		depends on ROOT_DISK
+		default 2
 
 	config ROOT_SIZE
 		int "fixed root disk size in MiB"
@@ -83,8 +103,8 @@ menuconfig ROOT_DISK
 	config ROOT_DEVICE
 		string "device to create file system"
 		depends on ROOT_DISK
-		default "mmc" if IMAGE_MMC
 		default "disk" if IMAGE_RAW
+		default "mmc" if IMAGE_MMC
 		default "request"
 
 menuconfig HOME_DISK
@@ -117,6 +137,7 @@ menuconfig HOME_DISK
 		default "disk" if IMAGE_RAW
 		default "request"
 
+if FLASH_INFO
 menu "Flash description"
     config MTD_PAGESIZE
         int "Nand page size in bytes"
@@ -134,9 +155,11 @@ menu "Flash description"
     config MTD_PEBSIZE
         int "Physical Erase Block (PEB) Size in KiB"
         default 128
-
 endmenu
+endif
 
-#source "image/mmc/Config.in"
+if MMC_INFO
+source "image/mmc/Config.in"
+endif
 
 endmenu
