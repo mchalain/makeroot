@@ -12,19 +12,19 @@ mtd-pebsize:=$(CONFIG_MTD_PEBSIZE)
 
 image-$(CONFIG_ROOT_DISK)+=root
 root-size:=$(CONFIG_ROOT_SIZE)
-root-fstype:=$(CONFIG_ROOT_FS)
+root-fstype:=$(CONFIG_ROOT_FS:"%"=%)
 root-data:=$(rootfs)
 root-device:=root.$(CONFIG_ROOT_DEVICE:"%"=%)
 
 image-$(CONFIG_BOOT_DISK)+=boot
 boot-size:=$(CONFIG_BOOT_SIZE)
-boot-fstype:=$(CONFIG_BOOT_FS)
+boot-fstype:=$(CONFIG_BOOT_FS:"%"=%)
 boot-data:=$(bootfs)
 boot-device:=boot.$(CONFIG_BOOT_DEVICE:"%"=%)
 
 image-$(CONFIG_HOME_DISK)+=home
 home-size:=$(CONFIG_HOME_SIZE)
-home-fstype:=$(CONFIG_HOME_FS)
+home-fstype:=$(CONFIG_HOME_FS:"%"=%)
 home-data:=$(homefs)
 home-device:=home.$(CONFIG_HOME_DEVICE:"%"=%)
 
