@@ -3,6 +3,7 @@ source "system/init/Config.in"
 source "system/lowlevel/Config.in"
 source "system/framework/Config.in"
 source "system/server/Config.in"
+source "system/disk/Config.in"
 menuconfig DEV
 	bool "Development tools"
 if DEV

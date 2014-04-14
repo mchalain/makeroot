@@ -8,6 +8,8 @@ subdir-y+=$(src)/lowlevel
 
 subdir-y+=$(src)/framework
 
+subdir-y+=$(src)/disk
+
 subdir-y+=$(src)/server
 
 subdir-y+=$(src)/lowlevel/graphics
