@@ -1,0 +1,5 @@
+menu "disk tools"
+config MKFS_EXT2
+	bool "ext2/3/4 file system tools"
+	
+endmenu
