@@ -1,0 +1,22 @@
+diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
+index 5893abb..19bae4a 100644
+--- a/drivers/crypto/ux500/cryp/cryp_core.c
++++ b/drivers/crypto/ux500/cryp/cryp_core.c
+@@ -543,7 +543,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
+ 					     ctx->device->dma.sg_src,
+ 					     ctx->device->dma.sg_src_len,
+ 					     direction,
+-					     DMA_CTRL_ACK);
++					     DMA_CTRL_ACK, NULL);
+ 		break;
+ 
+ 	case DMA_FROM_DEVICE:
+@@ -569,7 +569,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
+ 					     ctx->device->dma.sg_dst_len,
+ 					     direction,
+ 					     DMA_CTRL_ACK |
+-					     DMA_PREP_INTERRUPT);
++					     DMA_PREP_INTERRUPT, NULL);
+ 
+ 		desc->callback = cryp_dma_out_callback;
+ 		desc->callback_param = ctx;
