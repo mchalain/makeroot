@@ -1,0 +1,6 @@
+menu "Multimedia"
+config MM_MPD
+	bool "mpd - Music Player daemon"
+	depends on FW_GLIB
+
+endmenu
