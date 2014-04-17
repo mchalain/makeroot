@@ -32,7 +32,7 @@ config SERVER_LIBDLNA
 	bool "DLNA library framework"
 	help
 		http://libdlna.geexbox.org/
-	depends on FFMPEG
+	depends on FW_VIDEO_FFMPEG
 
 config SERVER_LIBUPNP_OLD
 	bool "Universable Plug and Play framework"
