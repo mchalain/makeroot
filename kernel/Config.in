@@ -12,7 +12,6 @@ choice
     config LINUX_LINARO
         bool "Linux from Linaro Team"
         select LINUX
-        select LINUX_LINARO
 
     config LINUX_CUSTOM
         bool "customized Linux "
@@ -48,8 +47,7 @@ config KERNEL
 config KERNEL_VERSION
     string
     depends on LINUX
-    prompt "kernel version number" if LINUX_LINARO_RELEASE_LATEST
-    prompt "kernel version number" if LINUX_CUSTOM
+    prompt "kernel version number" if LINUX_LINARO_RELEASE_LATEST || LINUX_CUSTOM
     default "3.7.1" if LINUX_STD
     default "git" if LINUX_LINARO_TRACKING
     default "3.8-2013.02" if LINUX_LINARO_RELEASE_13_02
@@ -85,8 +83,28 @@ config KERNEL_DEFCONFIG
 
 config KERNEL_IMAGE
     string "kernel image name"
+    default "uImage" if U_IMAGE
     default "zImage"
-    depends on !U_IMAGE
+
+config KERNEL_RAMADDR
+	hex "Kernel RAM address loading"
+	default 0x00100000 if BOARD_SNOWBALL
+
+menu "Kernel boot configuration"
+config KERNEL_CMDLINE_1
+	string "Command Line"
+	default "vmalloc=300M mem=128M@0 mali.mali_mem=32M@128M hwmem=168M@160M" if BOARD_SNOWBALL
+	default ""
+
+config KERNEL_CMDLINE_2
+	string "Command Line continue"
+	default "mem=48M@328M mem_issw=1M@383M mem=640M@384M" if BOARD_SNOWBALL
+	default ""
+
+config KERNEL_CMDLINE_3
+	string "Command Line continue"
+	default ""
+endmenu
 
 config BOOTDIR
     string

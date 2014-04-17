@@ -1,3 +1,4 @@
+menu "Bootloader configuration"
 config U_IMAGE
     bool
 
@@ -16,7 +17,10 @@ config U_BOOT_VERSION
 config U_BOOT_TARGET
 	string "the SoC target name"
 	depends on U_BOOT
-	default "snowball" if BOARD_SNOWBALL
 	default BOARD_NAME
 
-    
+config U_BOOT_SCRIPT
+	bool "u-boot script generation"
+	depends on U_BOOT
+	default y
+endmenu
