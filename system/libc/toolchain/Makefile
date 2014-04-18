@@ -12,7 +12,7 @@ install-header:  $(toolchain)/$(arch)/libc/usr/include
 	$(Q)$(INSTALL) -DrpP $(toolchain)/$(arch)/libc/usr/include/* $(DESTDIR:%=%/)/usr/include
 	$(Q)rm -rf $(DESTDIR:%=%/)/usr/include/sys
 	$(Q)$(INSTALL) -d $(DESTDIR:%=%/)/usr/include/sys
-	$(Q)$(INSTALL) -DrpP $(toolchain)/$(arch)/libc/usr/include/sys/* $(DESTDIR:%=%/)/usr/include/sys
+	$(Q)$(INSTALL) -DrpP $(toolchain)/$(arch)/libc/usr/include/$(cross_compile)/sys/* $(DESTDIR:%=%/)/usr/include/sys
 
 .PHONY:install-lib
 install-lib: $(toolchain)/$(arch)/libc/lib/ $(toolchain)/$(arch)/libc/usr/lib/
