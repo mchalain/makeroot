@@ -94,7 +94,7 @@ all: toolchain $(SUBDIRS)
 toolchain:
 	$(Q)$(MAKE) $(build)=tools/gcc
 else
-all: tools $(SUBDIRS)
+all: $(SUBDIRS)
 endif
 
 tree: system/tree
