@@ -96,27 +96,26 @@ toolchain:
 else
 all: $(SUBDIRS)
 endif
+install: target:="force-install=y install"
+install: $(SUBDIRS)
 
 tree: system/tree
-	$(Q)$(MAKE) $(build)=$<
+	$(Q)$(MAKE) $(build)=$< $(target)
 libc: system/libc
-	$(Q)$(MAKE) $(build)=$<
+	$(Q)$(MAKE) $(build)=$< $(target)
 base: system/base
-	$(Q)$(MAKE) $(build)=$<
+	$(Q)$(MAKE) $(build)=$< $(target)
 init: system/init
-	$(Q)$(MAKE) $(build)=$<
+	$(Q)$(MAKE) $(build)=$< $(target)
 egl: system/lowlevel/graphics/egl
-	$(Q)$(MAKE) $(build)=$<
-
-install:
-	$(Q)$(MAKE) $(build)=image install
+	$(Q)$(MAKE) $(build)=$< $(target)
 
 .PHONY:test
 test:
-	$(Q)$(MAKE) $(build)=$@
+	$(Q)$(MAKE) $(build)=$@ $(target)
 
 PHONY += $(SUBDIRS)  test
 $(SUBDIRS): FORCE
-	$(Q)$(MAKE) $(build)=$@
+	$(Q)$(MAKE) $(build)=$@ $(target)
 
 FORCE:;

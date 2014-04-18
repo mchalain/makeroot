@@ -159,7 +159,7 @@ $(1): $(packagesdir) $(sysroot) $(rootfs) $(bootfs) $(if $(wildcard $(sprj-destd
 	$(eval sprj:=$(1))
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
 	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
-	$$(if $$(wildcard $(sprj-destdir)/.post-install),$$(call multicmd,post-install-project))
+	$$(if $(force-install) $$(wildcard $(sprj-destdir)/.post-install),$$(call multicmd,post-install-project))
 	$$(if $$(wildcard $(sprj-destdir)/.post-install),$(Q)rm $(sprj-destdir)/.post-install)
 endef
 $(foreach subproject, $(subproject-y),$(eval $(call do-project,$(subproject))))

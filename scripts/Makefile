@@ -164,6 +164,10 @@ __build: $(subdir-ym) $(targets) $(extra-y) \
 	 $(subproject-y) $(install-y) $(image-target)
 	@:
 
+install: $(subdir-ym) $(targets) $(extra-y) \
+	 $(subproject-y) $(install-y) $(image-target)
+	@:
+
 $(rootfs) $(packagesdir) $(sysroot) $(bootfs) $(homefs) $(hostbin) $(host-objdirs) $(hostlib) $(hostlib)/pkgconfig:
 	mkdir -p $@
 
