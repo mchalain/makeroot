@@ -7,6 +7,7 @@ ifeq ($(findstring ux500,$(u-boot-version)),ux500)
 u-boot-git:=https://github.com/igloocommunity/u-boot-ux500.git
 u-boot-version=git
 else
+u-boot-version=git
 u-boot-git:=git://www.denx.de/git/u-boot.git
 endif
 u-boot:=$(CONFIG_U_BOOT_TARGET:"%"=%)_config
