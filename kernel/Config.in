@@ -1,8 +1,5 @@
 menu "Kernel Configuration"
 
-config LINUX
-    bool
-
 choice
     prompt "Kernel version"
     config LINUX_STD
@@ -13,10 +10,13 @@ choice
         bool "Linux from Linaro Team"
         select LINUX
 
-    config LINUX_CUSTOM
+    config KERNEL_CUSTOM
         bool "customized Linux "
-        select LINUX
 endchoice
+
+config LINUX
+    bool
+	prompt "Is Linux kernel" if KERNEL_CUSTOM
 
 choice
     prompt "Linaro version"
@@ -42,12 +42,12 @@ config KERNEL
     string
     default "linux-linaro" if LINUX_LINARO
     default "linux" if LINUX
-    prompt "Kernel name" if LINUX_CUSTOM
+    prompt "Kernel name" if KERNEL_CUSTOM
 
 config KERNEL_VERSION
     string
     depends on LINUX
-    prompt "kernel version number" if LINUX_LINARO_RELEASE_LATEST || LINUX_CUSTOM
+    prompt "kernel version number" if LINUX_LINARO_RELEASE_LATEST || KERNEL_CUSTOM
     default "3.7.1" if LINUX_STD
     default "git" if LINUX_LINARO_TRACKING
     default "3.8-2013.02" if LINUX_LINARO_RELEASE_13_02
@@ -72,10 +72,10 @@ if LINUX_LINARO
 		default "14.01" if LINUX_LINARO_RELEASE_14_01
 endif
 
-config LINUX_CUSTOM_URL
+config KERNEL_CUSTOM_URL
     string "linux source tree URL (compressed file or git repository)"
     default "git://git.kernel.org/linux/kernel/git/arm/arm-soc.git"
-    depends on LINUX_CUSTOM
+    depends on KERNEL_CUSTOM
 
 config KERNEL_DEFCONFIG
     string "default configuration file"
