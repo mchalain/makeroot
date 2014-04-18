@@ -20,7 +20,7 @@ endef
 cmd_copy = $(Q)cp $(if $(wildcard $(copy)),$(copy),$(join $(srctree)/,$(copy))) $(join $(install-dest)/,$(install-target))
 cmd_move = $(Q)mv $(if $(wildcard $(move)),$(move),$(join $(srctree)/,$(move))) $(join $(install-dest)/,$(install-target))
 quiet_cmd_link = LINK $(link)
-cmd_link = 	$(Q)cd $(install-dest) && ln -s $(link) $(install-target)
+cmd_link = 	$(Q)cd $(install-dest) && ln -sf $(link) $(install-target)
 cmd_touch = $(Q)touch $(join $(install-dest)/,$(install-target))
 quiet_cmd_generate = GEN $(generate)
 cmd_generate = $(Q)mv $(generate) $(join $(install-dest)/,$(install-target))
