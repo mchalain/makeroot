@@ -144,30 +144,23 @@ $(1)-build: $(1)-configure
 	$(foreach target, $(sprj-targets),
 		$(Q)$(call multicmd,build-project) )
 
-.SECONDEXPANSION:
-.PHONY:$(1)-install
-$(1)-install: $(1)-build
-
 $(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))): $(1)-build
 	$(eval sprj:=$(1))
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
 	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
 	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
 	$(Q)$(call multicmd,install-project)
-
-.ONESHELL:$(1)-post-install
-.SECONDEXPANSION:
-.PHONY:$(1)-post-install
-$(1)-post-install: $(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1)))
-	$(eval sprj:=$(1))
-	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
-	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
-	$(Q)$(call multicmd,post-install-project)
-			 
+	@touch $(sprj-destdir)/.post-install
 
 .SECONDEXPANSION:
 .PHONY:$(1)
-$(1): $(packagesdir) $(sysroot) $(rootfs) $(bootfs) $(if $(wildcard $(addprefix $(obj)/.,$(1).prj)),,$(1)-post-install)
-	$(Q)touch $(addprefix $(obj)/.,$(1).prj)
+$(1): $(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
+$(1): $(packagesdir) $(sysroot) $(rootfs) $(bootfs) $(if $(wildcard $(sprj-destdir)),,$(sprj-destdir))
+	$(eval sprj:=$(1))
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
+	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
+	$$(if $$(wildcard $(sprj-destdir)/.post-install),$$(call multicmd,post-install-project))
+	$$(if $$(wildcard $(sprj-destdir)/.post-install),$(Q)rm $(sprj-destdir)/.post-install)
 endef
 $(foreach subproject, $(subproject-y),$(eval $(call do-project,$(subproject))))
+
