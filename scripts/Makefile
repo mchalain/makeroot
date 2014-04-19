@@ -164,6 +164,9 @@ __build: $(subdir-ym) $(targets) $(extra-y) \
 	 $(subproject-y) $(install-y) $(image-target)
 	@:
 
+ifeq (y,$(force-install))
+target:="force-install=y install"
+endif
 install: $(subdir-ym) $(targets) $(extra-y) \
 	 $(subproject-y) $(install-y) $(image-target)
 	@:
