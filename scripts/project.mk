@@ -48,9 +48,9 @@ define cmd_configure-project
 			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) configure ,
 			$(if $(sprj-defconfig),
 				$(Q)cp $(sprj-defconfig) $(sprj-src)/.config && $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig,
-				$(if $$(wildcard $(sprj-src)/configure),
+				$(if $(wildcard $(sprj-src)/configure),
 					$(Q)cd $(sprj-src) && $(configure-cmd) $(sprj-config-opts),
-					$(if $$(wildcard $(sprj-src)/configure.ac),
+					$(if $(wildcard $(sprj-src)/configure.ac),
 						$(Q)cd $(sprj-src) && autoreconf --force -i && $(configure-cmd) $(sprj-config-opts),
 						$(Q)echo "no configuration found inside $(sprj-src)" && exit 1
 					)
@@ -68,9 +68,9 @@ define cmd_build-project
 		$(Q)cd $(sprj-src) && $(sprj-build),
 		$(if $(sprj-mkbuild),
 			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkbuild) $(if $(target),$(target),build),
-			$(if $$(wildcard  $(sprj-src)/Makefile),
+			$(if $(wildcard  $(sprj-src)/Makefile),
 				$(Q)$(MAKE) $(sprj-makeflags) MAKEFLAGS= -C $(sprj-src) $(target),
-				$(if $$(wildcard  $(sprj-src)/Android.mk),
+				$(if $(wildcard  $(sprj-src)/Android.mk),
 					$(Q)$(call android-tools) && $(MAKE) $(sprj-makeflags) MAKEFLAGS= $(android-build)=$(sprj-src)/Android.mk,
 					$(Q)echo "no build script found inside $(sprj-src)" && exit 1
 				)
@@ -89,7 +89,7 @@ define cmd_install-project
 		$(Q)cd $(sprj-src) && $(sprj-install),
 		$(if $(sprj-mkinstall),
 			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkinstall) install,
-			$(if $$(wildcard  $(sprj-src)/Makefile),
+			$(if $(wildcard  $(sprj-src)/Makefile),
 				$(Q)$(MAKE)  $(sprj-makeflags) INSTALL=$(install_tool) MAKEFLAGS= DESTDIR=$(sprj-destdir) DSTROOT=$(sprj-destdir) -C $(sprj-src) install,
 				$(Q)echo "no build script found inside $(sprj-src)" && exit 1
 			)
@@ -100,10 +100,8 @@ endef
 quiet_cmd_post-install-project = SYSROOT $(sprj)
 define cmd_post-install-project
 	$(foreach install-target, lib/ usr/lib/ usr/include/, \
-		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
-			$(eval install-dest = $(join $(sysroot)/,$(install-target)))
-			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(install-dest); fi
-		)
+		$(eval install-dest = $(join $(sysroot)/,$(install-target)))
+		$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(install-dest); fi
 	)
 	$(foreach install-target, lib/ bin/ sbin/ usr/lib/ usr/bin/ usr/sbin/ usr/libexec/, \
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
@@ -129,38 +127,50 @@ $(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version
 .SECONDEXPANSION:
 .PHONY:$(1)-configure
 $(1)-configure: $($(1)-dependances)
-	$(eval sprj:=$(1))
-	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
-	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
-	$(Q)$(call multicmd,configure-project)
+	$(Q)$(MAKE) $(build)=$(obj) sprj=$(1) configure-project
 
 .SECONDEXPANSION:
 .PHONY:$(1)-build
 $(1)-build: $(1)-configure
-	$(eval sprj:=$(1))
-	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
-	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
 	$(eval sprj-targets:=$(if $($(1)-targets),$($(1)-targets),all))
 	$(foreach target, $(sprj-targets),
-		$(Q)$(call multicmd,build-project) )
+		$(Q)$(MAKE) $(build)=$(obj) sprj=$(1) target=$(target) build-project )
 
 $(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))): $(1)-build
-	$(eval sprj:=$(1))
-	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(1)-version))))
-	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
-	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
-	$(Q)$(call multicmd,install-project)
-	@touch $(sprj-destdir)/.post-install
+	$(Q)$(MAKE) $(build)=$(obj) sprj=$(1) install-project
 
 .SECONDEXPANSION:
 .PHONY:$(1)
 $(1): $(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
 $(1): $(packagesdir) $(sysroot) $(rootfs) $(bootfs) $(if $(wildcard $(sprj-destdir)),,$(sprj-destdir))
-	$(eval sprj:=$(1))
-	$(eval sprj-version:=$(filter-out git hg cvs,$($(1)-version)))
-	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(1)-version)),$(1)-$($(1)-version),$(1))))
-	$$(if $(force-install) $$(wildcard $(sprj-destdir)/.post-install),$$(call multicmd,post-install-project))
-	$$(if $$(wildcard $(sprj-destdir)/.post-install),$(Q)rm $(sprj-destdir)/.post-install)
+	$(Q)$(MAKE) $(build)=$(obj) sprj=$(1) force-install=$(force-install) post-install-project
 endef
 $(foreach subproject, $(subproject-y),$(eval $(call do-project,$(subproject))))
 
+.PHONY:post-install-project
+post-install-project:
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(sprj)-version))))
+	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
+	$(if $(wildcard $(sprj-destdir)/.post-install),$(call multicmd,post-install-project))
+	$(if $(wildcard $(sprj-destdir)/.post-install),@rm $(sprj-destdir)/.post-install)
+
+.PHONY:install-project
+install-project:
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(sprj)-version))))
+	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
+	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
+	$(Q)$(call multicmd,install-project)
+	@touch $(sprj-destdir)/.post-install
+
+.PHONY:build-project
+build-project:
+	echo $@ $(target)
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
+	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
+	$(Q)$(call multicmd,build-project)
+
+.PHONY:configure-project
+configure-project:
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
+	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
+	$(Q)$(call multicmd,configure-project)
