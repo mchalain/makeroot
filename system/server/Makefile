@@ -2,10 +2,10 @@ cups-version=1.7.0
 subproject-$(CONFIG_SERVER_CUPS)+=cups
 cups-url="http://www.cups.org/software/$(cups-version)/cups-$(cups-version)-source.tar.bz2"
 cups-configure-arguments:=--disable-unit-tests --enable-libusb 
-hostprogs-y+=mantohtml
+hostprogs-$(CONFIG_SERVER_CUPS)+=mantohtml
 mantohtml-objs:=cups$(cups-version:%=-%)/man/mantohtml.o
 mantohtml-cflags:=-I$(src)/cups$(cups-version:%=-%)/
-#hostprogs-y+=genstrings
+#hostprogs-$(CONFIG_SERVER_CUPS)+=genstrings
 #genstrings-cxxobjs:=genstrings.o \
 #		ppdc-array.o \
 #		ppdc-attr.o \
