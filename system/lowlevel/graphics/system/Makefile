@@ -1,21 +1,28 @@
+libdrm-version:=git
 subproject-$(CONFIG_DRM)+=libdrm
 libdrm-git="git://anongit.freedesktop.org/git/mesa/drm.git"
 libdrm-mkconfig=$(src)/../egl/config/mesa.mk
 
+hdmiservice-version:=git
 subproject-$(CONFIG_BOARD_SNOWBALL)+=hdmiservice
-hdmiservice-git=git://igloocommunity.org/git/bsp/hdmiservice.git
+#hdmiservice-git=git://igloocommunity.org/git/bsp/hdmiservice.git
+hdmiservice-git=git://github.com/igloocommunity/hdmiservice.git
 hdmiservice-config=echo no configuration
 hdmiservice-targets=build
 
+b2r2lib-version:=git
 subproject-$(CONFIG_BOARD_SNOWBALL)+=b2r2lib
-b2r2lib-git=git://igloocommunity.org/git/bsp/b2r2lib.git
+#b2r2lib-git=git://igloocommunity.org/git/bsp/b2r2lib.git
+b2r2lib-git=git://github.com/igloocommunity/b2r2lib.git
 b2r2lib-makeflags=CC=$(CROSS_COMPILE:"%"=%)gcc CFLAGS="$(CFLAGS) -I./include" LDFLAGS="$(LDFLAGS)"
 b2r2lib-config=echo no configuration
 b2r2lib-targets=build
 
 ifeq ($(CONFIG_X11),y)
+mali_drv-version:=git
 subproject-$(CONFIG_BOARD_SNOWBALL)+=mali_drv
-mali_drv-git=git://igloocommunity.org/git/bsp/xorg-x11-drv-ste.git
+#mali_drv-git=git://igloocommunity.org/git/bsp/xorg-x11-drv-ste.git
+mali_drv-git=git://github.com/igloocommunity/xorg-x11-drv-ste.git
 mali_drv-configure-arguments=CFLAGS="$(CFLAGS) -I$(sysroot)/usr/include/pixman-1"
 endif
 
