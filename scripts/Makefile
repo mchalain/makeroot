@@ -170,7 +170,9 @@ endif
 install: $(subdir-ym) $(targets) $(extra-y) \
 	 $(subproject-y) $(install-y) $(image-target)
 	@:
-
+download: target:=download
+download: $(subdir-ym) $(download-target)
+	@:
 $(rootfs) $(packagesdir) $(sysroot) $(bootfs) $(homefs) $(hostbin) $(host-objdirs) $(hostlib) $(hostlib)/pkgconfig:
 	mkdir -p $@
 

@@ -99,6 +99,9 @@ endif
 install: target:="force-install=y install"
 install: $(SUBDIRS)
 
+download: target:=download
+download: $(SUBDIRS)
+
 tree: system/tree
 	$(Q)$(MAKE) $(build)=$< $(target)
 libc: system/libc
