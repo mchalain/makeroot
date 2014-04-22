@@ -177,10 +177,11 @@ subproject-$(CONFIG_SERVER_LIBUPNP_OLD)+=libupnp
 
 # the git reposiroty stores the cod inside pupnp directory,
 # the official release stores the code inside libupnp
-libupnp-version=1.6.19
+#libupnp-version:=1.6.19
+libupnp-version:=git
 subproject-$(CONFIG_SERVER_LIBUPNP)+=$(if $(findstring git,$(libupnp-version)), pupnp, libupnp)
-libupnp-url:=http://downloads.sourceforge.net/pupnp/libupnp-$(pupnp-version).tar.bz2
-pupnp-git:= git://gitorious.org/pupnp/pupnp.git
+libupnp-url:=http://downloads.sourceforge.net/pupnp/libupnp-$(libupnp-version).tar.bz2
+libupnp-git:= git://gitorious.org/pupnp/pupnp.git
 libupnp-configure-arguments:=--enable-samples --enable-debug
 
 libdlna-version=0.2.4
