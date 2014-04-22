@@ -1,0 +1,5 @@
+#!/bin/sh
+
+name=$(echo $0 | sed 's/^\(.*\)20_\(.*\)$/\2/' | sed 's/\(.*\).rc/\1/g')
+
+/usr/sbin/$name
