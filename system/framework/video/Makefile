@@ -1,10 +1,10 @@
-xvidcore-version:=
+xvidcore-version:=1.3.3
 subproject-$(CONFIG_FW_VIDEO_XVID)+=xvidcore
-xvidcore-url:=http://downloads.xvid.org/downloads/xvidcore-1.3.3.tar.bz2
+xvidcore-url:=http://downloads.xvid.org/downloads/xvidcore-$(xvidcore-version).tar.bz2
 xvidcore-cvs:=pserver:anonymous@cvs.xvid.org:/xvid
 xvidcore-config:=cd build/generic && ./configure --prefix=/usr --host=$(CROSS_COMPILE:%-=%)
 xvidcore-build:=cd build/generic && make
-xvidcore-install:=cd build/generic && make DESTDIR=$(packagesdir)/xvidcore install
+xvidcore-install:=cd build/generic && make DESTDIR=$(packagesdir)/xvidcore$(xvidcore-version:%=-%) install
 
 x264-version:=snapshot-20140414-2245-stable
 subproject-$(CONFIG_FW_VIDEO_X264)+=x264
