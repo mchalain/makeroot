@@ -156,8 +156,8 @@ post-install-project:
 
 .PHONY:install-project
 install-project:
-	$(eval sprj-version:=$(filter-out git hg cvs,$($(strip $(sprj)-version))))
-	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
+	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
+	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
 	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
 	$(Q)$(call multicmd,install-project)
 	@touch $(sprj-destdir)/.post-install
@@ -166,11 +166,11 @@ install-project:
 build-project:
 	echo $@ $(target)
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
-	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
+	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
 	$(Q)$(call multicmd,build-project)
 
 .PHONY:configure-project
 configure-project:
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
-	$(eval sprj-src:=$(join $(src)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
+	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
 	$(Q)$(call multicmd,configure-project)
