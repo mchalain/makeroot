@@ -26,7 +26,7 @@ export CONFIG_FILE
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
 -include  $(srctree)/$(CONFIG_FILE)
 
-BOARD ?= $(CONFIG_BOARD_NAME:"%"=%)
+BOARD ?= $(CONFIG_CONFIGNAME:"%"=%)
 TOOLCHAIN_PATH ?=$(if $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CURDIR)/out/host/toolchain/bin)
 
 root		:= $(CURDIR)
