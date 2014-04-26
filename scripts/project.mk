@@ -1,13 +1,17 @@
 # ==========================================================================
 # create directories on the target system
 
-flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) -march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
+flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) \
+							-march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
 CFLAGS:=--sysroot=$(sysroot) $(flags_extend) $(GCC_FLAGS)
 CPPFLAGS:=$(CFLAGS)
 CXXFLAGS:=$(CFLAGS)
-LDFLAGS:=--sysroot=$(sysroot) -Wl,-rpath-link=$(sysroot)/usr/lib/:$(sysroot)/lib/:$(join $(sysroot)/lib/,$(CROSS_COMPILE:%-=%)) $(flags_extend) $(GCC_FLAGS)
+LD=$(CROSS_COMPILE)gcc
+LDFLAGS:=--sysroot=$(sysroot) \
+	-Wl,-rpath-link=$(sysroot)/usr/lib/:$(sysroot)/lib/:$(join $(sysroot)/lib/,$(CROSS_COMPILE:%-=%)) \
+					$(flags_extend) $(GCC_FLAGS)
 DSOFLAGS:=$(LDFLAGS)
-export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS
+export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS LD
 
 # install-sh is a tool to install binaries and data inside the root directory
 # this script can use different applications that we can modify by environment variables
@@ -164,7 +168,6 @@ install-project:
 
 .PHONY:build-project
 build-project:
-	echo $@ $(target)
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
 	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
 	$(Q)$(call multicmd,build-project)
