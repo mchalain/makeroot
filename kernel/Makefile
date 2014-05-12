@@ -33,10 +33,10 @@ $(kernel:%=%-destdir):=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(k
 $(kernel:%=%-makeflags):=$(makeflags) INSTALL_PATH=$(bootfs) INSTALL_MOD_PATH=$($(kernel:%=%-destdir)) INSTALL_HDR_PATH=$(sysroot)/usr/ INSTALLKERNEL:=noinstallkernel
 ifneq (,$(findstring y,$(CONFIG_U_IMAGE)))
 	$(kernel:%=%-targets):= uImage modules modules_install headers_install uinstall
-	$(kernel:%=%-install):= find $(kernel:%=%-destdir)/lib/modules/ -name build -delete ; find $(kernel:%=%-destdir)/lib/modules/ -lname source -delete
+	$(kernel:%=%-install):= find $($(kernel:%=%-destdir))/lib/modules/ -name build -delete && find $($(kernel:%=%-destdir))/lib/modules/ -name source -delete
 else
 	$(kernel:%=%-targets):= modules $(CONFIG_KERNEL_IMAGE:"%"=%) modules_install headers_install install
-	$(kernel:%=%-install):= find $(kernel:%=%-destdir)/lib/modules/ -lname build -delete ; find $(kernel:%=%-destdir)/lib/modules/ -lname source -delete
+	$(kernel:%=%-install):= find $($(kernel:%=%-destdir))/lib/modules/ -name build -delete && find $($(kernel:%=%-destdir))/lib/modules/ -name source -delete
 endif
 
 #subdir-y+=$(src)/drivers/video
