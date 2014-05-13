@@ -58,17 +58,23 @@ define mount_loop
 	$(Q)mount $(2)
 endef
 define mount-dev
+	$(if $(wildcard $(2)),,$(Q)mkdir $(2))
 	$(Q)sudo mount $(1) $(2)
 endef
 define umount
 	$(Q)sync
 	$(Q)sudo umount -f $(1)
 endef
+
+mountpoint:=/tmp/image
+
 define cmd_fill-loop
-	$(call $(cmd_mount),$($*-device),/tmp/image/)
-	$(Q)$(INSTALL) -DrpP $($*-data)/ /tmp/image/
-	$(call umount,/tmp/image/)
+	$(call $(cmd_mount),$($*-device),$(mountpoint)/)
+	$(Q)$(INSTALL) -DrpP $($*-data)/ $(mountpoint)/
+	$(call umount,$(mountpoint)/)
 endef
+$(mountpoint):
+	$(Q)mkdir -p $@
 
 /dev/%:cmd_mount:=mount
 
