@@ -1,21 +1,21 @@
 menu "video framework"
-config FW_VIDEO_XVID
-	bool "XvidCore the XviD codec"
+config FW_VIDEO_XVID_SP
+	bool "XvidCore : the XviD codec"
 	help
 		http://www.xvid.com
 
-config FW_VIDEO_X264
-	bool "x264  H.264/MPEG-4 AVC compression format"
+config FW_VIDEO_X264_SP
+	bool "x264 :  H.264/MPEG-4 AVC compression format"
 	help
 		http://www.videolan.org/developers/x264.html
 
-config FW_AUDIO_AACPLUS
+config FW_AUDIO_AACPLUS_SP
 	bool "AAC+ audio codec"
 	help
 		
 
-config FW_VIDEO_FFMPEG
-	bool "FFmpeg the mpeg format framework"
+config FW_VIDEO_FFMPEG_SP
+	bool "FFmpeg : the mpeg format framework"
 	help
 		http://ffmpeg.org/
 

@@ -1,24 +1,24 @@
-xvidcore-version:=1.3.3
-subproject-$(CONFIG_FW_VIDEO_XVID)+=xvidcore
+xvidcore-version:=$(CONFIG_FW_VIDEO_XVID_VERSION)
+subproject-$(CONFIG_FW_VIDEO_XVID_SP)+=xvidcore
 xvidcore-url:=http://downloads.xvid.org/downloads/xvidcore-$(xvidcore-version).tar.bz2
 xvidcore-cvs:=pserver:anonymous@cvs.xvid.org:/xvid
 xvidcore-config:=cd build/generic && ./configure --prefix=/usr --host=$(CROSS_COMPILE:%-=%)
 xvidcore-build:=cd build/generic && make
 xvidcore-install:=cd build/generic && make DESTDIR=$(packagesdir)/xvidcore$(xvidcore-version:%=-%) install
 
-x264-version:=snapshot-20140414-2245-stable
-subproject-$(CONFIG_FW_VIDEO_X264)+=x264
+x264-version:=$(CONFIG_FW_VIDEO_X264_VERSION)
+subproject-$(CONFIG_FW_VIDEO_X264_SP)+=x264
 x264-git:=git://git.videolan.org/x264
 x264-url:=ftp://ftp.videolan.org/pub/videolan/x264/snapshots/x264-$(x264-version).tar.bz2
 x264-configure-arguments:=--enable-static --enable-shared
 x264-makeflags:="AS=$(CROSS_COMPILE:%-=%)-gcc"
 
-libaacplus-version:=2.0.2
-subproject-$(CONFIG_FW_AUDIO_AACPLUS)+=libaacplus
+libaacplus-version:=$(CONFIG_FW_AUDIO_AACPLUS_VERSION)
+subproject-$(CONFIG_FW_AUDIO_AACPLUS_SP)+=libaacplus
 libaacplus-url:=http://217.20.164.161/~tipok/aacplus/libaacplus-2.0.2.tar.gz
 
-ffmpeg-version=2.1.1
-subproject-$(CONFIG_FW_VIDEO_FFMPEG)+=ffmpeg
+ffmpeg-version=$(CONFIG_FW_VIDEO_FFMPEG_VERSION)
+subproject-$(CONFIG_FW_VIDEO_FFMPEG_SP)+=ffmpeg
 ffmpeg-url=http://ffmpeg.org/releases/ffmpeg-$(ffmpeg-version).tar.bz2
 ffmpeg-git=git://source.ffmpeg.org/ffmpeg.git ffmpeg
 ffmpeg-config:=./configure --enable-cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --sysroot=$(sysroot)
@@ -30,10 +30,10 @@ ffmpeg-config+=--enable-gpl --enable-version3 --enable-nonfree
 ifeq ($(CONFIG_PULSEAUDIO),y)
 ffmpeg-config+=--enable-libpulse
 endif
-ifeq ($(CONFIG_FW_VIDEO_XVID),y)
+ifeq ($(CONFIG_FW_VIDEO_XVID_SP),y)
 ffmpeg-config+=--enable-libxvid
 endif
-ifeq ($(CONFIG_FW_VIDEO_X264),y)
+ifeq ($(CONFIG_FW_VIDEO_X264_SP),y)
 ffmpeg-config+=--enable-libx264
 endif
 ifeq ($(CONFIG_FW_VIDEO_VORBIS),y)
@@ -51,9 +51,6 @@ endif
 ifeq ($(CONFIG_FW_AUDIO_FAAC),y)
 ffmpeg-config+=--enable-libfaac
 endif
-ifeq ($(CONFIG_FW_AUDIO_AACPLUS),y)
+ifeq ($(CONFIG_FW_AUDIO_AACPLUS_SP),y)
 ffmpeg-config+=--enable-libaacplus
-endif
-ifeq ($(CONFIG_PULSEAUDIO),y)
-ffmpeg-config+=--enable-libpulse
 endif
