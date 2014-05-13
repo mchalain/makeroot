@@ -1,77 +1,115 @@
 menu "network server"
-config SERVER_RPC
-	bool
-
-config SERVER_TCPW
-	bool "tcp_wrapper"
-
-config SERVER_CUPS
+config SERVER_CUPS_SP
 	bool "CUPS printer server"
 	help
 		http://www.cups.org
 
-config SERVER_PROFTP
+config SERVER_PROFTP_SP
 	bool "ProFTP file transfert server"
 	help
 		http://www.proftpd.org
 
 config SERVER_NFS
 	bool "NFS Network File System client/server"
-	select LIBEVENT
+	select FW_IPC_LIBEVENT
 	select SERVER_RPC
+	select SERVER_NFSUTILS_SP
+	select CONFIG_SERVER_NFSIDMAP_SP
 	help
 		http://linux-nfs.org
 
+if SERVER_NFS
+config SERVER_NFSUTILS_SP
+	bool
+
+config SERVER_NFSIDMAP_SP
+	bool
+endif
+
 config SERVER_SMB
 	bool "Microsoft Network File System client/server"
-	select LIBEVENT
+	select FW_IPC_LIBEVENT
+	select SERVER_CIFSUTILS_SP
 	help
 		http://www.samba.org
 
-config SERVER_LIBDLNA
-	bool "DLNA library framework"
+if SERVER_SMB
+config SERVER_CIFSUTILS_SP
+	bool
+config SERVER_SAMBA_SP
+	bool "Old Samba version"
+endif
+
+config SERVER_RPC
+	bool
+	select SERVER_RPCBIND_SP
+	select SERVER_LIBTIRPC_SP
+
+if SERVER_RPC
+config SERVER_RPCBIND_SP
+	bool
+
+config SERVER_LIBTIRPC_SP
+	bool
+
+config SERVER_TCPW_SP
+	bool
+	prompt "tcp_wrapper" if SERVER_RPCBIND_SP
+
+endif
+
+menuconfig UPNP
+	bool "UPnP servers"
+
+config SERVER_USHARE_SP
+	bool "uShare : DLNA Media Server"
+	depends on UPNP
+	select SERVER_LIBUPNP_SP
+	help
+		http://ushare.geexbox.org/
+
+config SERVER_MEDIATOMB_SP
+	bool "MediaTomb : DLNA Media Server"
+	depends on UPNP
+	select SERVER_LIBUPNP_SP
+	help
+		http://mediatomb.cc/
+
+config SERVER_GUPNP_SP
+	bool "gupnp : Gnome Universable Plug and Play framework"
+	depends on UPNP
+	depends on FW_GLIB
+	select LIBSOUP
+	select SECURITY_GSSDP
+	help
+		https://wiki.gnome.org/action/show/Projects/GUPnP
+
+config SERVER_LIBDLNA_SP
+	bool
+	prompt "libdlna : DLNA library framework" if SERVER_USHARE_SP
+	depends on UPNP
+	depends on FW_VIDEO_FFMPEG
 	help
 		http://libdlna.geexbox.org/
-	depends on FW_VIDEO_FFMPEG
 
-config SERVER_LIBUPNP_OLD
-	bool "Universable Plug and Play framework"
-	help
-		no more supported
-		http://upnp.sourceforge.net/
-
-config SERVER_LIBUPNP
-	bool "Portable Universable Plug and Play framework"
+config SERVER_LIBUPNP_SP
+	bool
+	prompt "libupnp : Portable Universable Plug and Play framework" if SHOW_ALL
+	depends on UPNP
 	help
 		pupnp is the replacement of the original libupnp
 		http://pupnp.sourceforge.net/
 
-config SERVER_USHARE
-	bool "uShare DLNA Media Server"
-	select SERVER_LIBUPNP
-	help
-		http://ushare.geexbox.org/
-
-config SERVER_MEDIATOMB
-	bool "MediaTomb DLNA Media Server"
-	select SERVER_LIBUPNP
-	help
-		http://mediatomb.cc/
-
 config SERVER_LIBSOUP
-	bool "HTTP client/server library"
-	depends on GLIB
+	bool
+	prompt "libsoup : HTTP client/server library" if UPNP
+	depends on UPNP
+	depends on FW_GLIB
 	help
 		https://wiki.gnome.org/action/show/Projects/libsoup
 
 config SECURITY_GSSDP
 	bool
-
-config SERVER_GUPNP
-	bool "Gnome Universable Plug and Play framework"
-	depends on LIBSOUP
-	select SECURITY_GSSDP
-	help
-		https://wiki.gnome.org/action/show/Projects/GUPnP
+	depends on FW_GLIB
 
 endmenu

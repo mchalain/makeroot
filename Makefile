@@ -23,8 +23,12 @@ MAKEFLAGS += --include-dir=$(srctree)
 CONFIG_FILE	?= .config
 export CONFIG_FILE
 
+VERSION_FILE	?= versioning/.config
+export VERSION_FILE
+
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
 -include  $(srctree)/$(CONFIG_FILE)
+-include  $(srctree)/$(VERSION_FILE)
 
 BOARD ?= $(CONFIG_CONFIGNAME:"%"=%)
 TOOLCHAIN_PATH ?=$(if $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CURDIR)/out/host/toolchain/bin)

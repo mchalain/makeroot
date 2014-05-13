@@ -26,8 +26,12 @@ EXTRA_CFLAGS   :=
 EXTRA_CPPFLAGS :=
 EXTRA_LDFLAGS  :=
 
+$(VERSION_FILE): versioning/default.config
+	cp $< $@
+
 # Read .config if it exist, otherwise ignore
 include $(CONFIG_FILE)
+include $(VERSION_FILE)
 
 # The filename Kbuild has precedence over Makefile
 build-dir := $(if $(filter /%,$(src)),$(src),$(srctree)/$(src))

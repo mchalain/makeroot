@@ -9,9 +9,13 @@ config FUSIONDALE
 	default y if DIRECTFB
 	select LINUX_FUSION
 
-config LIBEVENT
+config FW_IPC_LIBEVENT_SP
+	bool
+
+config FW_IPC_LIBEVENT
 	bool
 	prompt "libevent – an event notification library " if SHOW_ALL
+	select FW_IPC_LIBEVENT_SP
 
 config LINUX_FUSION
 	bool
