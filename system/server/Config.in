@@ -14,7 +14,7 @@ config SERVER_NFS
 	select FW_IPC_LIBEVENT
 	select SERVER_RPC
 	select SERVER_NFSUTILS_SP
-	select CONFIG_SERVER_NFSIDMAP_SP
+	select SERVER_NFSIDMAP_SP
 	help
 		http://linux-nfs.org
 
@@ -79,7 +79,7 @@ config SERVER_GUPNP_SP
 	bool "gupnp : Gnome Universable Plug and Play framework"
 	depends on UPNP
 	depends on FW_GLIB
-	select LIBSOUP
+	select SERVER_LIBSOUP
 	select SECURITY_GSSDP
 	help
 		https://wiki.gnome.org/action/show/Projects/GUPnP
@@ -102,7 +102,7 @@ config SERVER_LIBUPNP_SP
 
 config SERVER_LIBSOUP
 	bool
-	prompt "libsoup : HTTP client/server library" if UPNP
+	prompt "libsoup : HTTP client/server library" if SHOW_ALL
 	depends on UPNP
 	depends on FW_GLIB
 	help
