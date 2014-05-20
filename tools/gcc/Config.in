@@ -1,23 +1,23 @@
 menu "Toolchain"
-config LINARO
-	bool
-
 choice
     prompt "toolchain select"
-		default TOOLCHAIN_LINARO if LINARO
+		default TOOLCHAIN_CUSTOM
     config TOOLCHAIN_LINARO
         bool "Linaro Toolchain"
         depends on ARM
     config TOOLCHAIN_BARE_METAL
         bool "bare-metal Toolchain"
         depends on ARM
-    config TOOLCHAIN_SOURCERY
-		bool "Code Sourcery Toolchain"
+    config TOOLCHAIN_SOURCERY_LINUX
+		bool "Code Sourcery Toolchain for GNU/Linux"
+    config TOOLCHAIN_SOURCERY_EABI
+		bool "Code Sourcery Toolchain for EABI (with newlib)"
     config TOOLCHAIN_CUSTOM
         bool "custom Toolchain"
 endchoice
 
-if LINARO
+if TOOLCHAIN_LINARO
+menu "Linaro Toolchain"
 choice
 	prompt "Linaro release"
 	config LINARO_R_2013_06
@@ -40,6 +40,7 @@ config TOOLCHAIN_LINARO_VERSION
     default "2013.03-20130313" if LINARO_R_2013_03
     default "2012.03-20120326" if LINARO_R_2012_03
 
+endmenu
 endif
 
 config TOOLCHAIN_GCC_VERSION
@@ -54,15 +55,11 @@ config CROSS_COMPILE
     default "arm-linux-gnueabihf" if LINARO_R_2013_06
     default "arm-linux-gnueabihf" if LINARO_R_2013_04
     default "arm-linux-gnueabi" if LINARO_R_2012_03
+    default "arm-none-eabi" if TOOLCHAIN_SOURCERY_EABI
     default "arm-none-linux-gnueabi"
 
-config TOOLCHAIN_NAME
-    string "toolchain name"
-    default "linaro" if TOOLCHAIN_LINARO
-    default "gcc-arm-none-eabi-4_6-2012q2" if TOOLCHAIN_BARE_METAL
-
 menuconfig TOOLCHAIN_INSTALLATION
-	bool "Toolchain installation"
+	bool "use already installed Toolchain"
 
 config TOOLCHAIN_PATH
     string "Cross Compilation toolchain Path"

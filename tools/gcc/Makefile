@@ -11,12 +11,12 @@ gcc-linaro-version=$(CONFIG_CROSS_COMPILE:"%"=%)$(gcc-version:%=-%)-$(CONFIG_TOO
 toolchain-$(CONFIG_TOOLCHAIN_LINARO):=gcc-linaro
 gcc-linaro-url=http://launchpad.net/linaro-toolchain-binaries/trunk/$(linaro-release)/+download/gcc-linaro$(gcc-linaro-version:%=-%).tar.bz2
 
-toolchain-$(CONFIG_TOOLCHAIN_SOURCERY):=sourcery
+toolchain-$(CONFIG_TOOLCHAIN_SOURCERY_LINUX):=sourcery-linux
 ifeq ($(CONFIG_ARM),y)
-sourcery-url=https://sourcery.mentor.com/GNUToolchain/package10931/public/arm-none-linux-gnueabi/arm-2012.09-64-arm-none-linux-gnueabi-i686-pc-linux-gnu.tar.bz2
+sourcery-linux-url=https://sourcery.mentor.com/GNUToolchain/package10931/public/arm-none-linux-gnueabi/arm-2012.09-64-arm-none-linux-gnueabi-i686-pc-linux-gnu.tar.bz2
 endif
 ifeq ($(CONFIG_MIPS),y)
-sourcery-url=https://sourcery.mentor.com/GNUToolchain/package11081/public/mips-linux-gnu/mips-2012.09-99-mips-linux-gnu-i686-pc-linux-gnu.tar.bz2
+sourcery-linux-url=https://sourcery.mentor.com/GNUToolchain/package11081/public/mips-linux-gnu/mips-2012.09-99-mips-linux-gnu-i686-pc-linux-gnu.tar.bz2
 endif
 endif
 
