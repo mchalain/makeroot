@@ -28,56 +28,42 @@ choice
     default BOARD_SNOWBALL
     config BOARD_SNOWBALL
         bool "ST-Ericson Snowball"
-        select LINARO
         select SUBARCH_V7A
-        select HFP_CPU
         select GPU_MALI400
         help
 			http://www.igloocommunity.org/
 
     config BOARD_ORIGEN
         bool "Samsung Origen Board"
-        select LINARO
         select SUBARCH_V7A
-         select HFP_CPU
        help
 			http://www.origenboard.org
 			https://wiki.linaro.org/Boards/Origen/Index
 
     config BOARD_VEXPRESS
         bool "Arm Lt V-Express"
-        select LINARO
         select SUBARCH_V7A
-        select HFP_CPU
         help
 			http://www.arm.com/products/tools/development-boards/
 			https://wiki.linaro.org/Boards/Vexpress
 
     config BOARD_BEAGLE
         bool "Texas Instrument Beagle Board"
-        select LINARO
         select SUBARCH_V7A
-        select HFP_CPU
         help
 			https://wiki.linaro.org/Boards/BeagleBoardXM
 
     config BOARD_PANDA
         bool "Texas Instrument Pando Board"
-        select LINARO
         select SUBARCH_V7A
-        select HFP_CPU
 
     config BOARD_IMX51
         bool "Freescale DragonBall iMX51"
-        select LINARO
         select SUBARCH_V7A
-        select HFP_CPU
 
     config BOARD_OVERO
 		bool "Gumstix Overo"
-		select LINARO
         select SUBARCH_V7A
-        select HFP_CPU
 		help
 			https://wiki.linaro.org/Boards/Overo
     config BOARD_MULTI
@@ -111,7 +97,6 @@ choice
 		bool "ARM v7-A Cortex M3 M5"
 	config SUBARCH_V7A
 		bool "ARM v7-A Cortex A5 A7 A8 A9 A15"
-		select HFP_CPU
 	config SUBARCH_OTHER
 		bool "Other ARM subarchitecture"
 endchoice
@@ -127,6 +112,9 @@ config SUBARCH
 
 config HFP_CPU
 	bool "Hard Floating Point coprocessor"
+	default y if BOARD_SNOWBALL || BOARD_ORIGEN || BOARD_VEXPRESS
+	default y if BOARD_BEAGLE || BOARD_PANDA || BOARD_IMX51 || BOARD_OVERO
+	default n
 
 config THUMB
 	bool "build in Thumb format"
