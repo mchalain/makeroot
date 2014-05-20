@@ -10,7 +10,9 @@ x264-version:=$(CONFIG_FW_VIDEO_X264_VERSION)
 subproject-$(CONFIG_FW_VIDEO_X264_SP)+=x264
 x264-git:=git://git.videolan.org/x264
 x264-url:=ftp://ftp.videolan.org/pub/videolan/x264/snapshots/x264-$(x264-version).tar.bz2
-x264-configure-arguments:=--enable-static --enable-shared
+x264-configure-arguments:=--cross-prefix=$(CROSS_COMPILE)
+x264-configure-arguments+=--enable-static --enable-shared --enable-pic
+x264-configure-arguments+=--system-libx264 --disable-gpl
 x264-makeflags:="AS=$(CROSS_COMPILE:%-=%)-gcc"
 
 libaacplus-version:=$(CONFIG_FW_AUDIO_AACPLUS_VERSION)
@@ -21,10 +23,12 @@ ffmpeg-version=$(CONFIG_FW_VIDEO_FFMPEG_VERSION)
 subproject-$(CONFIG_FW_VIDEO_FFMPEG_SP)+=ffmpeg
 ffmpeg-url=http://ffmpeg.org/releases/ffmpeg-$(ffmpeg-version).tar.bz2
 ffmpeg-git=git://source.ffmpeg.org/ffmpeg.git ffmpeg
-ffmpeg-config:=./configure --enable-cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --sysroot=$(sysroot)
+ffmpeg-config:=./configure
+ffmpeg-config+=--enable-cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --sysroot=$(sysroot)
+ffmpeg-config+=--cc="$(CC)"
 ffmpeg-config+=--arch=$(CONFIG_ARCH:"%"=%) --target-os=linux --cpu=$(CONFIG_SUBARCH:"%"=%)
-ffmpeg-config+=--prefix=/usr --enable-shared --disable-doc --disable-stripping --extra-libs=-ldl
-ffmpeg-config+=--enable-gpl --enable-version3 --enable-nonfree
+ffmpeg-config+=--prefix=/usr --enable-shared --enable-pic --disable-stripping --extra-libs=-ldl
+ffmpeg-config+=--enable-gpl --enable-version3 --enable-nonfree --disable-doc
 # currently neon optimization is not compatible with shared libraries
 #ffmpeg-config+=--disable-neon
 ifeq ($(CONFIG_PULSEAUDIO),y)
