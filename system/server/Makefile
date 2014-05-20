@@ -32,7 +32,10 @@ mantohtml-cflags:=-I$(src)/cups$(cups-version:%=-%)/
 proftpd-version=$(CONFIG_SERVER_PROFTP_VERSION)
 subproject-$(CONFIG_SERVER_PROFTP_SP)+=proftpd
 proftpd-url=ftp://ftp.proftpd.org/distrib/source/proftpd-$(proftpd-version).tar.gz
-proftpd-configure-arguments:=--enable-dso --enable-nls --disable-ipv6
+proftpd-configure-arguments:=--enable-dso --disable-ipv6
+ifeq ($(CONFIG_LIBC_NLS),y)
+proftpd-configure-arguments:=--enable-nls
+endif
 proftpd-configure-arguments+=--localstatedir=/var/run
 ifneq ($(CONFIG_SECURITY_PAM),y)
 proftpd-configure-arguments+=--disable-auth-pam
@@ -112,9 +115,12 @@ libnfsidmap-url:=http://www.citi.umich.edu/projects/nfsv4/linux/libnfsidmap/libn
 
 nfs-utils-version=$(CONFIG_SERVER_NFSUTILS_VESION)
 subproject-$(CONFIG_SERVER_NFSUTILS_SP)+=nfs-utils
-nfs-utils-url:=http://downloads.sourceforge.net/nfs/nfs-utils-1.2.9.tar.bz2
+nfs-utils-url:=ftp://ftp.kernel.org/pub/linux/utils/nfs-utils/$(nfs-utils-version)/nfs-utils-$(nfs-utils-version).tar.xz
+#nfs-utils-url:=http://downloads.sourceforge.net/nfs/nfs-utils-$(nfs-utils-version).tar.bz2
 nfs-utils-git:=git://git.linux-nfs.org/projects/steved/nfs-utils.git
-nfs-utils-configure-arguments:=LIBS="-lnsl -lrt -ldl" --disable-nfsv41
+nfs-utils-LIBS:=-lrt -ldl
+nfs-utils-LIBS+=-lnsl
+nfs-utils-configure-arguments:=LIBS="$(nfs-utils-LIBS)" --disable-nfsv41
 ifneq ($(CONFIG_SERVER_TCPW_SP),y)
 nfs-utils-configure-arguments+=--without-tcp-wrappers
 endif
@@ -184,7 +190,8 @@ libupnp-url:=http://downloads.sourceforge.net/pupnp/libupnp-$(libupnp-version).t
 libupnp-git:= git://gitorious.org/pupnp/pupnp.git
 #the configuration request that the $LD version answers "*GNU*" but gcc as linker answers GCC
 #during the configuration we use ld
-libupnp-configure-arguments:=--enable-samples --enable-debug LD=$(CROSS_COMPILE)ld
+libupnp-configure-arguments:=--enable-samples --enable-debug LD="$(CROSS_COMPILE)ld"
+libupnp-configure-arguments+=--without-documentation
 
 libdlna-version=$(CONFIG_SERVER_LIBDLNA_VERSION)
 subproject-$(CONFIG_SERVER_LIBDLNA_SP)+=libdlna
@@ -196,7 +203,8 @@ ushare-version=$(CONFIG_SERVER_USHARE_VERSION)
 subproject-$(CONFIG_SERVER_USHARE_SP)+=ushare
 ushare-url=http://ushare.geexbox.org/releases/ushare-$(ushare-version).tar.bz2
 ushare-hg=http://hg.geexbox.org/ushare
-ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --disable-strip --enable-debug
+ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)-
+ushare-config+=--prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --disable-strip --enable-debug
 ifeq ($(CONFIG_SERVER_LIBDLNA_SP),y)
 ushare-config+=--enable-dlna
 endif
