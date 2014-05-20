@@ -8,18 +8,58 @@ choice
 
     config LIBC_GLIBC
         bool "The Gnu Libc"
+        select LIBC_NLS
+        select LIBC_NSL
+        select LIBC_RCP
+        select LIBC_LDSO
+        select LIBC_RT
 
     config LIBC_UCLIBC
         bool "uClibc"
+        select LIBC_NLS
+        select LIBC_NSL
+        select LIBC_RCP
+        select LIBC_LDSO
+        select LIBC_RT
 
     config LIBC_NEWLIB
         bool "newlib RedHat embedded libc"
 
     config LIBC_BIONIC
         bool "bionic the Google embedded libc"
+        select LIBC_NLS
+        select LIBC_NSL
+        select LIBC_RCP
+        select LIBC_LDSO
+        select LIBC_RT
+
+	config LIBC_MUSL_SP
+		bool "musl embedded libc for linux"
+        select LIBC_LDSO
+        select LIBC_NSL
+        select LIBC_RT
 
 endchoice
 
+config LIBC_NLS
+	bool
+	prompt "libc supports Native Language NLS" if LIBC_TOOLCHAIN
+config LIBC_NSL
+	bool
+	prompt "libc supports Network Services Library " if LIBC_TOOLCHAIN
+	help
+		gethostbyname getservbyname, getpwnam
+		This library may be a part of libc
+config LIBC_RCP
+	bool
+	prompt "libc supports Remote Command Protocol RCP" if LIBC_TOOLCHAIN
+config LIBC_LDSO
+	bool
+	prompt "libc supports Dynamic Linker LDSO (-ldl)" if LIBC_TOOLCHAIN
+config LIBC_RT
+	bool
+	prompt "libc supports RealTime functions" if LIBC_TOOLCHAIN
+	
 config LINARO_RUNTIME
 	bool "Linaro Runtime libraries"
 	default y if LINARO && LIBC_TOOLCHAIN
@@ -56,10 +96,10 @@ config LIBC_NEWLIB_CONFIGURE
     depends on LIBC_NEWLIB
 
 config PATCHELF
-	bool "patchelf utility"
+	bool "patchelf : binary utility"
 	help
-	patchelf is a small utility to modify the linker inside a binary.
+	patchelf is a small utility to modify the dynamic linker inside a binary.
 	Example need to launch /usr/bin/foobar but foobar must load 
-	/usr/lib/mylibc/libc.so instead /lib/libc.so
+	/usr/lib/mylibc/libc.so instead /lib/ld.so
 
 endmenu
