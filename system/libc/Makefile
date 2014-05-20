@@ -31,7 +31,7 @@ glibc-git:=git://sourceware.org/git/glibc.git
 
 bionic-version:=git
 subproject-$(CONFIG_LIBC_BIONIC)+=bionic
-bionic-git:=https://android.googlesource.com/platform/bionic
+bionic-git:=git://android.googlesource.com/platform/bionic
 
 linaro-release=$(firstword $(subst -, ,$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)))
 gcc-linaro-version=$(CONFIG_CROSS_COMPILE:"%"=%)$(CONFIG_TOOLCHAIN_GCC_VERSION:"%"=-%)-$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)_runtime
@@ -42,6 +42,15 @@ lib/$(CONFIG_CROSS_COMPILE:"%"=%)/: copy=$(srctree)/$(src)/gcc-linaro$(gcc-linar
 lib/$(CONFIG_CROSS_COMPILE:"%"=%)/: $(srctree)/$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/lib/$(CONFIG_CROSS_COMPILE:"%"=%)/ FORCE
 usr/lib/$(CONFIG_CROSS_COMPILE:"%"=%)/: copy=$(srctree)/$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/usr/lib/$(CONFIG_CROSS_COMPILE:"%"=%)/
 usr/lib/$(CONFIG_CROSS_COMPILE:"%"=%)/: $(srctree)/$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/usr/lib/$(CONFIG_CROSS_COMPILE:"%"=%)/ FORCE
+
+musl-version:=$(CONFIG_LIBC_MUSL_VERSION)
+subproject-$(CONFIG_LIBC_MUSL_SP):=musl
+musl-url:=http://www.musl-libc.org/releases/musl-$(musl-version).tar.gz
+musl-git:=git://git.musl-libc.org/musl
+musl-configure-arguments:=CC=$(firstword $(CC))
+install-$(CONFIG_LIBC_MUSL_SP):=lib/ld-musl-$(ARCH).so.1
+lib/ld-musl-$(ARCH).so.1:install-sysroot:=y
+lib/ld-musl-$(ARCH).so.1:link:=../usr/lib/libc.so
 
 patchelf-version=0.6
 subproject-$(CONFIG_PATCHELF)+=patchelf
