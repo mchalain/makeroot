@@ -53,6 +53,9 @@ $(install-subdirs): $(rootfs) FORCE
 	$(if $(wildcard $(rootfs)/$@),,$(eval install-target = $@) $(call cmd,mkdir))
 
 force:=n
+install-sysroot:=n
 $(sort $(install-y)): %: $(install-subdirs)
 	$(eval install-dest = $(rootfs))
 	$(if $(and $(wildcard $(rootfs)/$@),$(findstring n,$(force))),,$(call multicmd,install))
+	$(eval install-dest = $(sysroot))
+	$(if $(and $(wildcard $(sysroot)/$@),$(findstring y,$(install-sysroot))),$(call multicmd,install))
