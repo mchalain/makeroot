@@ -31,7 +31,7 @@ srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
 -include  $(srctree)/$(VERSION_FILE)
 
 BOARD ?= $(CONFIG_CONFIGNAME:"%"=%)
-TOOLCHAIN_PATH ?=$(if $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CURDIR)/out/host/toolchain/bin)
+TOOLCHAIN_PATH ?=$(if $(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CONFIG_TOOLCHAIN_PATH:"%"=%),$(CURDIR)/out/host/toolchain)
 
 root		:= $(CURDIR)
 srctree		:= $(if $(BUILD_SRC),$(BUILD_SRC),$(CURDIR))
@@ -49,9 +49,8 @@ hostobjtree	:= $(root)/$(hostobjtree)
 hostbin		:= $(hostobjtree)/bin
 hostlib		:= $(hostobjtree)/lib
 toolchain_path	:= $(TOOLCHAIN_PATH)
-toolchain_path	?= $(join $(hostobjtree),toolchain_path)
 export root srctree objtree sysroot 
-export hostobjtree hostbin toolchain_path
+export hostobjtree hostbin
 export packagesdir rootfs bootfs homefs
 
 CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
@@ -60,7 +59,7 @@ SUBARCH ?= $(CONFIG_SUBARCH:"%"=%)
 HFP ?= $(CONFIG_HFP_CPU:"%"=%)
 THUMB ?= $(CONFIG_THUMB:"%"=%)
 GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
-PATH:=$(hostbin):$(toolchain_path):$(PATH)
+PATH:=$(hostbin):$(toolchain_path)/bin:$(PATH)
 export GCC_FLAGS CROSS_COMPILE ARCH BOARD SUBARCH HFP THUMB PATH
 
 # We need some generic definitions.
