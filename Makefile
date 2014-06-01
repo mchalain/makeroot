@@ -54,10 +54,14 @@ export hostobjtree hostbin
 export packagesdir rootfs bootfs homefs
 
 CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
-ARCH ?= $(CONFIG_ARCH:"%"=%)
+ARCH?=$(CONFIG_ARCH:"%"=%)
+KERNEL?=$(if $(findstring $(CONFIG_LINUX:"%"=%),linux),linux,none)
+LIBC?=gnu
 SUBARCH ?= $(CONFIG_SUBARCH:"%"=%)
 HFP ?= $(CONFIG_HFP_CPU:"%"=%)
 THUMB ?= $(CONFIG_THUMB:"%"=%)
+TRIPLET_EXTRA?=$(if $(findtring arm,$(ARCH)),eabi$(if $(findstring y,$(HFP)),hf))
+TRIPLET:=$(ARCH)-$(KERNEL)-$(LIBC)$(TRIPLET_EXTRA)
 GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
 PATH:=$(hostbin):$(toolchain_path)/bin:$(PATH)
 export GCC_FLAGS CROSS_COMPILE ARCH BOARD SUBARCH HFP THUMB PATH
