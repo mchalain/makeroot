@@ -178,7 +178,7 @@ download: target:=download
 download: $(subdir-ym) $(download-target)
 	@:
 $(rootfs) $(packagesdir) $(sysroot) $(bootfs) $(homefs) $(hostbin) $(host-objdirs) $(hostlib) $(hostlib)/pkgconfig:
-	mkdir -p $@
+	$(Q)mkdir -p $@
 
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable se we can use it in if_changed and friends.
