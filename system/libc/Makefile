@@ -29,6 +29,11 @@ bionic-version:=git
 subproject-$(CONFIG_LIBC_BIONIC)+=bionic
 bionic-git:=git://android.googlesource.com/platform/bionic
 
+dietlibc-version=$(CONFIG_LIBC_DIETLIBC_VERSION)
+subproject-$(CONFIG_LIBC_DIETLIBC_SP)+=dietlibc
+dietlibc-url:=http://www.fefe.de/dietlibc/dietlibc-$(dietlibc-version).tar.bz2
+dietlibc-cvs:=:pserver:cvs@cvs.fefe.de:/cvs
+
 linaro-release=$(firstword $(subst -, ,$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)))
 gcc-linaro-version=$(CONFIG_CROSS_COMPILE:"%"=%)$(CONFIG_TOOLCHAIN_GCC_VERSION:"%"=-%)-$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)_runtime
 gcc-linaro-url=http://launchpad.net/linaro-toolchain-binaries/trunk/$(linaro-release)/+download/gcc-linaro$(gcc-linaro-version:%=-%).tar.bz2

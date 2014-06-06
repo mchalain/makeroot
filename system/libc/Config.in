@@ -33,6 +33,9 @@ choice
         select LIBC_LDSO
         select LIBC_RT
 
+	config LIBC_DIETLIBC_SP
+		bool "dietlibc the embedded libc"
+
 	config LIBC_MUSL_SP
 		bool "musl embedded libc for linux"
         select LIBC_LDSO
