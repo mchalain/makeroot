@@ -3,14 +3,12 @@ libc-toolchain-config:=echo configuration
 
 glibc-version=$(CONFIG_LIBC_GLIBC_VERSION)
 subproject-$(CONFIG_LIBC_GLIBC_SP)+=glibc
-glibc-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
 glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc$(glibc-version).tar.xz
 glibc-git:=git://sourceware.org/git/glibc.git
 
 uClibc-version=$(CONFIG_LIBC_UCLIBC_VERSION)
 subproject-$(CONFIG_LIBC_UCLIBCv)+=uClibc
-uClibc-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
-uClibc-url:=http://www.uclibc.org/downloads/uClibc-$(CONFIG_LIBC_UCLIBC_VERSION:"%"=%).tar.xz
+uClibc-url:=http://www.uclibc.org/downloads/uClibc-$(uClibc-version).tar.xz
 uClibc-git:=git://git.busybox.net/uClibc.git
 uClibc-defconfig:=$(CONFIG_LIBC_UCLIBC_DEFCONFIG:"%"=%)
 
@@ -22,7 +20,6 @@ newlib-git:=git://git.linaro.org/toolchain/newlib.git
 else
 newlib-url:=ftp://sourceware.org/pub/newlib/newlib$(newlib-version).tar.gz
 endif
-newlib-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
 newlib-configure:=$(CONFIG_LIBC_NEWLIB_CONFIGURE:"%"=%)
 
 bionic-version:=git
