@@ -1,0 +1,19 @@
+menu "external tools suppliers"
+
+menuconfig LINARO
+	bool "linaro consortium support"
+ 
+config LINARO_VERSION
+	string "Linaro release number"
+	depends on LINARO 
+	default "14.05"
+
+config LINARO_LSK
+	bool "Linaro stable Long Support Kernel"
+	depends on LINARO && LINUX_LINARO
+	default y
+
+menuconfig SOURCERY
+	bool "Code Sourcery tools support"
+
+endmenu
