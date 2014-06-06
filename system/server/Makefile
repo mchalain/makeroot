@@ -190,7 +190,7 @@ libupnp-url:=http://downloads.sourceforge.net/pupnp/libupnp-$(libupnp-version).t
 libupnp-git:= git://gitorious.org/pupnp/pupnp.git
 #the configuration request that the $LD version answers "*GNU*" but gcc as linker answers GCC
 #during the configuration we use ld
-libupnp-configure-arguments:=--enable-samples --enable-debug LD="$(CROSS_COMPILE)ld"
+libupnp-configure-arguments:=--enable-samples --enable-debug
 libupnp-configure-arguments+=--without-documentation
 
 libdlna-version=$(CONFIG_SERVER_LIBDLNA_VERSION)
@@ -205,6 +205,9 @@ ushare-url=http://ushare.geexbox.org/releases/ushare-$(ushare-version).tar.bz2
 ushare-hg=http://hg.geexbox.org/ushare
 ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)-
 ushare-config+=--prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --disable-strip --enable-debug
+ifneq ($(CONFIG_LIBC_NLS),y)
+ushare-config+=--disable-nls
+endif
 ifeq ($(CONFIG_SERVER_LIBDLNA_SP),y)
 ushare-config+=--enable-dlna
 endif
