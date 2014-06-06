@@ -22,14 +22,15 @@ uClibc-url:=http://www.uclibc.org/downloads/uClibc-$(uClibc-version).tar.xz
 uClibc-git:=git://git.busybox.net/uClibc.git
 uClibc-defconfig:=$(CONFIG_LIBC_UCLIBC_DEFCONFIG:"%"=%)
 
-newlib-version=$(CONFIG_LIBC_NEWLIB_VERSION)
-subproject-$(CONFIG_LIBC_NEWLIB_SP)+=newlib
-ifeq ($(findstring linaro, $(newlib-version)),linaro)
+ifeq (y,$(CONFIG_LINARO))
+newlib-version=linaro-$(CONFIG_LIBC_NEWLIB_VERSION)-$(linaro-version:%=20%)
 newlib-url:=https://releases.linaro.org/14.02/components/toolchain/newlib-linaro/newlib-$(newlib-version).tar.bz2
 newlib-git:=git://git.linaro.org/toolchain/newlib.git
 else
+newlib-version=$(CONFIG_LIBC_NEWLIB_VERSION)
 newlib-url:=ftp://sourceware.org/pub/newlib/newlib$(newlib-version).tar.gz
 endif
+subproject-$(CONFIG_LIBC_NEWLIB_SP)+=newlib
 newlib-configure:=$(CONFIG_LIBC_NEWLIB_CONFIGURE:"%"=%)
 
 bionic-version:=git
