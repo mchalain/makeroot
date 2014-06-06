@@ -7,18 +7,26 @@ makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH) \
 
 kernel=$(CONFIG_KERNEL:"%"=%)
 subproject-y+=$(kernel)
+#default kernel-version
 $(kernel)-version:=$(CONFIG_KERNEL_VERSION:"%"=%)
+
+ifeq ($(CONFIG_LINUX_STD), y)
+linux-url:=http://www.kernel.org/pub/linux/kernel/v3.0/linux$(linux-version:%=-%).tar.bz2
+else
+ifeq ($(CONFIG_LINUX_LINARO), y)
+linaro-version:=$(CONFIG_LINARO_VERSION:"%"=%)
+ifeq ($(findstring git,$(CONFIG_KERNEL_VERSION)))
+linux-version:=linaro-$(CONFIG_KERNEL_VERSION:"%"=%)-$(linaro-version:%=20%)
+endif
+linaro-lsk:=$(if $(CONFIG_LINARO_LSK),stable-lsk)
+linux-git:=git://git.linaro.org/kernel/linux-linaro-tracking.git
+linux-url:=http://releases.linaro.org/$(linaro-version)/components/kernel/linux-linaro$(linaro-lsk)/linux-$(linux-linaro-version).tar.bz2
+endif
+endif
 
 KDIR:=$(src)/$(kernel)$($(kernel)-version:%=-%)
 export KDIR
 
-ifeq ($(CONFIG_LINUX_STD), y)
-linux-url:=http://www.kernel.org/pub/linux/kernel/v3.0/linux$(linux-version:%=-%).tar.bz2
-endif
-ifeq ($(CONFIG_LINUX_LINARO), y)
-linux-linaro-git:=git://git.linaro.org/kernel/linux-linaro-tracking.git
-linux-linaro-url:=http://releases.linaro.org/$(CONFIG_LINUX_LINARO_RELEASE)/components/kernel/$(CONFIG_LINUX_LINARO_DIR)/linux-linaro$(linux-linaro-version:%=-%).tar.bz2
-endif
 ifneq ($(CONFIG_KERNEL_CUSTOM_URL),"")
 $(kernel:%=%-url):=$(sort $(filter-out %.git, $(CONFIG_KERNEL_CUSTOM_URL:"%"=%)) $(filter-out git:%, $(CONFIG_KERNEL_CUSTOM_URL:"%"=%)))
 $(kernel:%=%-git):=$(sort $(filter %.git, $(CONFIG_KERNEL_CUSTOM_URL:"%"=%)) $(filter git:%, $(CONFIG_KERNEL_CUSTOM_URL:"%"=%)))

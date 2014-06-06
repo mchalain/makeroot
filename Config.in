@@ -142,6 +142,8 @@ endchoice
 
 endmenu
 
+source "tools/Config.in"
+
 source "tools/gcc/Config.in"
 
 menu "Embedded System Build"

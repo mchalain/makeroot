@@ -1,60 +1,35 @@
 menu "Toolchain"
 choice
-    prompt "toolchain select"
+	prompt "toolchain select"
 		default TOOLCHAIN_CUSTOM
-    config TOOLCHAIN_LINARO
-        bool "Linaro Toolchain"
-        depends on ARM
-    config TOOLCHAIN_BARE_METAL
-        bool "bare-metal Toolchain"
-        depends on ARM
-    config TOOLCHAIN_SOURCERY_LINUX
+	config TOOLCHAIN_LINARO
+		bool "Linaro Toolchain"
+		depends on ARM && LINARO
+
+	config TOOLCHAIN_BARE_METAL
+		bool "bare-metal Toolchain"
+		depends on ARM
+
+	config TOOLCHAIN_SOURCERY_LINUX
 		bool "Code Sourcery Toolchain for GNU/Linux"
-    config TOOLCHAIN_SOURCERY_EABI
+
+	config TOOLCHAIN_SOURCERY_EABI
 		bool "Code Sourcery Toolchain for EABI (with newlib)"
-    config TOOLCHAIN_CUSTOM
-        bool "custom Toolchain"
+
+	config TOOLCHAIN_CUSTOM
+		bool "custom Toolchain"
+
 endchoice
-
-if TOOLCHAIN_LINARO
-menu "Linaro Toolchain"
-choice
-	prompt "Linaro release"
-	config LINARO_R_2013_06
-		bool "2013.06"
-	config LINARO_R_2013_04
-		bool "2013.04"
-	config LINARO_R_2013_03
-		bool "2013.03"
-	config LINARO_R_2012_03
-		bool "2012.03"
-	config LINARO_R_OTHER
-		bool "Other release"
-endchoice
-
-config TOOLCHAIN_LINARO_VERSION
-    string
-    prompt "Linaro Compiler version" if LINARO_R_OTHER
-    default "2013.06" if LINARO_R_2013_06
-    default "2013.04-20130415" if LINARO_R_2013_04
-    default "2013.03-20130313" if LINARO_R_2013_03
-    default "2012.03-20120326" if LINARO_R_2012_03
-
-endmenu
-endif
 
 config TOOLCHAIN_GCC_VERSION
-    string "C Compiler version"
-    default "4.8" if LINARO_R_2013_06
-    default "4.7" if LINARO_R_2013_04
-    default "" if LINARO_R_2012_03
-    default "4.6"
+	string "C Compiler version"
+	default "4.8" if TOOLCHAIN_LINARO
+	default "4.6"
 
 config CROSS_COMPILE
     string "Cross Compilation tools suffix"
-    default "arm-linux-gnueabihf" if LINARO_R_2013_06
-    default "arm-linux-gnueabihf" if LINARO_R_2013_04
-    default "arm-linux-gnueabi" if LINARO_R_2012_03
+    default "arm-linux-gnueabihf" if TOOLCHAIN_LINARO
+    default "arm-linux-gnueabi" if TOOLCHAIN_LINARO
     default "arm-none-eabi" if TOOLCHAIN_SOURCERY_EABI
     default "arm-none-linux-gnueabi"
 
