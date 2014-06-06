@@ -52,6 +52,6 @@ lib/ld-musl-$(ARCH).so.1:link:=../usr/lib/libc.so
 patchelf-version=0.6
 subproject-$(CONFIG_PATCHELF)+=patchelf
 patchelf-url=http://hydra.nixos.org/build/1524660/download/3/patchelf-0.6.tar.gz
-patchelf-config=./configure --host=$(CROSS_COMPILE:%-=%)
+patchelf-config=./configure --host=$(TRIPLET)
 
 pthread-git:=http://git.savannah.gnu.org/cgit/hurd/libpthread.git/
