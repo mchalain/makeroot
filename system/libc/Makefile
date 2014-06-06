@@ -2,20 +2,20 @@ subproject-$(CONFIG_LIBC_TOOLCHAIN):=libc-toolchain
 libc-toolchain-config:=echo configuration 
 
 glibc-version=$(CONFIG_LIBC_GLIBC_VERSION)
-subproject-$(CONFIG_LIBC_GLIBC)+=glibc
+subproject-$(CONFIG_LIBC_GLIBC_SP)+=glibc
 glibc-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
 glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc$(glibc-version).tar.xz
 glibc-git:=git://sourceware.org/git/glibc.git
 
 uClibc-version=$(CONFIG_LIBC_UCLIBC_VERSION)
-subproject-$(CONFIG_LIBC_UCLIBC)+=uClibc
+subproject-$(CONFIG_LIBC_UCLIBCv)+=uClibc
 uClibc-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
 uClibc-url:=http://www.uclibc.org/downloads/uClibc-$(CONFIG_LIBC_UCLIBC_VERSION:"%"=%).tar.xz
 uClibc-git:=git://git.busybox.net/uClibc.git
 uClibc-defconfig:=$(CONFIG_LIBC_UCLIBC_DEFCONFIG:"%"=%)
 
 newlib-version=$(CONFIG_LIBC_NEWLIB_VERSION)
-subproject-$(CONFIG_LIBC_NEWLIB)+=newlib
+subproject-$(CONFIG_LIBC_NEWLIB_SP)+=newlib
 ifeq ($(findstring linaro, $(newlib-version)),linaro)
 newlib-url:=https://releases.linaro.org/14.02/components/toolchain/newlib-linaro/newlib-$(newlib-version).tar.bz2
 newlib-git:=git://git.linaro.org/toolchain/newlib.git

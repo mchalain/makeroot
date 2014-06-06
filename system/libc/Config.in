@@ -6,7 +6,7 @@ choice
     config LIBC_TOOLCHAIN
         bool "the libc from the toolchain"
 
-    config LIBC_GLIBC
+    config LIBC_GLIBC_SP
         bool "The Gnu Libc"
         select LIBC_NLS
         select LIBC_NSL
@@ -14,7 +14,7 @@ choice
         select LIBC_LDSO
         select LIBC_RT
 
-    config LIBC_UCLIBC
+    config LIBC_UCLIBC_SP
         bool "uClibc"
         select LIBC_NLS
         select LIBC_NSL
@@ -22,7 +22,7 @@ choice
         select LIBC_LDSO
         select LIBC_RT
 
-    config LIBC_NEWLIB
+    config LIBC_NEWLIB_SP
         bool "newlib RedHat embedded libc"
 
     config LIBC_BIONIC
