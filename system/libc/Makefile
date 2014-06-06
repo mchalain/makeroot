@@ -3,8 +3,11 @@ libc-toolchain-config:=echo configuration
 
 glibc-version=$(CONFIG_LIBC_GLIBC_VERSION)
 subproject-$(CONFIG_LIBC_GLIBC_SP)+=glibc
-glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc$(glibc-version).tar.xz
+glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc-$(glibc-version).tar.xz
 glibc-git:=git://sourceware.org/git/glibc.git
+glibc-makeflags:=CC= LD= CPP=
+glibc-configure-arguments:=--with-headers=$(sysroot)/usr/include
+glibc-builddir:=y
 
 ifeq (y,$(CONFIG_LINARO))
 linaro-version:=$(CONFIG_LINARO_VERSION:"%"=%)
