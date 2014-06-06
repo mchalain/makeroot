@@ -1,9 +1,11 @@
-CROSS_COMPILE := $(CONFIG_CROSS_COMPILE:"%"=%-)
-ARCH := $(CONFIG_ARCH:"%"=%)
-export CROSS_COMPILE ARCH
-
 subproject-$(CONFIG_LIBC_TOOLCHAIN):=toolchain
 toolchain-config:=echo configuration 
+
+glibc-version=$(strip $(if $(CONFIG_LIBC_GLIBC_VERSION:"%"=%),$(CONFIG_LIBC_GLIBC_VERSION:"%"=%)))
+subproject-$(CONFIG_LIBC_GLIBC)+=glibc
+glibc-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
+glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc$(glibc-version).tar.xz
+glibc-git:=git://sourceware.org/git/glibc.git
 
 uclibc-version=$(strip $(if $(CONFIG_LIBC_UCLIBC_VERSION:"%"=%),$(CONFIG_LIBC_UCLIBC_VERSION:"%"=%)))
 subproject-$(CONFIG_LIBC_UCLIBC)+=uClibc
@@ -22,12 +24,6 @@ newlib-url:=ftp://sourceware.org/pub/newlib/newlib$(newlib-version).tar.gz
 endif
 newlib-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
 newlib-configure:=$(CONFIG_LIBC_NEWLIB_CONFIGURE:"%"=%)
-
-glibc-version=$(strip $(if $(CONFIG_LIBC_GLIBC_VERSION:"%"=%),$(CONFIG_LIBC_GLIBC_VERSION:"%"=%)))
-subproject-$(CONFIG_LIBC_GLIBC)+=glibc
-glibc-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
-glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc$(glibc-version).tar.xz
-glibc-git:=git://sourceware.org/git/glibc.git
 
 bionic-version:=git
 subproject-$(CONFIG_LIBC_BIONIC)+=bionic
