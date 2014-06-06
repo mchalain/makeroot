@@ -3,15 +3,17 @@
 
 flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) \
 							-march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
-CFLAGS:=--sysroot=$(sysroot) $(flags_extend) $(GCC_FLAGS)
+flags_extend+=--sysroot=$(sysroot)
+CFLAGS:=
+LDFLAGS:= \
+	-Wl,-rpath-link=/usr/lib/:/lib/:$(join /lib/,$(CROSS_COMPILE:%-=%))
+DSOFLAGS:=$(LDFLAGS)
+# GCC_FLAGS is defined with the config file
+CFLAGS+=$(GCC_FLAGS) $(LDFLAGS) $(flags_extend)
 CPPFLAGS:=$(CFLAGS)
 CXXFLAGS:=$(CFLAGS)
-LD=$(CROSS_COMPILE)gcc
-LDFLAGS:=--sysroot=$(sysroot) \
-	-Wl,-rpath-link=$(sysroot)/usr/lib/:$(sysroot)/lib/:$(join $(sysroot)/lib/,$(CROSS_COMPILE:%-=%)) \
-					$(flags_extend) $(GCC_FLAGS)
-DSOFLAGS:=$(LDFLAGS)
-export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS LD
+LDFLAGS+=$(GCC_FLAGS) $(flags_extend)
+export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS
 
 # install-sh is a tool to install binaries and data inside the root directory
 # this script can use different applications that we can modify by environment variables
@@ -53,9 +55,9 @@ define cmd_configure-project
 			$(if $(sprj-defconfig),
 				$(Q)cp $(sprj-defconfig) $(sprj-src)/.config && $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig,
 				$(if $(wildcard $(sprj-src)/configure),
-					$(Q)cd $(sprj-src) && $(configure-cmd) $(sprj-config-opts),
+					$(Q)cd $(sprj-src) && $(sprj-makeflags) $(configure-cmd) $(sprj-config-opts),
 					$(if $(wildcard $(sprj-src)/configure.ac),
-						$(Q)cd $(sprj-src) && autoreconf --force -i && $(configure-cmd) $(sprj-config-opts),
+						$(Q)cd $(sprj-src) && autoreconf --force -i && $(sprj-makeflags) $(configure-cmd) $(sprj-config-opts),
 						$(Q)echo "no configuration found inside $(sprj-src)" && exit 1
 					)
 				)

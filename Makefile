@@ -54,17 +54,54 @@ export hostobjtree hostbin
 export packagesdir rootfs bootfs homefs
 
 CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
-ARCH?=$(CONFIG_ARCH:"%"=%)
-KERNEL?=$(if $(findstring $(CONFIG_LINUX:"%"=%),linux),linux,none)
-LIBC?=gnu
+KERNEL	?= $(if $(findstring y,$(CONFIG_LINUX)),linux,none)
+ARCH ?= $(CONFIG_ARCH:"%"=%)
 SUBARCH ?= $(CONFIG_SUBARCH:"%"=%)
 HFP ?= $(CONFIG_HFP_CPU:"%"=%)
 THUMB ?= $(CONFIG_THUMB:"%"=%)
+ifeq ($(CONFIG_LIBC_TOOLCHAIN),y)
+TRIPLET:=$(CROSS_COMPILE:%-=%)
+LIBC?= \
+	$(if $(findstring gnu,$(TRIPLET)),gnu,\
+		$(if $(findstring uclibc,$(TRIPLET)),uclibc,\
+			$(if $(findstring android,$(TRIPLET)),android,\
+				$(if $(findstring musl,$(TRIPLET)),gnumusl,\
+					$(if $(findstring dietlibc,$(TRIPLET)),dietlibc,\
+						newlib,) \
+				) \
+			) \
+		) \
+	)
+
+else
+ABI:=$(strip \
+	$(if $(findstring arm,$(ARCH)), \
+		$(if $(findstring y,$(THUMB)),thumb,\
+		eabi$(if $(findstring y,$(HFP)),hf)\
+		)\
+	))
+LIBC:=$(strip \
+	$(if $(findstring y,$(CONFIG_LIBC_GLIBC_SP)),gnu,\
+		$(if $(findstring y,$(CONFIG_LIBC_UCLIBC)),uclibc,\
+			$(if $(findstring y,$(CONFIG_LIBC_BIONIC)),android,\
+				$(if $(findstring y,$(CONFIG_LIBC_MUSL_SP)),gnumusl,\
+					$(if $(findstring y,$(CONFIG_LIBC_DIETLIBC)),dietlibc,\
+						$(if $(findstring y,$(CONFIG_LIBC_NEWLIB)),) \
+					) \
+				) \
+			) \
+		) \
+	))
 TRIPLET_EXTRA?=$(if $(findtring arm,$(ARCH)),eabi$(if $(findstring y,$(HFP)),hf))
-TRIPLET:=$(ARCH)-$(KERNEL)-$(LIBC)$(TRIPLET_EXTRA)
+TRIPLET:=$(ARCH)-$(KERNEL)-$(LIBC)$(ABI)
+endif
+export CROSS_COMPILE KERNEL ARCH LIBC BOARD SUBARCH HFP THUMB TRIPLET
+
 GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
+export GCC_FLAGS
 PATH:=$(hostbin):$(toolchain_path)/bin:$(PATH)
-export GCC_FLAGS CROSS_COMPILE ARCH BOARD SUBARCH HFP THUMB PATH
+export PATH
+
 
 # We need some generic definitions.
 $(srctree)/scripts/include.mk: ;
@@ -122,7 +159,8 @@ egl: system/lowlevel/graphics/egl
 
 .PHONY:test
 test:
-	$(Q)$(MAKE) $(build)=$@ $(target)
+	echo $(TRIPLET) $(HFP) $(LIBC) $(CONFIG_CONFIG_LIBC_TOOLCHAIN)
+#	$(Q)$(MAKE) $(build)=$@ $(target)
 
 PHONY += $(SUBDIRS)  test
 $(SUBDIRS): FORCE
