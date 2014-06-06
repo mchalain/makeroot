@@ -1,17 +1,21 @@
 menu "Kernel Configuration"
 
 choice
-    prompt "Kernel version"
-    config LINUX_STD
-        bool "Linux standard"
-        select LINUX
+	prompt "Kernel version"
+	config LINUX_STD
+		bool "Linux standard"
+		select LINUX
 
-    config LINUX_LINARO
-        bool "Linux from Linaro Team"
-        select LINUX
+	config LINUX_LINARO
+		bool "Linux from Linaro Team"
+		select LINUX
 
-    config KERNEL_CUSTOM
-        bool "customized Linux "
+	config KERNEL_CUSTOM
+		bool "customized Linux "
+
+	config KERNEL_HEADERS
+		bool "do not build kernel just install headers files"
+		select KERNEL_HEADERS_MOIFIED
 endchoice
 
 config LINUX
@@ -105,6 +109,11 @@ config KERNEL_CMDLINE_3
 	string "Command Line continue"
 	default ""
 endmenu
+
+config KERNEL_HEADERS_MOIFIED
+	bool "sabotage : kernel headers files cleaned"
+	help
+		https://github.com/sabotage-linux/sabotage
 
 config BOOTDIR
     string

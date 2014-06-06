@@ -39,5 +39,12 @@ else
 	$(kernel:%=%-install):= find $($(kernel:%=%-destdir))/lib/modules/ -name build -delete && find $($(kernel:%=%-destdir))/lib/modules/ -name source -delete
 endif
 
+kernel-headers-version:=git
+subproject-$(CONFIG_KERNEL_HEADERS_MODIFIED)+=kernel-headers
+kernel-headers-git:=git://github.com/sabotage-linux/kernel-headers
+kernel-headers-config:=echo done
+kernel-headers-build:=
+kernel-headers-makeflags:=ARCH=$(ARCH) prefix=/usr
+
 #subdir-y+=$(src)/drivers/video
 
