@@ -81,7 +81,7 @@ ABI:=$(strip \
 		)\
 	))
 LIBC:=$(strip \
-	$(if $(findstring y,$(CONFIG_LIBC_GLIBC_SP) $(findstring y,$(CONFIG_LIBC_EGLIBC_SP)),gnu,\
+	$(if $(findstring y,$(CONFIG_LIBC_GLIBC_SP)) $(findstring y,$(CONFIG_LIBC_EGLIBC_SP)),gnu,\
 		$(if $(findstring y,$(CONFIG_LIBC_UCLIBC)),uclibc,\
 			$(if $(findstring y,$(CONFIG_LIBC_BIONIC)),android,\
 				$(if $(findstring y,$(CONFIG_LIBC_MUSL_SP)),gnumusl,\
