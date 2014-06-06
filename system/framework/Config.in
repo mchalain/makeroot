@@ -4,9 +4,10 @@ source "system/framework/fileparser/Config.in"
 source "system/framework/filecompressor/Config.in"
 source "system/framework/images/Config.in"
 source "system/framework/video/Config.in"
-config NCURSES
+config FW_NCURSES_SP
 	bool "ncurses graphic library"
 	default y if LSB
 	help
 		http://www.gnu.org/software/ncurses/
+
 endmenu

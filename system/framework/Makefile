@@ -6,6 +6,6 @@ subdir-y+=$(src)/images
 
 subdir-y+=$(src)/video
 
-ncurses-version:=5.9
-subproject-$(CONFIG_NCURSES)+=ncurses
+ncurses-version:=$(CONFIG_FW_NCURSES_VERSION)
+subproject-$(CONFIG_FW_NCURSES_SP)+=ncurses
 ncurses-url:=http://ftp.gnu.org/pub/gnu/ncurses/ncurses-$(ncurses-version).tar.gz
