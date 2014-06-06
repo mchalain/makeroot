@@ -48,7 +48,6 @@ musl-version:=$(CONFIG_LIBC_MUSL_VERSION)
 subproject-$(CONFIG_LIBC_MUSL_SP):=musl
 musl-url:=http://www.musl-libc.org/releases/musl-$(musl-version).tar.gz
 musl-git:=git://git.musl-libc.org/musl
-musl-configure-arguments:=CC=$(firstword $(CC))
 install-$(CONFIG_LIBC_MUSL_SP):=lib/ld-musl-$(ARCH).so.1
 lib/ld-musl-$(ARCH).so.1:install-sysroot:=y
 lib/ld-musl-$(ARCH).so.1:link:=../usr/lib/libc.so
