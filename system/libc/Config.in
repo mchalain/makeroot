@@ -43,10 +43,10 @@ endchoice
 
 config LIBC_NLS
 	bool
-	prompt "libc supports Native Language NLS" if LIBC_TOOLCHAIN
+	prompt "libc supports Native Language NLS (-lnls)" if LIBC_TOOLCHAIN
 config LIBC_NSL
 	bool
-	prompt "libc supports Network Services Library " if LIBC_TOOLCHAIN
+	prompt "libc supports Network Services Library (-lnsl)" if LIBC_TOOLCHAIN
 	help
 		gethostbyname getservbyname, getpwnam
 		This library may be a part of libc
@@ -58,37 +58,21 @@ config LIBC_LDSO
 	prompt "libc supports Dynamic Linker LDSO (-ldl)" if LIBC_TOOLCHAIN
 config LIBC_RT
 	bool
-	prompt "libc supports RealTime functions" if LIBC_TOOLCHAIN
+	prompt "libc supports RealTime functions (-lrt)" if LIBC_TOOLCHAIN
 	
 config LINARO_RUNTIME
 	bool "Linaro Runtime libraries"
 	default y if LINARO && LIBC_TOOLCHAIN
-
-config LIBC_GLIBC_VERSION
-    string "version"
-    default 2.17
-    depends on LIBC_GLIBC
 
 config LIBC_GLIBC_DEFCONFIG
     string "config file"
     default libc/config/glibc_defconfig
     depends on LIBC_GLIBC
 
-config LIBC_UCLIBC_VERSION
-    string "version"
-    default 0.9.33
-    depends on LIBC_UCLIBC
-
 config LIBC_UCLIBC_DEFCONFIG
     string "config file"
     default libc/config/uclibc_defconfig
     depends on LIBC_UCLIBC
-
-config LIBC_NEWLIB_VERSION
-    string "version"
-    default linaro-2.1.0-2014.02 if LINARO
-    default 2.0.0
-    depends on LIBC_NEWLIB
 
 config LIBC_NEWLIB_CONFIGURE
     string "configure options"

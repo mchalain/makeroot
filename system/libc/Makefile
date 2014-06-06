@@ -1,20 +1,20 @@
 subproject-$(CONFIG_LIBC_TOOLCHAIN):=toolchain
 toolchain-config:=echo configuration 
 
-glibc-version=$(strip $(if $(CONFIG_LIBC_GLIBC_VERSION:"%"=%),$(CONFIG_LIBC_GLIBC_VERSION:"%"=%)))
+glibc-version=$(CONFIG_LIBC_GLIBC_VERSION)
 subproject-$(CONFIG_LIBC_GLIBC)+=glibc
 glibc-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
 glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc$(glibc-version).tar.xz
 glibc-git:=git://sourceware.org/git/glibc.git
 
-uclibc-version=$(strip $(if $(CONFIG_LIBC_UCLIBC_VERSION:"%"=%),$(CONFIG_LIBC_UCLIBC_VERSION:"%"=%)))
+uClibc-version=$(CONFIG_LIBC_UCLIBC_VERSION)
 subproject-$(CONFIG_LIBC_UCLIBC)+=uClibc
 uClibc-makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH)
 uClibc-url:=http://www.uclibc.org/downloads/uClibc-$(CONFIG_LIBC_UCLIBC_VERSION:"%"=%).tar.xz
 uClibc-git:=git://git.busybox.net/uClibc.git
 uClibc-defconfig:=$(CONFIG_LIBC_UCLIBC_DEFCONFIG:"%"=%)
 
-newlib-version=$(strip $(CONFIG_LIBC_NEWLIB_VERSION:"%"=%))
+newlib-version=$(CONFIG_LIBC_NEWLIB_VERSION)
 subproject-$(CONFIG_LIBC_NEWLIB)+=newlib
 ifeq ($(findstring linaro, $(newlib-version)),linaro)
 newlib-url:=https://releases.linaro.org/14.02/components/toolchain/newlib-linaro/newlib-$(newlib-version).tar.bz2
