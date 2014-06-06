@@ -7,7 +7,15 @@ choice
         bool "the libc from the toolchain"
 
     config LIBC_GLIBC_SP
-        bool "The Gnu Libc"
+        bool "glibc : The Gnu Libc"
+        select LIBC_NLS
+        select LIBC_NSL
+        select LIBC_RCP
+        select LIBC_LDSO
+        select LIBC_RT
+
+    config LIBC_EGLIBC_SP
+        bool "eglibc : The Gnu Libc for embedded"
         select LIBC_NLS
         select LIBC_NSL
         select LIBC_RCP

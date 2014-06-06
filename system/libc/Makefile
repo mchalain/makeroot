@@ -6,6 +6,16 @@ subproject-$(CONFIG_LIBC_GLIBC_SP)+=glibc
 glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc$(glibc-version).tar.xz
 glibc-git:=git://sourceware.org/git/glibc.git
 
+ifeq (y,$(CONFIG_LINARO))
+linaro-version:=$(CONFIG_LINARO_VERSION:"%"=%)
+eglibc-version:=linaro-$(CONFIG_LIBC_EGLIBC_VERSION)-$(linaro-version:%=20%)
+eglibc-url=https://releases.linaro.org/$(linaro-version)/components/toolchain/eglibc-linaro/eglibc-$(eglibc-version).tar.bz2
+else
+eglibc-version:=$(CONFIG_LIBC_EGLIBC_VERSION)
+eglibc-svn:=svn://svn.eglibc.org/branches/eglibc-$(subst .,_,$(eglibc-version))
+endif
+subproject-$(CONFIG_LIBC_EGLIBC_SP):=eglibc
+
 uClibc-version=$(CONFIG_LIBC_UCLIBC_VERSION)
 subproject-$(CONFIG_LIBC_UCLIBCv)+=uClibc
 uClibc-url:=http://www.uclibc.org/downloads/uClibc-$(uClibc-version).tar.xz
