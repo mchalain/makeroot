@@ -1,5 +1,5 @@
-subproject-$(CONFIG_LIBC_TOOLCHAIN):=toolchain
-toolchain-config:=echo configuration 
+subproject-$(CONFIG_LIBC_TOOLCHAIN):=libc-toolchain
+libc-toolchain-config:=echo configuration 
 
 glibc-version=$(CONFIG_LIBC_GLIBC_VERSION)
 subproject-$(CONFIG_LIBC_GLIBC)+=glibc
