@@ -154,7 +154,7 @@ samba-version=$(CONFIG_SERVER_SAMBA_VERSION)
 subproject-$(CONFIG_SERVER_SAMBA_SP)+=samba
 subproject-n+=samba
 samba-url:=http://ftp.samba.org/pub/samba/stable/samba-$(samba-version).tar.gz
-samba-config:=cd source3 && ./configure --host=$(CROSS_COMPILE:%-=%) --target=$(CROSS_COMPILE:%-=%)
+samba-config:=cd source3 && ./configure --host=$(TRIPLET) --target=$(TRIPLET)
 #samba-config:=./source3/configure --cross-compile --cross-execute=$(CROSS_COMPILE:%-=%)-  --abi-check
 samba-config+= --prefix=/usr --sysconfdir=/etc --with-configdir=/etc/samba
 samba-configure-arguments+= --without-ads
@@ -197,13 +197,13 @@ libdlna-version=$(CONFIG_SERVER_LIBDLNA_VERSION)
 subproject-$(CONFIG_SERVER_LIBDLNA_SP)+=libdlna
 libdlna-url= http://libdlna.geexbox.org/releases/libdlna-$(libdlna-version).tar.bz2
 libdlna-hg=http://hg.geexbox.org/libdlna
-libdlna-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --prefix=/usr
+libdlna-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE) --prefix=/usr
 
 ushare-version=$(CONFIG_SERVER_USHARE_VERSION)
 subproject-$(CONFIG_SERVER_USHARE_SP)+=ushare
 ushare-url=http://ushare.geexbox.org/releases/ushare-$(ushare-version).tar.bz2
 ushare-hg=http://hg.geexbox.org/ushare
-ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)-
+ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE)
 ushare-config+=--prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --disable-strip --enable-debug
 ifneq ($(CONFIG_LIBC_NLS),y)
 ushare-config+=--disable-nls
