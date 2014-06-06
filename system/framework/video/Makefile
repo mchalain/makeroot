@@ -13,7 +13,7 @@ x264-url:=ftp://ftp.videolan.org/pub/videolan/x264/snapshots/x264-$(x264-version
 x264-configure-arguments:=--cross-prefix=$(CROSS_COMPILE)
 x264-configure-arguments+=--enable-static --enable-shared --enable-pic
 x264-configure-arguments+=--system-libx264 --disable-gpl
-x264-makeflags:="AS=$(CROSS_COMPILE:%-=%)-gcc"
+x264-makeflags:=AS=$(CROSS_COMPILE:%-=%)-gcc
 
 libaacplus-version:=$(CONFIG_FW_AUDIO_AACPLUS_VERSION)
 subproject-$(CONFIG_FW_AUDIO_AACPLUS_SP)+=libaacplus
