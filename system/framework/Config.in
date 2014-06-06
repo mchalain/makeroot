@@ -4,10 +4,17 @@ source "system/framework/fileparser/Config.in"
 source "system/framework/filecompressor/Config.in"
 source "system/framework/images/Config.in"
 source "system/framework/video/Config.in"
+
+comment "graphic framework"
 config FW_NCURSES_SP
 	bool "ncurses graphic library"
 	default y if LSB
 	help
 		http://www.gnu.org/software/ncurses/
+
+config FW_SDL_SP
+	bool "sdl graphic library"
+	help
+		http://www.libsdl.org
 
 endmenu
