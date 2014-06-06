@@ -56,7 +56,9 @@ media/floppy media/cdrom media/usb: dir=y
 mnt/floppy mnt/cdrom mnt/usb: dir=y
 
 install-$(CONFIG_DEV_MDEV)+=etc/init.d/mdev
-etc/init.d/mdev:
+etc/init.d/mdev: generate=/tmp/mdev
+etc/init.d/mdev: /tmp/mdev
+/tmp/mdev:
 	@echo '#!/bin/sh' > $@
 	@echo 'echo /bin/mdev >/proc/sys/kernel/hotplug' >> $@
 
