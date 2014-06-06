@@ -93,7 +93,8 @@ config LIBC_NEWLIB_CONFIGURE
 config PATCHELF
 	bool "patchelf : binary utility"
 	help
-	patchelf is a small utility to modify the dynamic linker inside a binary.
+	patchelf is a small utility to modify the dynamic linker
+	inside a binary.
 	Example need to launch /usr/bin/foobar but foobar must load 
 	/usr/lib/mylibc/libc.so instead /lib/ld.so
 
