@@ -14,7 +14,7 @@ config PIXMAN
 config LIBPNG
     bool
     prompt "png Portable Network Graphics library" if SHOW_ALL
-    select ZLIB
+    select FW_ZLIB_SP
     help
         http://www.libpng.org/pub/png/
 

@@ -1,7 +1,7 @@
 menu "files compressor libraries and utilities"
-config ZLIB
+config FW_ZLIB_SP
     bool
-    prompt "zip compression library" if SHOW_ALL
+    prompt "zlib : zip compression library" if SHOW_ALL
     default y if LSB
     help
         http://zlib.net/
