@@ -2,12 +2,32 @@ subproject-$(CONFIG_LIBC_TOOLCHAIN):=libc-toolchain
 libc-toolchain-config:=echo configuration 
 
 glibc-version=$(CONFIG_LIBC_GLIBC_VERSION)
+download-$(CONFIG_LIBC_GLIBC_SP)+=glibc-ports
+glibc-ports-url:=http://ftp.gnu.org/gnu/glibc/glibc-ports-$(glibc-version).tar.bz2
 subproject-$(CONFIG_LIBC_GLIBC_SP)+=glibc
 glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc-$(glibc-version).tar.xz
 glibc-git:=git://sourceware.org/git/glibc.git
-glibc-makeflags:=CC= LD= CPP=
-glibc-configure-arguments:=--with-headers=$(sysroot)/usr/include
+glibc-makeflags:=MAKEFLAGS="install_root=$(packagesdir)/glibc-$(glibc-version)"
+glibc-configure-arguments:=--with-headers=$(sysroot)/usr/include --enable-add-ons=../glibc-ports-$(glibc-version),nptl --config-cache
+glibc-configure-arguments+=--disable-profile
+# by default applications will be linked with -z now option. At the start, all links are done before running.
+# This feature increases the start time of the application but decreases the running time for big application.
+glibc-configure-arguments+=--enable-bind-now
+# this feature adds random value to the stack protector
+glibc-configure-arguments+=--enable-stackguard-randomization
+# Thread Local Storage.
+glibc-configure-arguments+=--with-tls
+glibc-configure-arguments+=--disable-pt_chown
 glibc-builddir:=y
+# the previous --config-cache argument requires the file $(src)/build-glibc-$(glibc-version)/config.cache that we generate here.
+pre-install-$(CONFIG_LIBC_GLIBC_SP)+=/tmp/config.cache
+/tmp/config.cache: copy=$(src)/build-glibc-$(glibc-version)/config.cache
+/tmp/config.cache: $(src)/build-glibc-$(glibc-version)/config.cache
+$(src)/build-glibc-$(glibc-version)/config.cache: $(src)/build-glibc-$(glibc-version)
+	@echo "libc_cv_forced_unwind=yes" > $@
+	@echo "libc_cv_c_cleanup=yes" >> $@
+$(src)/build-glibc-$(glibc-version):
+	@mkdir $@
 
 ifeq (y,$(CONFIG_LINARO))
 linaro-version:=$(CONFIG_LINARO_VERSION:"%"=%)
@@ -18,6 +38,8 @@ eglibc-version:=$(CONFIG_LIBC_EGLIBC_VERSION)
 eglibc-svn:=svn://svn.eglibc.org/branches/eglibc-$(subst .,_,$(eglibc-version))
 endif
 subproject-$(CONFIG_LIBC_EGLIBC_SP):=eglibc
+eglibc-configure-arguments:=--with-headers=$(sysroot)/usr/include --enable-add-ons=../glibc-ports-2.16.0,nptl --disable-profile --without-gd --without-cvs
+eglibc-builddir:=y
 
 uClibc-version=$(CONFIG_LIBC_UCLIBC_VERSION)
 subproject-$(CONFIG_LIBC_UCLIBCv)+=uClibc
