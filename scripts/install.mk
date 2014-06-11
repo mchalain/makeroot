@@ -59,3 +59,7 @@ $(sort $(install-y)): %: $(install-subdirs)
 	$(if $(and $(wildcard $(rootfs)/$@),$(findstring n,$(force))),,$(call multicmd,install))
 	$(eval install-dest = $(sysroot))
 	$(if $(and $(wildcard $(sysroot)/$@),$(findstring y,$(install-sysroot))),$(call multicmd,install))
+
+$(sort $(pre-install-y)): %: $(install-subdirs)
+	$(eval install-dest = $(rootfs))
+	$(if $(and $(wildcard $(rootfs)/$@),$(findstring n,$(force))),,$(call multicmd,install))
