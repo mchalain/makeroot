@@ -3,7 +3,7 @@
 
 flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) \
 							-march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
-flags_extend+=--sysroot=$(sysroot) -isystem /usr/include
+flags_extend+=--sysroot=$(sysroot) -isystem $(sysroot)/usr/include
 CFLAGS:=-O
 LDFLAGS:= \
 	-Wl,-rpath-link=/usr/lib/:/lib/:$(join /lib/,$(TRIPLET))
