@@ -59,27 +59,27 @@ ARCH ?= $(CONFIG_ARCH:"%"=%)
 SUBARCH ?= $(CONFIG_SUBARCH:"%"=%)
 HFP ?= $(CONFIG_HFP_CPU:"%"=%)
 THUMB ?= $(CONFIG_THUMB:"%"=%)
+ABI?=$(strip \
+	$(if $(findstring arm,$(ARCH)), \
+		$(if $(findstring y,$(THUMB)),thumb,\
+		eabi\
+		)\
+	))
 ifeq ($(CONFIG_LIBC_TOOLCHAIN),y)
-TRIPLET:=$(CROSS_COMPILE:%-=%)
 LIBC?= \
-	$(if $(findstring gnu,$(TRIPLET)),gnu,\
-		$(if $(findstring uclibc,$(TRIPLET)),uclibc,\
-			$(if $(findstring android,$(TRIPLET)),android,\
-				$(if $(findstring musl,$(TRIPLET)),gnumusl,\
-					$(if $(findstring dietlibc,$(TRIPLET)),dietlibc,\
-						newlib,) \
+	$(if $(findstring gnu,$(CROSS_COMPILE)),gnu,\
+		$(if $(findstring uclibc,$(CROSS_COMPILE)),uclibc,\
+			$(if $(findstring android,$(CROSS_COMPILE)),android,\
+				$(if $(findstring musl,$(CROSS_COMPILE)),gnumusl,\
+					$(if $(findstring dietlibc,$(CROSS_COMPILE)),dietlibc,\
+						) \
 				) \
 			) \
 		) \
 	)
 
+TRIPLET:=$(ARCH)-unknown-$(KERNEL)-$(LIBC)$(ABI)
 else
-ABI:=$(strip \
-	$(if $(findstring arm,$(ARCH)), \
-		$(if $(findstring y,$(THUMB)),thumb,\
-		eabi$(if $(findstring y,$(HFP)),hf)\
-		)\
-	))
 LIBC:=$(strip \
 	$(if $(findstring y,$(CONFIG_LIBC_GLIBC_SP)) $(findstring y,$(CONFIG_LIBC_EGLIBC_SP)),gnu,\
 		$(if $(findstring y,$(CONFIG_LIBC_UCLIBC)),uclibc,\
@@ -92,10 +92,9 @@ LIBC:=$(strip \
 			) \
 		) \
 	))
-TRIPLET_EXTRA?=$(if $(findtring arm,$(ARCH)),eabi$(if $(findstring y,$(HFP)),hf))
-TRIPLET:=$(ARCH)-$(KERNEL)-$(LIBC)$(ABI)
-LIBC:=$(if $(LIBC),$(LIBC),newlib)
+TRIPLET:=$(ARCH)-unknown-$(KERNEL)-$(LIBC)$(ABI)
 endif
+LIBC:=$(if $(LIBC),$(LIBC),newlib)
 export CROSS_COMPILE KERNEL ARCH LIBC BOARD SUBARCH HFP THUMB TRIPLET
 
 GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
