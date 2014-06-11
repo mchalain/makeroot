@@ -56,7 +56,7 @@ define cmd_configure-project
 	$(eval sprj-config-opts = $($(sprj)-configure-arguments))
 	$(if $(wildcard $(sprj-builddir)),,$(Q)mkdir -p $(sprj-builddir))
 	$(if $(sprj-config),
-		$(Q)cd $(sprj-builddir) && ../$(notdir $(sprj-src))/$(sprj-config),
+		$(Q)cd $(sprj-builddir) && $(sprj-config),
 		$(if $(sprj-mkconfig),
 			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) configure ,
 			$(if $(sprj-defconfig),
