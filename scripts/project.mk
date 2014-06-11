@@ -4,7 +4,7 @@
 flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) \
 							-march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
 flags_extend+=--sysroot=$(sysroot) -isystem /usr/include
-CFLAGS:=
+CFLAGS:=-O
 LDFLAGS:= \
 	-Wl,-rpath-link=/usr/lib/:/lib/:$(join /lib/,$(TRIPLET))
 DSOFLAGS:=$(LDFLAGS)
@@ -33,14 +33,18 @@ config_shipped:=.config_shipped.prj
 build_shipped:=.build_shipped.prj
 install_shipped:=.install_shipped.prj
 
+unsetflags:=MAKEFLAGS=
+#unsetflags:=
+
 configure-flags:= \
 	ac_cv_func_malloc_0_nonnull=yes \
 	ac_cv_func_realloc_0_nonnull=yes
 
 configure-cmd:= \
 	./configure \
-	--host=$(TRIPLET:%-=%) \
-	--target=$(TRIPLET:%-=%) \
+	--host=$(TRIPLET) \
+	--target=$(TRIPLET) \
+	--build=x86_64-unknown-linux-gnu \
 	--prefix=/usr \
 	--sysconfdir=/etc
 quiet_cmd_configure-project = CONFIGURE $(sprj)
@@ -50,19 +54,19 @@ define cmd_configure-project
 	$(eval sprj-mkconfig = $($(sprj)-mkconfig))
 	$(eval sprj-config = $($(sprj)-config))
 	$(eval sprj-config-opts = $($(sprj)-configure-arguments))
-	$(eval sprj-builddir:=$(dir $(sprj-src))$(if $(findstring y,$($(sprj)-builddir)),build-)$(notdir $(sprj-src)))
-	$(Q)echo $(sprj-src) $(sprj-builddir)
 	$(if $(wildcard $(sprj-builddir)),,$(Q)mkdir -p $(sprj-builddir))
 	$(if $(sprj-config),
 		$(Q)cd $(sprj-builddir) && ../$(notdir $(sprj-src))/$(sprj-config),
 		$(if $(sprj-mkconfig),
 			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkconfig) configure ,
 			$(if $(sprj-defconfig),
-				$(Q)cp $(sprj-defconfig) $(sprj-src)/.config && $(MAKE) $(sprj-makeflags) -C $(sprj-src) MAKEFLAGS= silentoldconfig,
+				$(Q)cp $(sprj-defconfig) $(sprj-src)/.config && $(MAKE) $(unsetflags) $(sprj-makeflags) -C $(sprj-src) silentoldconfig,
 				$(if $(wildcard $(sprj-src)/configure),
 					$(Q)cd $(sprj-builddir) && $(sprj-makeflags) $(configure-flags) ../$(notdir $(sprj-src))/$(configure-cmd) $(sprj-config-opts),
 					$(if $(wildcard $(sprj-src)/configure.ac),
-						$(Q)cd $(sprj-src) && autoreconf --force -i && cd $(sprj-builddir) && $(sprj-makeflags) $(configure-flags) ../$(notdir $(sprj-src))/$(configure-cmd) $(sprj-config-opts),
+						$(Q)echo coucou
+						$(Q)cd $(sprj-src) && autoreconf --force -i
+						$(Q)cd $(sprj-builddir) && $(sprj-makeflags) $(configure-flags) ../$(notdir $(sprj-src))/$(configure-cmd) $(sprj-config-opts),
 						$(Q)echo "no configuration found inside $(sprj-src)" && exit 1
 					)
 				)
@@ -76,13 +80,13 @@ define cmd_build-project
 	$(eval sprj-makeflags:=$($(sprj)-makeflags))
 	$(eval sprj-build = $($(sprj)-build))
 	$(if $(sprj-build),
-		$(Q)cd $(sprj-src) && $(sprj-build),
+		$(Q)cd $(sprj-builddir) && $(sprj-build),
 		$(if $(sprj-mkbuild),
-			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkbuild) $(if $(target),$(target),build),
-			$(if $(wildcard  $(sprj-src)/Makefile),
-				$(Q)$(MAKE) $(sprj-makeflags) MAKEFLAGS= -C $(sprj-src) $(target),
+			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-builddir) -f $(srctree)/$(sprj-mkbuild) $(if $(target),$(target),build),
+			$(if $(wildcard  $(sprj-builddir)/Makefile),
+					$(Q)$(MAKE) -C $(sprj-builddir) $(unsetflags) $(sprj-makeflags) $(target),
 				$(if $(wildcard  $(sprj-src)/Android.mk),
-					$(Q)$(call android-tools) && $(MAKE) $(sprj-makeflags) MAKEFLAGS= $(android-build)=$(sprj-src)/Android.mk,
+					$(Q)$(call android-tools) && $(MAKE) $(unsetflags) $(sprj-makeflags)  $(android-build)=$(sprj-src)/Android.mk,
 					$(Q)echo "no build script found inside $(sprj-src)" && exit 1
 				)
 			)
@@ -97,11 +101,11 @@ define cmd_install-project
 	$(eval sprj-install = $($(sprj)-install))
 	$(if $(wildcard $(sprj-destdir)),, $(Q)mkdir -p $(sprj-destdir))
 	$(if $(sprj-install), 
-		$(Q)cd $(sprj-src) && $(sprj-install),
+		$(Q)cd $(sprj-builddir) && $(sprj-install),
 		$(if $(sprj-mkinstall),
 			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkinstall) install,
-			$(if $(wildcard  $(sprj-src)/Makefile),
-				$(Q)$(MAKE)  $(sprj-makeflags) INSTALL=$(install_tool) MAKEFLAGS= DESTDIR=$(sprj-destdir) DSTROOT=$(sprj-destdir) -C $(sprj-src) install,
+			$(if $(wildcard  $(sprj-builddir)/Makefile),
+				$(Q)$(MAKE) -C $(sprj-builddir) $(unsetflags) INSTALL=$(install_tool) DESTDIR=$(sprj-destdir) $(sprj-makeflags) install,
 				$(Q)echo "no build script found inside $(sprj-src)" && exit 1
 			)
 		)
@@ -169,6 +173,7 @@ post-install-project:
 install-project:
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
 	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
+	$(eval sprj-builddir:=$(dir $(sprj-src))$(if $(findstring y,$($(sprj)-builddir)),build-)$(notdir $(sprj-src)))
 	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
 	$(Q)$(call multicmd,install-project)
 	@touch $(sprj-destdir)/.post-install
@@ -177,11 +182,13 @@ install-project:
 build-project:
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
 	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
+	$(eval sprj-builddir:=$(dir $(sprj-src))$(if $(findstring y,$($(sprj)-builddir)),build-)$(notdir $(sprj-src)))
 	$(Q)$(call multicmd,build-project)
 
 .PHONY:configure-project
 configure-project:
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
 	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
+	$(eval sprj-builddir:=$(dir $(sprj-src))$(if $(findstring y,$($(sprj)-builddir)),build-)$(notdir $(sprj-src)))
 	$(Q) echo $(sprj) $($(sprj)-version) $(linaro-version)
 	$(Q)$(call multicmd,configure-project)
