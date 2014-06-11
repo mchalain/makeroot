@@ -164,14 +164,14 @@ ifneq ($(cmd_files),)
 endif
 
 __build: $(subdir-ym) $(targets) $(extra-y) \
-	 $(download-target) $(host-target) $(toolchain-target) \
+	 $(download-target) $(host-target) $(pre-install-y) $(toolchain-target) \
 	 $(subproject-y) $(install-y) $(image-target)
 	@:
 
 ifeq (y,$(force-install))
 target:="force-install=y install"
 endif
-install: $(subdir-ym) $(targets) $(extra-y) \
+install: $(subdir-ym) $(targets) $(extra-y) $(pre-install-y)\
 	 $(subproject-y) $(install-y) $(image-target)
 	@:
 download: target:=download
