@@ -1,0 +1,46 @@
+--- src/security.c.orig	2014-06-12 15:58:03.566505951 +0200
++++ src/security.c	2014-06-12 16:15:03.550463293 +0200
+@@ -21,11 +21,15 @@
+  * XXX for special case checks in check_callit.
+  */
+ #include <rpcsvc/mount.h>
++#ifdef CONFIG_SERVER_RQUOTA
+ #include <rpcsvc/rquota.h>
++#endif
+ #include <rpcsvc/nfs_prot.h>
++#ifdef CONFIG_SERVER_NIS
+ #include <rpcsvc/yp.h>
+ #include <rpcsvc/ypclnt.h>
+ #include <rpcsvc/yppasswd.h>
++#endif
+ 
+ #include "rpcbind.h"
+ 
+@@ -308,14 +312,19 @@
+ 		    args->rmt_proc != MOUNTPROC_UMNT)
+ 			break;
+ 		goto deny;
++#ifdef CONFIG_SERVER_NIS
+ 	case YPBINDPROG:
+ 		if (args->rmt_proc != YPBINDPROC_SETDOM)
+ 			break;
+ 		/* FALLTHROUGH */
+ 	case YPPASSWDPROG:
++#endif
+ 	case NFS_PROGRAM:
++#ifdef CONFIG_SERVER_RQUOTA
+ 	case RQUOTAPROG:
++#endif
+ 		goto deny;
++#ifdef CONFIG_SERVER_NIS
+ 	case YPPROG:
+ 		switch (args->rmt_proc) {
+ 		case YPPROC_ALL:
+@@ -326,6 +335,7 @@
+ 		default:
+ 			break;
+ 		}
++#endif
+ 	default:
+ 		break;
+ 	}
