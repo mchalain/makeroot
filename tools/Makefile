@@ -12,6 +12,7 @@ download-y+=fileutils
 fileutils-url=ftp://ftp.gnu.org/old-gnu/fileutils/fileutils-$(fileutils-verion).tar.gz
 
 subdir-y+=$(src)/install
+subdir-$(CONFIG_SERVER_RPC)+= $(src)/sunrpc-4.0
 
 pkg-config-version:=0.28
 download-n+=pkg-config
