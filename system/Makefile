@@ -4,6 +4,8 @@ subdir-y+=$(src)/framework/filecompressor
 subdir-y+=$(src)/framework/fileparser
 subdir-y+=$(src)/framework/ipc
 
+subdir-y+=$(src)/database
+
 subdir-y+=$(src)/lowlevel
 
 subdir-y+=$(src)/framework
