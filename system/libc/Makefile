@@ -18,6 +18,9 @@ glibc-configure-arguments+=--enable-stackguard-randomization
 # Thread Local Storage.
 glibc-configure-arguments+=--with-tls
 glibc-configure-arguments+=--disable-pt_chown
+# RPC is no longer supported by glibc but it could be easier to use it for some RPC applications like rpcbind
+# look at system/server/Makefile to see new support of old header files as nis.h yp.h mount.h previously into rpcsvc directory
+#glibc-configure-arguments+=--enable-obsolete-rpc
 glibc-builddir:=y
 # the previous --config-cache argument requires the file $(src)/build-glibc-$(glibc-version)/config.cache that we generate here.
 pre-install-$(CONFIG_LIBC_GLIBC_SP)+=/tmp/config.cache
