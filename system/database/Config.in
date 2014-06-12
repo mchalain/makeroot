@@ -1,0 +1,4 @@
+menu "Databases"
+config DB_GDBM_SP
+	bool "GDBM : The GNU dbm"
+endmenu
