@@ -259,6 +259,7 @@ main (int argc, char **argv)
   struct cp_options x;
   int n_files;
   char **file;
+  char *sysroot = NULL;
 
   program_name = argv[0];
   setlocale (LC_ALL, "");
@@ -312,18 +313,18 @@ main (int argc, char **argv)
 	case 'o':
 	  owner_name = optarg;
 	  break;
-        case 'P':
-          x.dereference = 0;
-          x.xstat = lstat;
-          break;
-        case 'p':
- 	  x.preserve_timestamps = 1;
-          x.preserve_chmod_bits = 1;
-          x.set_mode = 0;
-          x.umask_kill = 0775;
+	case 'P':
+	  x.dereference = 0;
+	  x.xstat = lstat;
 	  break;
-        case 'r':
-          x.recursive = 1;
+	case 'p':
+ 	  x.preserve_timestamps = 1;
+	  x.preserve_chmod_bits = 1;
+	  x.set_mode = 0;
+	  x.umask_kill = 0775;
+	  break;
+	case 'r':
+	  x.recursive = 1;
 	  break;
 	case 'S':
 	  simple_backup_suffix = optarg;
@@ -334,6 +335,9 @@ main (int argc, char **argv)
     case 'z':
 	  gzip_files = 1;
 	  break;
+	case 'R':
+	  sysroot =getenv("INSTALL_SYSROOT");
+      break;
 	default:
 	  usage (1);
 	  }
@@ -382,9 +386,17 @@ main (int argc, char **argv)
       int i;
       for (i = 0; i < n_files; i++)
 	{
+      char *to_sysroot;
+      if (sysroot)
+        to_sysroot = path_concat (sysroot, file[i], NULL);
+      else
+        to_sysroot = file[i];
+
 	  errors |=
-	    make_path (file[i], mode, mode, owner_id, group_id, 0,
+	    make_path (to_sysroot, mode, mode, owner_id, group_id, 0,
 		       (x.verbose ? "creating directory `%s'" : NULL));
+      if (sysroot)
+        free(to_sysroot);
 	}
     }
   else
@@ -395,18 +407,35 @@ main (int argc, char **argv)
 
       if (n_files == 2)
         {
-          if (mkdir_and_install)
-	    errors = install_file_to_path (file[0], file[1], &x);
-	  else if (!isdir (file[1]))
-	    errors = install_file_in_file (file[0], file[1], &x);
+      char *to_sysroot;
+      if (sysroot)
+        to_sysroot = path_concat (sysroot, file[1], NULL);
+      else
+        to_sysroot = file[1];
+
+      if (!isdir (to_sysroot))
+        {
+	      if (mkdir_and_install)
+	        errors = install_file_to_path (file[0], to_sysroot, &x);
+	      else 
+	        errors = install_file_in_file (file[0], to_sysroot, &x);
+	    }
 	  else
-	    errors = install_file_in_dir (file[0], file[1], &x);
+	    errors = install_file_in_dir (file[0], to_sysroot, &x);
+      if (sysroot)
+        free(to_sysroot);
 	}
       else
 	{
 	  int i;
 	  const char *dest = file[n_files - 1];
-	  if (!isdir (dest))
+      char *to_sysroot;
+      if (sysroot)
+        to_sysroot = path_concat (sysroot, dest, NULL);
+      else
+        to_sysroot = dest;
+
+	  if (!isdir (to_sysroot))
 	    {
 	      error (0, 0,
 		     _("installing multiple files, but last argument (%s) \
@@ -416,8 +445,10 @@ is not a directory"),
 	    }
 	  for (i = 0; i < n_files - 1; i++)
 	    {
-	      errors |= install_file_in_dir (file[i], dest, &x);
+	      errors |= install_file_in_dir (file[i], to_sysroot, &x);
 	    }
+      if (sysroot)
+        free(to_sysroot);
 	}
     }
 
@@ -442,16 +473,7 @@ install_file_to_path (const char *from, const char *to,
   if (!STREQ (dest_dir, ".")
       && !isdir (dest_dir))
     {
-      /* Someone will probably ask for a new option or three to specify
-	 owner, group, and permissions for parent directories.  Remember
-	 that this option is intended mainly to help installers when the
-	 distribution doesn't provide proper install rules.  */
-#define DIR_MODE 0755
-      fail = make_path (dest_dir, DIR_MODE, DIR_MODE, owner_id, group_id, 0,
-			(x->verbose ? _("creating directory `%s'") : NULL));
-
-      if (fail == 0)
-	fail = install_file_in_dir (from, dest_dir, x);
+      fail = install_file_in_dir (from, dest_dir, x);
     }
   else
     {
@@ -471,9 +493,11 @@ static int
 install_file_in_file (const char *from, const char *to,
 		      const struct cp_options *x)
 {
+  if (x->verbose)
+    fprintf(stderr,"install %s to %s\n", from, to);
   if (copy_file (from, to, x))
     return 1;
- if (strip_files)
+  if (strip_files)
     strip (to);
   if (change_attributes (to))
     return 1;
@@ -494,11 +518,24 @@ install_file_in_dir (const char *from, const char *to_dir,
 {
   char *from_base;
   char *to;
-  int ret;
+  int ret = 0;
 
+  if (x->verbose)
+    fprintf(stderr,"install %s inside %s\n", from, to_dir);
+  if (!isdir (to_dir))
+    {
+      /* Someone will probably ask for a new option or three to specify
+     owner, group, and permissions for parent directories.  Remember
+     that this option is intended mainly to help installers when the
+     distribution doesn't provide proper install rules.  */
+#define DIR_MODE 0755
+      ret = make_path (to_dir, DIR_MODE, DIR_MODE, owner_id, group_id, 0,
+		    (x->verbose ? _("creating directory `%s'") : NULL));
+    }
   from_base = base_name (from);
   to = path_concat (to_dir, from_base, NULL);
-  ret = install_file_in_file (from, to, x);
+  if (ret == 0)
+    ret = install_file_in_file (from, to, x);
   free (to);
   return ret;
 }
