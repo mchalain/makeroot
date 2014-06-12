@@ -79,6 +79,71 @@ install-$(CONFIG_SERVER_TCPW_SP)+=etc/hosts.allow
 etc/hosts.allow:copy=$(src)/hosts.allow
 etc/hosts.allow:$(src)/hosts.allow
 
+nis-utils-version:=1.4.1
+subproject-$(CONFIG_SERVER_NIS)+=nis-utils
+nis-utils-url:=http://www.linux-nis.org/download/NIS+/nis-utils-$(nis-utils-version).tar.gz
+nis-utils-configure-arguments:=
+ifeq ($(CONFIG_LIBC_NLS),y)
+nis-utils-configure-arguments+=--enable-nls
+else
+nis-utils-configure-arguments+=--disable-nls
+endif
+pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/nispasswd.h
+usr/include/tirpc/rpcsvc/nispasswd.h: copy=$(src)/nis-utils-$(nis-utils-version)/src/rpc.nispasswdd/nispasswd.h
+usr/include/tirpc/rpcsvc/nispasswd.h:install-sysroot:=y
+pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/nis.h
+usr/include/tirpc/rpcsvc/nis.h: generate=/tmp/nis.h
+usr/include/tirpc/rpcsvc/nis.h:install-sysroot:=y
+/tmp/nis.h:
+	@$(hostbin)/rpcgen -h $(src)/nis-utils-$(nis-utils-version)/src/nis.x -o $@
+
+pwdutils-version:=3.0.4
+subproject-$(CONFIG_SERVER_NIS)+=pwdutils
+pwdutils-url:=https://www.kernel.org/pub/linux/utils/net/NIS/pwdutils-$(pwdutils-version).tar.gz
+pwdutils-configure-arguments:=
+ifeq ($(CONFIG_LIBC_NLS),y)
+pwdutils-configure-arguments+=--enable-nls
+else
+pwdutils-configure-arguments+=--disable-nls
+endif
+
+ypserv-version:=2.32
+subproject-$(CONFIG_SERVER_NIS)+=ypserv
+ypserv-url:=http://www.linux-nis.org/download/ypserv/ypserv-$(ypserv-version).tar.gz
+ypserv-configure-arguments:=
+ifeq ($(CONFIG_LIBC_NLS),y)
+ypserv-configure-arguments+=--enable-nls
+else
+ypserv-configure-arguments+=--disable-nls
+endif
+pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/yp.h
+usr/include/tirpc/rpcsvc/yp.h: copy=$(src)/ypserv-$(ypserv-version)/lib/yp.h
+usr/include/tirpc/rpcsvc/yp.h:install-sysroot:=y
+pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/yppasswd.h
+usr/include/tirpc/rpcsvc/yppasswd.h: copy=$(src)/ypserv-$(ypserv-version)/rpc.yppasswdd/yppasswd.h
+usr/include/tirpc/rpcsvc/yppasswd.h:install-sysroot:=y
+
+yp-tools-version:=2.14
+subproject-$(CONFIG_SERVER_NIS)+=yp-tools
+yp-tools-url:=http://www.linux-nis.org/download/yp-tools/yp-tools-$(yp-tools-version).tar.gz
+ifeq ($(CONFIG_LIBC_NLS),y)
+yp-tools-configure-arguments:=--enable-nls
+else
+yp-tools-configure-arguments:=--disable-nls
+endif
+pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/ypclnt.h
+usr/include/tirpc/rpcsvc/ypclnt.h: copy=$(src)/yp-tools-$(yp-tools-version)/src/ypclnt.h
+usr/include/tirpc/rpcsvc/ypclnt.h:install-sysroot:=y
+
+ypbind-mt-version:=1.37.1
+subproject-$(CONFIG_SERVER_NIS)+=ypbind-mt
+ypbind-mt-url:=http://www.linux-nis.org/download/ypbind-mt/ypbind-mt-$(ypbind-mt-version).tar.bz2
+ifeq ($(CONFIG_LIBC_NLS),y)
+ypbind-mt-configure-arguments:=--enable-nls
+else
+ypbind-mt-configure-arguments:=--disable-nls
+endif
+
 libtirpc-version:=$(CONFIG_SERVER_LIBTIRPC_VERSION)
 subproject-$(CONFIG_SERVER_LIBTIRPC_SP)+=libtirpc
 libtirpc-url:=http://downloads.sourceforge.net/project/libtirpc/libtirpc/$(libtirpc-version)/libtirpc-$(libtirpc-version).tar.bz2
@@ -139,6 +204,14 @@ rpcbind-configure-arguments:=--bindir=/sbin --with-rpcuser=root
 ifeq ($(CONFIG_SERVER_TCPW_SP),y)
 rpcbind-configure-arguments+=--enable-libwrap
 endif
+rpcbind-CFLAGS:=
+ifeq ($(CONFIG_SERVER_NIS),y)
+rpcbind-CFLAGS+=-DCONFIG_SERVER_NIS
+endif
+ifeq ($(CONFIG_SERVER_RQUOTA),y)
+rpcbind-CFLAGS+=-DCONFIG_SERVER_RQUOTA
+endif
+rpcbind-makeflags:=CFLAGS="$(CFLAGS) $(rpcbind-CFLAGS)"
 
 download-$(CONFIG_SERVER_RPC)+=services
 services-url:=http://svnweb.freebsd.org/base/head/etc/services?view=co

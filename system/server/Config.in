@@ -46,10 +46,10 @@ config SERVER_RPC
 	select SERVER_LIBTIRPC_SP
 
 if SERVER_RPC
-config SERVER_RPCBIND_SP
+config SERVER_LIBTIRPC_SP
 	bool
 
-config SERVER_LIBTIRPC_SP
+config SERVER_RPCBIND_SP
 	bool
 
 config SERVER_TCPW_SP
@@ -57,6 +57,11 @@ config SERVER_TCPW_SP
 	prompt "tcp_wrapper" if SERVER_RPCBIND_SP
 
 endif
+
+menu "Authentification server/client"
+config SERVER_NIS
+	bool "NIS/NIS+ authentification client"
+endmenu
 
 menuconfig UPNP
 	bool "UPnP servers"
