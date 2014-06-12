@@ -79,7 +79,6 @@ install-$(CONFIG_SERVER_TCPW_SP)+=etc/hosts.allow
 etc/hosts.allow:copy=$(src)/hosts.allow
 etc/hosts.allow:$(src)/hosts.allow
 
-
 libtirpc-version:=$(CONFIG_SERVER_LIBTIRPC_VERSION)
 subproject-$(CONFIG_SERVER_LIBTIRPC_SP)+=libtirpc
 libtirpc-url:=http://downloads.sourceforge.net/project/libtirpc/libtirpc/$(libtirpc-version)/libtirpc-$(libtirpc-version).tar.bz2
@@ -89,6 +88,39 @@ libtirpc-configure-arguments+=--disable-gssapi
 endif
 install-$(CONFIG_SERVER_RPC)+=etc/netconfig
 etc/netconfig:copy=$(packagesdir)/libtirpc-$(libtirpc-version)/etc/netconfig
+
+libnfsidmap-version:=$(CONFIG_SERVER_NFSIDMAP_VERSION)
+subproject-$(CONFIG_SERVER_NFSIDMAP_SP)+=libnfsidmap
+libnfsidmap-url:=http://www.citi.umich.edu/projects/nfsv4/linux/libnfsidmap/libnfsidmap-$(libnfsidmap-version).tar.gz
+
+nfs-utils-version=$(CONFIG_SERVER_NFSUTILS_VESION)
+subproject-$(CONFIG_SERVER_NFSUTILS_SP)+=nfs-utils
+nfs-utils-url:=ftp://ftp.kernel.org/pub/linux/utils/nfs-utils/$(nfs-utils-version)/nfs-utils-$(nfs-utils-version).tar.xz
+#nfs-utils-url:=http://downloads.sourceforge.net/nfs/nfs-utils-$(nfs-utils-version).tar.bz2
+nfs-utils-git:=git://git.linux-nfs.org/projects/steved/nfs-utils.git
+nfs-utils-LIBS:=-lrt -ldl
+nfs-utils-LIBS+=-lnsl
+nfs-utils-configure-arguments:=LIBS="$(nfs-utils-LIBS)" --disable-nfsv41 
+nfs-utils-configure-arguments+=--with-sysroot=$(sysroot) --with-rpcgen=$(hostbin)/rpcgen
+ifneq ($(CONFIG_SERVER_TCPW_SP),y)
+nfs-utils-configure-arguments+=--without-tcp-wrappers
+endif
+ifneq ($(CONFIG_SECURITY_GSS),y)
+nfs-utils-configure-arguments+=--disable-gss --disable-uuid --disable-nfsdcltrack
+endif
+ifeq ($(CONFIG_SERVER_LIBTIRPC_SP),y)
+nfs-utils-configure-arguments+=--enable-tirpc --with-tirpcinclude=$(sysroot)/usr/include/tirpc
+else
+nfs-utils-configure-arguments+=--disable-tirpc
+endif
+
+install-$(CONFIG_SERVER_NFS)+=var/lib/nfs etc/exports usr/include/
+var/lib/nfs:dir=y
+var/lib/nfs/rmtab:touch=y
+etc/exports:generate=/tmp/exports
+etc/exports:/tmp/exports
+/tmp/exports:
+	@echo "/home $(CONFIG_IPADDRESS)(rw,sync)" > $@
 
 rpcbind-version:=$(CONFIG_SERVER_RPCBIND_VESION)
 subproject-$(CONFIG_SERVER_RPCBIND_SP)+=rpcbind
@@ -108,33 +140,6 @@ rpc-url:=http://svnweb.freebsd.org/base/head/etc/rpc?view=co
 install-$(CONFIG_SERVER_RPC)+=etc/rpc
 etc/rpc:copy=$(src)/rpc
 etc/rpc:$(src)/rpc
-
-libnfsidmap-version:=$(CONFIG_SERVER_NFSIDMAP_VERSION)
-subproject-$(CONFIG_SERVER_NFSIDMAP_SP)+=libnfsidmap
-libnfsidmap-url:=http://www.citi.umich.edu/projects/nfsv4/linux/libnfsidmap/libnfsidmap-$(libnfsidmap-version).tar.gz
-
-nfs-utils-version=$(CONFIG_SERVER_NFSUTILS_VESION)
-subproject-$(CONFIG_SERVER_NFSUTILS_SP)+=nfs-utils
-nfs-utils-url:=ftp://ftp.kernel.org/pub/linux/utils/nfs-utils/$(nfs-utils-version)/nfs-utils-$(nfs-utils-version).tar.xz
-#nfs-utils-url:=http://downloads.sourceforge.net/nfs/nfs-utils-$(nfs-utils-version).tar.bz2
-nfs-utils-git:=git://git.linux-nfs.org/projects/steved/nfs-utils.git
-nfs-utils-LIBS:=-lrt -ldl
-nfs-utils-LIBS+=-lnsl
-nfs-utils-configure-arguments:=LIBS="$(nfs-utils-LIBS)" --disable-nfsv41
-ifneq ($(CONFIG_SERVER_TCPW_SP),y)
-nfs-utils-configure-arguments+=--without-tcp-wrappers
-endif
-ifneq ($(CONFIG_SECURITY_GSS),y)
-nfs-utils-configure-arguments+=--disable-gss --disable-uuid --disable-nfsdcltrack
-endif
-
-install-$(CONFIG_SERVER_NFS)+=var/lib/nfs etc/exports
-var/lib/nfs:dir=y
-var/lib/nfs/rmtab:touch=y
-etc/exports:generate=/tmp/exports
-etc/exports:/tmp/exports
-/tmp/exports:
-	@echo "/home $(CONFIG_IPADDRESS)(rw,sync)" > $@
 
 cifs-utils-version=$(CONFIG_SERVER_CIFSUTILS_VERSION)
 subproject-$(CONFIG_SERVER_CIFSUTILS_SP)+=cifs-utils
