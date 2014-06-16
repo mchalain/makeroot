@@ -95,7 +95,7 @@ pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/nis.h
 usr/include/tirpc/rpcsvc/nis.h: generate=/tmp/nis.h
 usr/include/tirpc/rpcsvc/nis.h:install-sysroot:=y
 /tmp/nis.h:
-	@$(hostbin)/rpcgen -h $(src)/nis-utils-$(nis-utils-version)/src/nis.x -o $@
+	$(Q)$(hostbin)/rpcgen -h $(src)/nis-utils-$(nis-utils-version)/src/nis.x -o $@
 
 pwdutils-version:=3.0.4
 subproject-$(CONFIG_SERVER_NIS)+=pwdutils
@@ -185,14 +185,14 @@ var/lib/nfs/rmtab:touch=y
 etc/exports:generate=/tmp/exports
 etc/exports:/tmp/exports
 /tmp/exports:
-	@echo "/home $(CONFIG_IPADDRESS)(rw,sync)" > $@
+	$(Q)echo "/home $(CONFIG_IPADDRESS)(rw,sync)" > $@
 
 pre-install-$(CONFIG_SERVER_RPC)+=usr/include/tirpc/rpcsvc/mount.h
 usr/include/tirpc/rpcsvc/mount.h: generate=/tmp/mount.h
 usr/include/tirpc/rpcsvc/mount.h:install-sysroot:=y
 usr/include/tirpc/rpcsvc/mount.h: /tmp/mount.h
 /tmp/mount.h:
-	$(hostbin)/rpcgen -h $(src)/nfs-utils-$(nfs-utils-version)/support/export/mount.x -o $@
+	$(Q)$(hostbin)/rpcgen -h $(src)/nfs-utils-$(nfs-utils-version)/support/export/mount.x -o $@
 pre-install-$(CONFIG_SERVER_RPC)+=usr/include/tirpc/rpcsvc/nfs_prot.h
 usr/include/tirpc/rpcsvc/nfs_prot.h: copy=$(src)/nfs-utils-$(nfs-utils-version)/support/include/rpcsvc/nfs_prot.h
 usr/include/tirpc/rpcsvc/nfs_prot.h:install-sysroot:=y
