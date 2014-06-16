@@ -2,26 +2,42 @@ menu "Toolchain"
 choice
 	prompt "toolchain select"
 		default TOOLCHAIN_CUSTOM
+
 	config TOOLCHAIN_LINARO
 		bool "Linaro Toolchain"
+		select TOOLCHAIN_GCC
 		depends on ARM && LINARO
 
 	config TOOLCHAIN_BARE_METAL
 		bool "bare-metal Toolchain"
+		select TOOLCHAIN_GCC
 		depends on ARM
 
 	config TOOLCHAIN_SOURCERY_LINUX
 		bool "Code Sourcery Toolchain for GNU/Linux"
+		select TOOLCHAIN_GCC
 
 	config TOOLCHAIN_SOURCERY_EABI
 		bool "Code Sourcery Toolchain for EABI (with newlib)"
+		select TOOLCHAIN_GCC
 
 	config TOOLCHAIN_CUSTOM
 		bool "custom Toolchain"
 
 endchoice
 
+choice
+	prompt "compiler name" if TOOLCHAIN_CUSTOM
+config TOOLCHAIN_GCC
+	bool "GCC"
+config TOOLCHAIN_LLVM
+	bool "LLVM"
+config TOOLCHAIN_ARM
+	bool "ARM"
+endchoice
+
 config TOOLCHAIN_GCC_VERSION
+	depends on TOOLCHAIN_GCC
 	string "C Compiler version"
 	default "4.8" if TOOLCHAIN_LINARO
 	default "4.6"

@@ -16,7 +16,6 @@ install-header:  $(toolchain)/$(arch)/libc/usr/include
 
 .PHONY:install-lib
 install-lib: $(toolchain)/$(arch)/libc/lib/ $(toolchain)/$(arch)/libc/usr/lib/
-	$(Q)$(INSTALL) -DrpP $(toolchain)/$(arch)/lib $(DESTDIR:%=%/)lib
 	$(Q)$(INSTALL) -DrpP $(toolchain)/$(arch)/libc/lib/ $(DESTDIR:%=%/)lib
 	$(Q)$(INSTALL) -DrpP $(toolchain)/$(arch)/libc/usr/lib/ $(DESTDIR:%=%/)usr/lib
 

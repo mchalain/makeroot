@@ -1,3 +1,12 @@
+#GCC build and link all applications with libgcc_s.so
+pre-install-$(CONFIG_TOOLCHAIN_GCC)+=lib/libgcc_s.so lib/libgcc_s.so.1
+lib/libgcc_s.so:copy:=$(toolchain_path)/$(CROSS_COMPILE:%-=%)/lib/libgcc_s.so
+lib/libgcc_s.so:$(toolchain_path)/$(CROSS_COMPILE:%-=%)/lib/libgcc_s.so
+lib/libgcc_s.so:install-sysroot:=y
+lib/libgcc_s.so.1:copy:=$(toolchain_path)/$(CROSS_COMPILE:%-=%)/lib/libgcc_s.so.1
+lib/libgcc_s.so.1:$(toolchain_path)/$(CROSS_COMPILE:%-=%)/lib/libgcc_s.so.1
+lib/libgcc_s.so.1:install-sysroot:=y
+
 subdir-y+=$(src)/tree $(src)/libc $(src)/base $(src)/init
 
 subdir-y+=$(src)/framework/filecompressor
