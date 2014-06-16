@@ -50,7 +50,7 @@ hostbin		:= $(hostobjtree)/bin
 hostlib		:= $(hostobjtree)/lib
 toolchain_path	:= $(TOOLCHAIN_PATH)
 export root srctree objtree sysroot 
-export hostobjtree hostbin
+export hostobjtree hostbin toolchain_path
 export packagesdir rootfs bootfs homefs
 
 CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
@@ -95,7 +95,8 @@ LIBC:=$(strip \
 TRIPLET:=$(ARCH)-unknown-$(KERNEL)-$(LIBC)$(ABI)
 endif
 LIBC:=$(if $(LIBC),$(LIBC),newlib)
-export CROSS_COMPILE KERNEL ARCH LIBC BOARD SUBARCH HFP THUMB TRIPLET
+LDSO:=ld.so.1
+export CROSS_COMPILE KERNEL ARCH LIBC BOARD SUBARCH HFP THUMB TRIPLET LDSO
 
 GCC_FLAGS ?=  $(CONFIG_GCC_FLAGS:"%"=%)
 export GCC_FLAGS

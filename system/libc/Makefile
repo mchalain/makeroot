@@ -1,13 +1,19 @@
 subproject-$(CONFIG_LIBC_TOOLCHAIN):=libc-toolchain
 libc-toolchain-config:=echo configuration 
 
+# during the glibc configuration CPP are looking for limits.h recursivly.
+# but no ending limits.h are available. We work around this problem to create an empty limits.h file
+# this file will be over write during the installation of the glibc
+pre-install-$(CONFIG_LIBC_GLIBC_SP)+=usr/include/limits.h
+usr/include/limits.h: touch=y
+usr/include/limits.h: install-sysroot:=y
 glibc-version=$(CONFIG_LIBC_GLIBC_VERSION)
 download-$(CONFIG_LIBC_GLIBC_SP)+=glibc-ports
 glibc-ports-url:=http://ftp.gnu.org/gnu/glibc/glibc-ports-$(glibc-version).tar.bz2
 subproject-$(CONFIG_LIBC_GLIBC_SP)+=glibc
 glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc-$(glibc-version).tar.xz
 glibc-git:=git://sourceware.org/git/glibc.git
-glibc-makeflags:=MAKEFLAGS="install_root=$(packagesdir)/glibc-$(glibc-version)"
+glibc-makeflags:=MAKEFLAGS="install_root=$(packagesdir)/glibc-$(glibc-version) ld.so-version=$(LDSO)"
 glibc-configure-arguments:=--with-headers=$(sysroot)/usr/include --enable-add-ons=../glibc-ports-$(glibc-version),nptl --config-cache
 glibc-configure-arguments+=--disable-profile
 # by default applications will be linked with -z now option. At the start, all links are done before running.
@@ -41,6 +47,7 @@ eglibc-version:=$(CONFIG_LIBC_EGLIBC_VERSION)
 eglibc-svn:=svn://svn.eglibc.org/branches/eglibc-$(subst .,_,$(eglibc-version))
 endif
 subproject-$(CONFIG_LIBC_EGLIBC_SP):=eglibc
+eglibc-makeflags:=MAKEFLAGS="install_root=$(packagesdir)/glibc-$(glibc-version) ld.so-version=$(LDSO)"
 eglibc-configure-arguments:=--with-headers=$(sysroot)/usr/include --enable-add-ons=../glibc-ports-2.16.0,nptl --disable-profile --without-gd --without-cvs
 eglibc-builddir:=y
 
@@ -84,9 +91,9 @@ musl-version:=$(CONFIG_LIBC_MUSL_VERSION)
 subproject-$(CONFIG_LIBC_MUSL_SP):=musl
 musl-url:=http://www.musl-libc.org/releases/musl-$(musl-version).tar.gz
 musl-git:=git://git.musl-libc.org/musl
-install-$(CONFIG_LIBC_MUSL_SP):=lib/ld-musl-$(ARCH).so.1
-lib/ld-musl-$(ARCH).so.1:install-sysroot:=y
-lib/ld-musl-$(ARCH).so.1:link:=../usr/lib/libc.so
+install-$(CONFIG_LIBC_MUSL_SP):=lib/$(LDSO)
+lib/$(LDSO):install-sysroot:=y
+lib/$(LDSO):link:=../usr/lib/libc.so
 
 patchelf-version=0.6
 subproject-$(CONFIG_PATCHELF)+=patchelf

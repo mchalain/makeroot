@@ -6,7 +6,8 @@ flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-mar
 flags_extend+=--sysroot=$(sysroot) -isystem $(sysroot)/usr/include
 CFLAGS:=-O
 LDFLAGS:= \
-	-Wl,-rpath-link=/usr/lib/:/lib/:$(join /lib/,$(TRIPLET))
+	-Wl,-rpath-link=/usr/lib/:/lib/:$(join /lib/,$(TRIPLET)) \
+	-Wl,--dynamic-linker=/lib/$(LDSO)
 DSOFLAGS:=$(LDFLAGS)
 # GCC_FLAGS is defined with the config file
 CFLAGS+=$(GCC_FLAGS) $(LDFLAGS) $(flags_extend)
