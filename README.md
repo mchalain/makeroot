@@ -13,7 +13,7 @@ the system tree as you want.
 Makeroot is not a packages manager. Makeroot doesn't ckeck packages dependancies. You can build two packages with dependancies
 for a project, and a third one for another project.  
 
-Makeroot doesn't decide for you, you keep handing on your project.  
+*Makeroot doesn't decide for you, you keep control of your project*.  
 
 What Makeroot can do for you  
 ----------------------------
@@ -41,3 +41,20 @@ All applications needed to build the device image, are downloaded and build.
 
 Makeroot is dedicated to run on Linux/GNU but may run on Windows or other systems.
 
+Which libc Makeroot uses
+-------------------------
+ * glibc the GNU Libc
+ * eglibc the Embedded GNU Libc
+ * musl
+ * uClibc
+ * dietlib
+ * newlib
+ 
+Which compilers Makeroot uses
+-----------------------------
+ * GCC
+   * from GNU with build
+   * from Linaro
+   * from Code Sourcery
+ * CLang
+ * ARM tools
