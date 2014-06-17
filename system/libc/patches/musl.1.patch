@@ -1,0 +1,20 @@
+--- include/netinet/if_ether.h.orig	2014-06-17 09:15:56.527371173 +0200
++++ include/netinet/if_ether.h	2014-06-17 09:16:43.975369189 +0200
+@@ -4,6 +4,7 @@
+ #include <stdint.h>
+ #include <sys/types.h>
+ 
++#ifndef __linux__
+ #define ETH_ALEN	6
+ #define ETH_HLEN	14
+ #define ETH_ZLEN	60
+@@ -96,6 +97,9 @@
+ 	uint8_t h_source[ETH_ALEN];
+ 	uint16_t h_proto;
+ };
++#else
++#include <linux/if_ether.h>
++#endif
+ 
+ #include <net/ethernet.h>
+ #include <net/if_arp.h>
