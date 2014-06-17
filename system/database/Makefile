@@ -1,4 +1,4 @@
-gdbm-version:=$(CONFIG_DB_GDBM_VERSION)1.11
+gdbm-version:=$(CONFIG_DB_GDBM_VERSION)
 subproject-$(CONFIG_DB_GDBM_SP)+=gdbm
 gdbm-url:=ftp://ftp.gnu.org/gnu/gdbm/gdbm-$(gdbm-version).tar.gz
 
