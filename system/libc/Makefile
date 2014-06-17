@@ -48,7 +48,13 @@ eglibc-svn:=svn://svn.eglibc.org/branches/eglibc-$(subst .,_,$(eglibc-version))
 endif
 subproject-$(CONFIG_LIBC_EGLIBC_SP):=eglibc
 eglibc-makeflags:=MAKEFLAGS="install_root=$(packagesdir)/glibc-$(glibc-version) ld.so-version=$(LDSO)"
-eglibc-configure-arguments:=--with-headers=$(sysroot)/usr/include --enable-add-ons=../glibc-ports-2.16.0,nptl --disable-profile --without-gd --without-cvs
+eglibc-configure-arguments:=--with-headers=$(sysroot)/usr/include --enable-add-ons=ports,nptl
+eglibc-configure-arguments+=--disable-profile
+eglibc-configure-arguments+=--without-gd
+eglibc-configure-arguments+=--without-cvs
+eglibc-configure-arguments+=--enable-bind-now
+eglibc-configure-arguments+=-enable-stackguard-randomization
+eglibc-configure-arguments+=--prefix=/
 eglibc-builddir:=y
 
 uClibc-version=$(CONFIG_LIBC_UCLIBC_VERSION)
