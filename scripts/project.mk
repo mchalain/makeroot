@@ -65,7 +65,6 @@ define cmd_configure-project
 				$(if $(wildcard $(sprj-src)/configure),
 					$(Q)cd $(sprj-builddir) && $(sprj-makeflags) $(configure-flags) ../$(notdir $(sprj-src))/$(configure-cmd) $(sprj-config-opts),
 					$(if $(wildcard $(sprj-src)/configure.ac),
-						$(Q)echo coucou
 						$(Q)cd $(sprj-src) && autoreconf --force -i
 						$(Q)cd $(sprj-builddir) && $(sprj-makeflags) $(configure-flags) ../$(notdir $(sprj-src))/$(configure-cmd) $(sprj-config-opts),
 						$(Q)echo "no configuration found inside $(sprj-src)" && exit 1
@@ -191,5 +190,4 @@ configure-project:
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
 	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
 	$(eval sprj-builddir:=$(dir $(sprj-src))$(if $(findstring y,$($(sprj)-builddir)),build-)$(notdir $(sprj-src)))
-	$(Q) echo $(sprj) $($(sprj)-version) $(linaro-version)
 	$(Q)$(call multicmd,configure-project)
