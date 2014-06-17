@@ -269,6 +269,11 @@ samba-config+=$(samba-configure-arguments)
 samba-build:=cd source3 && make
 samba-install:=cd source3 && make DESTDIR=$(destdir) install
 
+lighttpd-version:=$(CONFIG_SERVER_LIGHTTPD_VERSION)
+subproject-$(CONFIG_SERVER_LIGHTTPD_SP)+=lighttpd
+lighttpd-url:=http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.35.tar.gz
+lighttpd-git
+
 # the git reposiroty stores the cod inside pupnp directory,
 # the official release stores the code inside libupnp
 libupnp-version:=$(CONFIG_SERVER_LIBUPNP_VESION)
@@ -338,4 +343,3 @@ gupnp-mainversion=0.20
 subproject-$(CONFIG_SERVER_GUPNP_SP)+=gupnp
 gupnp-url=https://download.gnome.org/sources/gupnp/$(gupnp-mainversion)/gupnp-$(gupnp-version).tar.xz
 gupnp-git=git://git.gnome.org/gupnp.git
-

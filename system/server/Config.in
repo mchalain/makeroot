@@ -63,6 +63,9 @@ config SERVER_NIS
 	bool "NIS/NIS+ authentification client"
 endmenu
 
+config SERVER_LIGHTTPD_SP
+	bool "Lighttpd : a light HTTP server"
+
 menuconfig UPNP
 	bool "UPnP servers"
 
