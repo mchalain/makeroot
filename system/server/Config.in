@@ -4,6 +4,8 @@ config SERVER_CUPS_SP
 	help
 		http://www.cups.org
 
+menu "File servers"
+
 config SERVER_PROFTP_SP
 	bool "ProFTP file transfert server"
 	help
@@ -39,6 +41,7 @@ config SERVER_CIFSUTILS_SP
 config SERVER_SAMBA_SP
 	bool "Old Samba version"
 endif
+endmenu
 
 config SERVER_RPC
 	bool
@@ -63,6 +66,7 @@ config SERVER_NIS
 	bool "NIS/NIS+ authentification client"
 endmenu
 
+menu "Web server"
 config SERVER_LIGHTTPD_SP
 	bool "Lighttpd : a light HTTP server"
 
@@ -115,6 +119,7 @@ config SERVER_LIBSOUP
 	depends on FW_GLIB
 	help
 		https://wiki.gnome.org/action/show/Projects/libsoup
+endmenu
 
 config SECURITY_GSSDP
 	bool
