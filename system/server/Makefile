@@ -82,18 +82,20 @@ etc/hosts.allow:$(src)/hosts.allow
 nis-utils-version:=1.4.1
 subproject-$(CONFIG_SERVER_NIS)+=nis-utils
 nis-utils-url:=http://www.linux-nis.org/download/NIS+/nis-utils-$(nis-utils-version).tar.gz
+nis-utils-makeflags:=CFLAGS="$(CFLAGS) -I/usr/include/tircp"
 nis-utils-configure-arguments:=
 ifeq ($(CONFIG_LIBC_NLS),y)
 nis-utils-configure-arguments+=--enable-nls
 else
 nis-utils-configure-arguments+=--disable-nls
 endif
-pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/nispasswd.h
+pre-install-$(CONFIG_SERVER_RCP)+=usr/include/tirpc/rpcsvc/nispasswd.h
 usr/include/tirpc/rpcsvc/nispasswd.h: copy=$(src)/nis-utils-$(nis-utils-version)/src/rpc.nispasswdd/nispasswd.h
 usr/include/tirpc/rpcsvc/nispasswd.h:install-sysroot:=y
-pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/nis.h
+pre-install-$(CONFIG_SERVER_RCP)+=usr/include/tirpc/rpcsvc/nis.h
 usr/include/tirpc/rpcsvc/nis.h: generate=/tmp/nis.h
 usr/include/tirpc/rpcsvc/nis.h:install-sysroot:=y
+usr/include/tirpc/rpcsvc/nis.h:/tmp/nis.h
 /tmp/nis.h:
 	$(Q)$(hostbin)/rpcgen -h $(src)/nis-utils-$(nis-utils-version)/src/nis.x -o $@
 
@@ -272,7 +274,7 @@ samba-install:=cd source3 && make DESTDIR=$(destdir) install
 lighttpd-version:=$(CONFIG_SERVER_LIGHTTPD_VERSION)
 subproject-$(CONFIG_SERVER_LIGHTTPD_SP)+=lighttpd
 lighttpd-url:=http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.35.tar.gz
-lighttpd-git
+lighttpd-git:=
 
 # the git reposiroty stores the cod inside pupnp directory,
 # the official release stores the code inside libupnp
