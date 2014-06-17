@@ -25,7 +25,7 @@ What Makeroot can do for you
 What Makeroot does
 --------------------
 step by step Makeroot
- * downloads (, builds) and installs a toolchain
+ * downloads (, builds) and installs a toolchain and other tools
  * builds the bootloader
  * builds and installs a kernel Linux or BSD or other
  * creates a system tree with configuration files and initialisation files
@@ -34,3 +34,10 @@ step by step Makeroot
  * builds and installs dozens packages
  * generates images on MMC or into raw image file
  
+Which concepts Makeroot uses
+---------------------------
+Makeroot is based on Makefile and try to use only Makefile.
+All applications needed to build the device image, are downloaded and build.
+
+Makeroot is dedicated to run on Linux/GNU but may run on Windows or other systems.
+
