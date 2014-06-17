@@ -98,9 +98,32 @@ musl-version:=$(CONFIG_LIBC_MUSL_VERSION)
 subproject-$(CONFIG_LIBC_MUSL_SP):=musl
 musl-url:=http://www.musl-libc.org/releases/musl-$(musl-version).tar.gz
 musl-git:=git://git.musl-libc.org/musl
-install-$(CONFIG_LIBC_MUSL_SP):=lib/$(LDSO)
+install-$(CONFIG_LIBC_MUSL_SP)+=lib/$(LDSO)
 lib/$(LDSO):install-sysroot:=y
 lib/$(LDSO):link:=../usr/lib/libc.so
+install-$(CONFIG_LIBC_MUSL-SP)+=gcc.specs
+gcc.specs:install-sysroot:=y
+gcc.specs:generate=/tmp/gcc.specs
+gcc.specs:/tmp/gcc.specs
+/tmp/gcc.specs:incdir:=/usr/include
+/tmp/gcc.specs:libdir:=/usr/lib
+/tmp/gcc.specs:
+	$(Q)echo '' > $@
+	$(Q)echo '%rename cpp_options old_cpp_options' >> $@
+	$(Q)echo '*cpp_options:' >> $@
+	$(Q)echo '-nostdinc -isystem %R'$(incdir)' -isystem include%s %(old_cpp_options)' >> $@
+	$(Q)echo '*cc1:' >> $@
+	$(Q)echo '%(cc1_cpu) -nostdinc -isystem %R'$(incdir)' -isystem include%s' >> $@
+	$(Q)echo '*link_libgcc:' >> $@
+	$(Q)echo '-L%R'$(libdir)' -L .%s' >> $@
+	$(Q)echo '*libgcc:' >> $@
+	$(Q)echo 'libgcc.a%s %:if-exists(libgcc_eh.a%s)' >> $@
+	$(Q)echo '*startfile:' >> $@
+	$(Q)echo '%{!shared: %R'$(libdir)'/%{pie:S}crt1.o} %R'$(libdir)'/crti.o %{shared|pie:crtbeginS.o%s;:crtbegin.o%s}' >> $@
+	$(Q)echo '*endfile:' >> $@
+	$(Q)echo '%{shared|pie:crtendS.o%s;:crtend.o%s} %R'$(libdir)'/crtn.o' >> $@
+	$(Q)echo '*link:' >> $@
+	$(Q)echo '-nostdlib %{shared:-shared} %{static:-static} %{rdynamic:-export-dynamic}' >> $@
 
 patchelf-version=0.6
 subproject-$(CONFIG_PATCHELF)+=patchelf
