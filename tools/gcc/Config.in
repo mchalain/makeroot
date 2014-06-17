@@ -26,15 +26,15 @@ choice
 
 endchoice
 
-choice
-	prompt "compiler name" if TOOLCHAIN_CUSTOM
 config TOOLCHAIN_GCC
-	bool "GCC"
+	bool
+	prompt "GCC compiler" if TOOLCHAIN_CUSTOM
 config TOOLCHAIN_LLVM
-	bool "LLVM"
+	bool
+	prompt "LLVM compiler" if TOOLCHAIN_CUSTOM
 config TOOLCHAIN_ARM
-	bool "ARM"
-endchoice
+	bool
+	prompt "ARM compiler" if TOOLCHAIN_CUSTOM
 
 config TOOLCHAIN_GCC_VERSION
 	depends on TOOLCHAIN_GCC
