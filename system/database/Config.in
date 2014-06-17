@@ -1,4 +1,7 @@
 menu "Databases"
 config DB_GDBM_SP
 	bool "GDBM : The GNU dbm"
+
+config DB_SQLITE_SP
+	bool "SQLite : The embedded SQL DB"
 endmenu
