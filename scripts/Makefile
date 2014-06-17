@@ -163,9 +163,9 @@ ifneq ($(cmd_files),)
   include $(cmd_files)
 endif
 
-__build: $(subdir-ym) $(targets) $(extra-y) \
+__build: \
 	 $(download-target) $(host-target) $(pre-install-y) $(toolchain-target) \
-	 $(subproject-y) $(install-y) $(image-target)
+	 $(subproject-y) $(install-y) $(image-target) $(subdir-ym)
 	@:
 
 ifeq (y,$(force-install))
