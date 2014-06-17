@@ -275,6 +275,13 @@ lighttpd-version:=$(CONFIG_SERVER_LIGHTTPD_VERSION)
 subproject-$(CONFIG_SERVER_LIGHTTPD_SP)+=lighttpd
 lighttpd-url:=http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.35.tar.gz
 lighttpd-git:=
+lighttpd-configure-arguments:=--without-pcre
+ifneq (y,$(CONFIG_FW_BZIP2_SP))
+lighttpd-configure-arguments+=--without-bzip2
+endif
+ifeq (y,$(CONFIG_DB_GDBM_SP))
+lighttpd-configure-arguments+=--with-gdbm
+endif
 
 # the git reposiroty stores the cod inside pupnp directory,
 # the official release stores the code inside libupnp
