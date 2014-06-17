@@ -41,20 +41,21 @@ $(src)/build-glibc-$(glibc-version):
 ifeq (y,$(CONFIG_LINARO))
 linaro-version:=$(CONFIG_LINARO_VERSION:"%"=%)
 eglibc-version:=linaro-$(CONFIG_LIBC_EGLIBC_VERSION)-$(linaro-version:%=20%)
-eglibc-url=https://releases.linaro.org/$(linaro-version)/components/toolchain/eglibc-linaro/eglibc-$(eglibc-version).tar.bz2
+eglibc-url:=https://releases.linaro.org/$(linaro-version)/components/toolchain/eglibc-linaro/eglibc-$(eglibc-version).tar.bz2
+eglibc-git:=git://git.linaro.org/toolchain/eglibc.git
 else
 eglibc-version:=$(CONFIG_LIBC_EGLIBC_VERSION)
 eglibc-svn:=svn://svn.eglibc.org/branches/eglibc-$(subst .,_,$(eglibc-version))
 endif
 subproject-$(CONFIG_LIBC_EGLIBC_SP):=eglibc
-eglibc-makeflags:=MAKEFLAGS="install_root=$(packagesdir)/glibc-$(glibc-version) ld.so-version=$(LDSO)"
+eglibc-makeflags:=MAKEFLAGS="install_root=$(packagesdir)/eglibc-$(eglibc-version) install-bootstrap-headers=yes ld.so-version=$(LDSO)"
+eglibc-targets:=install-headers all
 eglibc-configure-arguments:=--with-headers=$(sysroot)/usr/include --enable-add-ons=ports,nptl
 eglibc-configure-arguments+=--disable-profile
 eglibc-configure-arguments+=--without-gd
 eglibc-configure-arguments+=--without-cvs
-eglibc-configure-arguments+=--enable-bind-now
-eglibc-configure-arguments+=-enable-stackguard-randomization
-eglibc-configure-arguments+=--prefix=/
+eglibc-configure-arguments+=--disable-build-nscd
+eglibc-configure-arguments+=--enable-multi-arch
 eglibc-builddir:=y
 
 uClibc-version=$(CONFIG_LIBC_UCLIBC_VERSION)
