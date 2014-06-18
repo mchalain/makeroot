@@ -101,9 +101,9 @@ musl-git:=git://git.musl-libc.org/musl
 install-$(CONFIG_LIBC_MUSL_SP)+=lib/$(LDSO)
 lib/$(LDSO):install-sysroot:=y
 lib/$(LDSO):link:=../usr/lib/libc.so
-install-$(CONFIG_LIBC_MUSL-SP)+=gcc.specs
+install-$(CONFIG_LIBC_MUSL_SP)+=gcc.specs
 gcc.specs:install-sysroot:=y
-gcc.specs:generate=/tmp/gcc.specs
+gcc.specs:generate:=/tmp/gcc.specs
 gcc.specs:/tmp/gcc.specs
 /tmp/gcc.specs:incdir:=/usr/include
 /tmp/gcc.specs:libdir:=/usr/lib
@@ -124,6 +124,9 @@ gcc.specs:/tmp/gcc.specs
 	$(Q)echo '%{shared|pie:crtendS.o%s;:crtend.o%s} %R'$(libdir)'/crtn.o' >> $@
 	$(Q)echo '*link:' >> $@
 	$(Q)echo '-nostdlib %{shared:-shared} %{static:-static} %{rdynamic:-export-dynamic}' >> $@
+	$(Q)echo '*esp_link:' >> $@
+	$(Q)echo '*esp_options:' >> $@
+	$(Q)echo '*esp_cpp_options:' >> $@
 
 patchelf-version=0.6
 subproject-$(CONFIG_PATCHELF)+=patchelf
