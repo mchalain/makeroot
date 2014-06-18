@@ -10,10 +10,10 @@ LDFLAGS:= \
 	-Wl,--dynamic-linker=/lib/$(LDSO)
 DSOFLAGS:=$(LDFLAGS)
 # GCC_FLAGS is defined with the config file
-CFLAGS+=$(GCC_FLAGS) $(LDFLAGS) $(flags_extend)
-CPPFLAGS:=$(CFLAGS)
+CFLAGS+=$(if $(wildcard $(sysroot)/gcc.specs),-specs $(sysroot)/gcc.specs) $(GCC_FLAGS) $(LDFLAGS) $(flags_extend)
+CPPFLAGS:=
 CXXFLAGS:=$(CFLAGS)
-LDFLAGS+=$(GCC_FLAGS) $(flags_extend)
+LDFLAGS+=$(GCC_FLAGS) $(flags_extend) 
 export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS
 
 # install-sh is a tool to install binaries and data inside the root directory
