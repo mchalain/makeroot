@@ -184,6 +184,7 @@ install-project:
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
 	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
 	$(eval sprj-builddir:=$(dir $(sprj-src))$(if $(findstring y,$($(sprj)-builddir)),build-)$(notdir $(sprj-src)))
+	$(eval sprj-builddir:=$(if $(findstring y,$($(sprj)-builddir)),$(join $(objtree)/build/,$(notdir $(sprj-src))),$(sprj-src)))
 	$(eval sprj-destdir:=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(sprj)-version)),$(sprj)-$($(sprj)-version),$(sprj))))
 	$(Q)$(call multicmd,install-project)
 	@touch $(sprj-destdir)/.post-install
@@ -193,6 +194,7 @@ build-project:
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
 	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
 	$(eval sprj-builddir:=$(dir $(sprj-src))$(if $(findstring y,$($(sprj)-builddir)),build-)$(notdir $(sprj-src)))
+	$(eval sprj-builddir:=$(if $(findstring y,$($(sprj)-builddir)),$(join $(objtree)/build/,$(notdir $(sprj-src))),$(sprj-src)))
 	$(Q)$(call multicmd,build-project)
 
 .PHONY:configure-project
@@ -200,4 +202,5 @@ configure-project:
 	$(eval sprj-version:=$(filter-out git hg cvs,$($(sprj)-version)))
 	$(eval sprj-src:=$(firstword $(wildcard $(join $(src)/,$(sprj)-$($(sprj)-version)) $(join $(src)/,$(sprj)))))
 	$(eval sprj-builddir:=$(dir $(sprj-src))$(if $(findstring y,$($(sprj)-builddir)),build-)$(notdir $(sprj-src)))
+	$(eval sprj-builddir:=$(if $(findstring y,$($(sprj)-builddir)),$(join $(objtree)/build/,$(notdir $(sprj-src))),$(sprj-src)))
 	$(Q)$(call multicmd,configure-project)
