@@ -14,6 +14,7 @@ x264-configure-arguments:=--cross-prefix=$(CROSS_COMPILE)
 x264-configure-arguments+=--enable-static --enable-shared --enable-pic
 x264-configure-arguments+=--system-libx264 --disable-gpl
 x264-makeflags:=AS=$(CROSS_COMPILE:%-=%)-gcc
+x264-builddir:=y
 
 libaacplus-version:=$(CONFIG_FW_AUDIO_AACPLUS_VERSION)
 subproject-$(CONFIG_FW_AUDIO_AACPLUS_SP)+=libaacplus
@@ -23,7 +24,8 @@ ffmpeg-version=$(CONFIG_FW_VIDEO_FFMPEG_VERSION)
 subproject-$(CONFIG_FW_VIDEO_FFMPEG_SP)+=ffmpeg
 ffmpeg-url=http://ffmpeg.org/releases/ffmpeg-$(ffmpeg-version).tar.bz2
 ffmpeg-git=git://source.ffmpeg.org/ffmpeg.git ffmpeg
-ffmpeg-config:=./configure
+ffmpeg-builddir:=y
+ffmpeg-config:=$(srctree)/$(src)/ffmpeg$(if $(findstring git,$(ffmpeg-version)),,$(ffmpeg-version:%=-%))/configure
 ffmpeg-config+=--enable-cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --sysroot=$(sysroot)
 ffmpeg-config+=--cc="$(CC)"
 ffmpeg-config+=--arch=$(ARCH) --target-os=linux --cpu=$(SUBARCH)
