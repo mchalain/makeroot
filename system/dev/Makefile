@@ -11,6 +11,7 @@ gdb-version=7.6
 subproject-$(CONFIG_TOOLS_GDB)+=gdb
 gdb-url=http://ftp.gnu.org/gnu/gdb/gdb-$(gdb-version).tar.gz
 gdb-configure-arguments:=--prefix=/usr/local
+gdb-builddir:=y
 
 strace-version=4.8
 subproject-$(CONFIG_TOOLS_GDB)+=strace
