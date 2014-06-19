@@ -1,13 +1,19 @@
 menu "files parser libraries"
-config EXPAT
+config FW_EXPAT
     bool
-    prompt "xml fileparser in C language" if SHOW_ALL
+    prompt "expat : xml fileparser in C language" if SHOW_ALL
     help
         http://expat.sourceforge.net/
 
-config LIBFFI
+config FW_LIBTOOL
     bool
-    prompt "A Portable Foreign Function Interface Library " if SHOW_ALL
+    prompt "libtool : libltdl dynamic link helper" if SHOW_ALL
+    help
+        http://www.gnu.org/software/libtool/
+
+config FW_LIBFFI
+    bool
+    prompt "libffi : A Portable Foreign Function Interface Library " if SHOW_ALL
     help
         http://sourceware.org/libffi/
 
