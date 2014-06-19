@@ -3,18 +3,22 @@
 
 flags_extend=$(if $(filter arm, $(ARCH)), $(if $(filter y,$(THUMB)),-mthumb,-marm) \
 							-march=$(SUBARCH) -mfloat-abi=$(if $(filter y,$(HFP)),hard,soft))
-flags_extend+=--sysroot=$(sysroot) -isystem $(sysroot)/usr/include
+CPPFLAGS:=--sysroot=$(sysroot) -isystem $(sysroot)/usr/include
 CFLAGS:=-O
 LDFLAGS:= \
 	-Wl,-rpath-link=/usr/lib/:/lib/:$(join /lib/,$(TRIPLET)) \
 	-Wl,--dynamic-linker=/lib/$(LDSO)
 DSOFLAGS:=$(LDFLAGS)
 # GCC_FLAGS is defined with the config file
-CFLAGS+=$(if $(wildcard $(sysroot)/gcc.specs),-specs $(sysroot)/gcc.specs) $(GCC_FLAGS) $(LDFLAGS) $(flags_extend)
-CPPFLAGS:=
+CFLAGS+=$(flags_extend) $(LDFLAGS) $(CPPFLAGS) $(GCC_FLAGS)
+CPPFLAGS+=$(GCC_FLAGS)
 CXXFLAGS:=$(CFLAGS)
-LDFLAGS+=$(GCC_FLAGS) $(flags_extend) 
-export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS
+LDFLAGS+=$(flags_extend) $(CPPFLAGS) $(GCC_FLAGS)
+CC:=$(if $(wildcard $(sysroot)/gcc.specs),$(toolchain_path)/bin/specs-wrapper-gcc,$(CC))
+# when specs file is used, this file is necessary for the link
+# LD doesn't support specs file directly, and we have to use CC instead
+LD:=$(if $(wildcard $(sysroot)/gcc.specs),$(CC),$(LD))
+export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS DSOFLAGS LD
 
 # install-sh is a tool to install binaries and data inside the root directory
 # this script can use different applications that we can modify by environment variables

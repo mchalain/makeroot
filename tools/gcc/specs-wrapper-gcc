@@ -1,0 +1,8 @@
+#!/bin/bash
+prog=$(basename $0 | sed 's/^\(.*\)-\(.*\)$/\2/')
+flags=${prog^^}_FLAGS
+if [ $prog = gcc ]; then
+specs="-specs $sysroot/gcc.specs"
+fi
+#echo ${CROSS_COMPILE}$prog $specs $@ ${!flags} >> $HOME/Privée/makeroot/toto.txt
+${CROSS_COMPILE}$prog $specs $@ ${!flags}
