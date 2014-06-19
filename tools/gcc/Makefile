@@ -20,3 +20,41 @@ sourcery-linux-url=https://sourcery.mentor.com/GNUToolchain/package11081/public/
 endif
 endif
 
+libelf-version:=0.8.13
+libelf-url:=http://www.mr511.de/software/libelf-$(libelf-version).tar.gz
+libelf-configure-arguments:=--prefix=/tmp
+libelf-configure-arguments+=--disable-shared
+
+gmp-version:=4.3.2
+gmp-url:=ftp://gcc.gnu.org/pub/gcc/infrastructure/gmp-$(gmp-version).tar.gz
+gmp-configure-arguments:=--prefix=/tmp
+gmp-configure-arguments+=--disable-shared
+
+mpfr-version:=2.4.2
+mpfr-url:=ftp://gcc.gnu.org/pub/gcc/infrastructure/mpfr-$(mpfr-version).tar.gz
+mpfr-configure-arguments:=--prefix=/tmp
+mpfr-configure-arguments+=--with-gmp=$(src)/$(toolchain_path)/tmp
+mpfr-configure-arguments+=--disable-shared
+
+mpc-version:=0.8.1
+mpc-url:=ftp://gcc.gnu.org/pub/gcc/infrastructure/mpc-$(mpc-version).tar.gz
+mpc-configure-arguments:=--prefix=/tmp
+mpc-configure-arguments+=--with-gmp=$(src)/$(toolchain_path)/tmp
+mpc-configure-arguments+=--with-mpfr=$(src)/$(toolchain_path)/tmp
+mpc-configure-arguments+=--disable-shared
+
+gcc-url:=ftp://gcc.gnu.org/pub/gcc/releases/gcc-$(gcc-version)/gcc-$(gcc-version).tar.bz2
+gcc-dependencies:=gmp mpfr mpc libelf
+gcc-build-dir:=y
+gcc-targets:=all-gcc all-target-libgcc install-gcc install-target-libgcc
+gcc-configure-arguments:=--target=$(TRIPLET) --prefix=/
+gcc-configure-arguments+=--with-build-sysroot=$(src)/$(toolchain_path)/$(sysroot)
+gcc-configure-arguments+=--enable-languages=c,c++,lto --enable-lto
+gcc-configure-arguments+=--disable-multilib --disable-nls
+gcc-configure-arguments+=--disable-shared
+gcc-configure-arguments+=--disable-libssp --disable-libstdcxx-pch --disable-libmudflap --disable-libquadmath --enable-libstdcxx-time 
+gcc-configure-arguments+=--enable-c99 --enable-long-long --enable-threads=posix
+gcc-configure-arguments+=--with-build-time-tools=$(src)/$(toolchain_path)/bin
+gcc-configure-arguments+=--oldincludedir=$(src)/$(toolchain_path)/$(sysroot)/usr/include
+gcc-configure-arguments+=--with-arch=$(SUBARCH) --with-fpu=$(if $(findstring y,$(HFP)),vfp,soft) --with-float=$(if $(findstring y,$(HFP)),hard,soft)
+gcc-configure-arguments+=$(foreach part,$(gcc-dependencies),--with-$(part)=$(src)/$(toolchain_path)/tmp/)
