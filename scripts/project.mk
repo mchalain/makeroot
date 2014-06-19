@@ -67,11 +67,11 @@ define cmd_configure-project
 			$(if $(sprj-defconfig),
 				$(Q)cp $(sprj-defconfig) $(sprj-src)/.config && $(MAKE) $(unsetflags) $(sprj-makeflags) -C $(sprj-src) silentoldconfig,
 				$(if $(wildcard $(sprj-src)/configure),
-					$(Q)cd $(sprj-builddir) && $(sprj-makeflags) $(configure-flags) ../$(notdir $(sprj-src))/$(configure-cmd) $(sprj-config-opts),
+					$(Q)cd $(sprj-builddir) && $(sprj-makeflags) $(configure-flags) $(srctree)/$(src)/$(notdir $(sprj-src))/$(configure-cmd) $(sprj-config-opts),
 					$(if $(wildcard $(sprj-src)/configure.ac),
 						$(Q)cd $(sprj-src) && autoreconf --force -i
-						$(Q)cd $(sprj-builddir) && $(sprj-makeflags) $(configure-flags) ../$(notdir $(sprj-src))/$(configure-cmd) $(sprj-config-opts),
-						$(Q)echo "no configuration found inside $(sprj-src)" && exit 1
+						$(Q)cd $(sprj-builddir) && $(sprj-makeflags) $(configure-flags) $(srctree)/$(src)/$(notdir $(sprj-src))/$(configure-cmd) $(sprj-config-opts),
+						$(Q)echo "no configuration found inside $(sprj-builddir)" && exit 1
 					)
 				)
 			)
@@ -88,10 +88,13 @@ define cmd_build-project
 		$(if $(sprj-mkbuild),
 			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-builddir) -f $(srctree)/$(sprj-mkbuild) $(if $(target),$(target),build),
 			$(if $(wildcard  $(sprj-builddir)/Makefile),
-					$(Q)$(MAKE) -C $(sprj-builddir) $(unsetflags) $(sprj-makeflags) $(target),
-				$(if $(wildcard  $(sprj-src)/Android.mk),
-					$(Q)$(call android-tools) && $(MAKE) $(unsetflags) $(sprj-makeflags)  $(android-build)=$(sprj-src)/Android.mk,
-					$(Q)echo "no build script found inside $(sprj-src)" && exit 1
+				$(Q)$(MAKE) -C $(sprj-builddir) $(unsetflags) $(sprj-makeflags) $(target),
+				$(if $(wildcard  $(sprj-src)/Makefile),
+					$(Q)$(MAKE) -C $(sprj-builddir) -f $(srctree)/$(sprj-src)/Makefile $(unsetflags) $(sprj-makeflags) $(target),
+					$(if $(wildcard  $(sprj-src)/Android.mk),
+						$(Q)$(call android-tools) && $(MAKE) $(unsetflags) $(sprj-makeflags)  $(android-build)=$(sprj-src)/Android.mk,
+						$(Q)echo "no build script found inside $(sprj-builddir)" && exit 1
+					)
 				)
 			)
 		)
@@ -110,7 +113,10 @@ define cmd_install-project
 			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkinstall) install,
 			$(if $(wildcard  $(sprj-builddir)/Makefile),
 				$(Q)$(MAKE) -C $(sprj-builddir) $(unsetflags) INSTALL=$(install_tool) DESTDIR=$(sprj-destdir) $(sprj-makeflags) install,
-				$(Q)echo "no build script found inside $(sprj-src)" && exit 1
+				$(if $(wildcard  $(sprj-src)/Makefile),
+					$(Q)$(MAKE) -C $(sprj-builddir) -f $(srctree)/$(sprj-src)/Makefile $(unsetflags) INSTALL=$(install_tool) DESTDIR=$(sprj-destdir) $(sprj-makeflags) install,
+					$(Q)echo "no build script found inside $(sprj-builddir)" && exit 1
+				)
 			)
 		)
 	)
