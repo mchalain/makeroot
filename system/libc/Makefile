@@ -110,20 +110,34 @@ gcc.specs:/tmp/gcc.specs
 /tmp/gcc.specs:
 	$(Q)echo '' > $@
 	$(Q)echo '%rename cpp_options old_cpp_options' >> $@
+	$(Q)echo '' >> $@
 	$(Q)echo '*cpp_options:' >> $@
-	$(Q)echo '-nostdinc -isystem %R'$(incdir)' -isystem include%s %(old_cpp_options)' >> $@
+	$(Q)echo '-nostdinc -isystem %R'$(incdir)' -isystem include%s %(old_cpp_options) -D_GNU_SOURCE -D_POSIX_SOURCE -D__USE_GNU' >> $@
+	$(Q)echo '' >> $@
 	$(Q)echo '*cc1:' >> $@
-	$(Q)echo '%(cc1_cpu) -nostdinc -isystem %R'$(incdir)' -isystem include%s' >> $@
+	$(Q)echo '%(cc1_cpu) -nostdinc -isystem %R'$(incdir)' -isystem include%s -D_GNU_SOURCE -D_POSIX_SOURCE -D__USE_GNU' >> $@
+	$(Q)echo '' >> $@
 	$(Q)echo '*link_libgcc:' >> $@
 	$(Q)echo '-L%R'$(libdir)' -L .%s' >> $@
+	$(Q)echo '' >> $@
 	$(Q)echo '*libgcc:' >> $@
 	$(Q)echo 'libgcc.a%s %:if-exists(libgcc_eh.a%s)' >> $@
+	$(Q)echo '' >> $@
 	$(Q)echo '*startfile:' >> $@
 	$(Q)echo '%{!shared: %R'$(libdir)'/%{pie:S}crt1.o} %R'$(libdir)'/crti.o %{shared|pie:crtbeginS.o%s;:crtbegin.o%s}' >> $@
+	$(Q)echo '' >> $@
 	$(Q)echo '*endfile:' >> $@
 	$(Q)echo '%{shared|pie:crtendS.o%s;:crtend.o%s} %R'$(libdir)'/crtn.o' >> $@
+	$(Q)echo '' >> $@
 	$(Q)echo '*link:' >> $@
 	$(Q)echo '-nostdlib %{shared:-shared} %{static:-static} %{rdynamic:-export-dynamic}' >> $@
+	$(Q)echo '' >> $@
+	$(Q)echo '*lib:' >> $@
+	$(Q)echo '-lgcc_eh -lc' >> $@
+	$(Q)echo '' >> $@
+	$(Q)echo '*predefines:' >> $@
+	$(Q)echo '-D_GNU_SOURCE -D_POSIX_SOURCE' >> $@
+	$(Q)echo '' >> $@
 	$(Q)echo '*esp_link:' >> $@
 	$(Q)echo '*esp_options:' >> $@
 	$(Q)echo '*esp_cpp_options:' >> $@
