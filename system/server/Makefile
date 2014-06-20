@@ -284,7 +284,7 @@ subproject-$(CONFIG_SERVER_LIGHTTPD_SP)+=lighttpd
 lighttpd-url:=http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.35.tar.gz
 lighttpd-git:=
 lighttpd-builddir:=y
-lighttpd-configure-arguments:=--without-pcre
+lighttpd-configure-arguments:=--without-pcre --program-prefix=
 ifneq (y,$(CONFIG_FW_BZIP2_SP))
 lighttpd-configure-arguments+=--without-bzip2
 endif
