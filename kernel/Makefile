@@ -47,6 +47,10 @@ else
 	$(kernel:%=%-install):= find $($(kernel:%=%-destdir))/lib/modules/ -name build -delete && find $($(kernel:%=%-destdir))/lib/modules/ -name source -delete
 endif
 
+rtems-version:=4.10.2
+rtems-url:=http://git.rtems.org/rtems/snapshot/rtems-$(rtems-version).tar.bz2
+rtems-git:=git://git.rtems.org/rtems.git
+
 kernel-headers-version:=git
 subproject-$(CONFIG_KERNEL_HEADERS_MODIFIED)+=kernel-headers
 kernel-headers-git:=git://github.com/sabotage-linux/kernel-headers

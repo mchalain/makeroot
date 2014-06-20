@@ -17,6 +17,12 @@ choice
 	config KERNEL_HEADERS
 		bool "do not build kernel just install headers files"
 		select KERNEL_HEADERS_MOIFIED
+
+	config RTEMS
+		bool "RTEMS : Open Source RTOS"
+		help
+			http://www.rtems.org/
+
 endchoice
 
 config LINUX
@@ -26,6 +32,7 @@ config LINUX
 config KERNEL
     string
     default "linux" if LINUX
+    default "rtems" if RTMES
     prompt "Kernel name" if KERNEL_CUSTOM
 
 config KERNEL_VERSION
