@@ -102,11 +102,11 @@ menu  "Select scripts"
 			
 		config INIT_MR_PROFTPD
 			bool "start proftpd powerfull ftp server"
-			depends on INIT_MR_NETWORK && SERVER_PROFTP
+			depends on INIT_MR_NETWORK && SERVER_PROFTP_SP
 			
 		config INIT_MR_USHARE
 			bool "start ushare upnp/dlna server"
-			depends on INIT_MR_NETWORK && SERVER_USHARE
+			depends on INIT_MR_NETWORK && SERVER_USHARE_SP
 			
 endmenu
 endif
