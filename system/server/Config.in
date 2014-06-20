@@ -100,7 +100,7 @@ config SERVER_LIBDLNA_SP
 	bool
 	prompt "libdlna : DLNA library framework" if SERVER_USHARE_SP
 	depends on UPNP
-	depends on FW_VIDEO_FFMPEG
+	depends on FW_VIDEO_FFMPEG_SP
 	help
 		http://libdlna.geexbox.org/
 
