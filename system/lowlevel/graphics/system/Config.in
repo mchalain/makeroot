@@ -14,8 +14,8 @@ choice
 
     config WAYLAND
         tristate "Wayland"
-        select LIBFFI
-        select EXPAT
+        select FW_LIBFFI
+        select FW_EXPAT
         select WAYLAND_LIB
 
 endchoice
