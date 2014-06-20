@@ -25,11 +25,11 @@ install-$(CONFIG_SERVER_NFS)+=etc/init.d/nfsd
 etc/init.d/nfsd: copy=$(src)/imrscripts/nfsd
 etc/init.d/nfsd: chmod:=744
 
-install-$(CONFIG_SERVER_USHARE)+=etc/init.d/ushare
+install-$(CONFIG_SERVER_USHARE_SP)+=etc/init.d/ushare
 etc/init.d/ushare: copy=$(src)/imrscripts/ushare
 etc/init.d/ushare: chmod:=744
 
-install-$(CONFIG_SERVER_PROFTP)+=etc/init.d/proftpd
+install-$(CONFIG_SERVER_PROFTP_SP)+=etc/init.d/proftpd
 etc/init.d/proftpd: copy=$(src)/imrscripts/proftpd
 etc/init.d/proftpd: chmod:=744
 
