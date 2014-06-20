@@ -32,7 +32,7 @@ mantohtml-cflags:=-I$(src)/cups$(cups-version:%=-%)/
 proftpd-version=$(CONFIG_SERVER_PROFTP_VERSION)
 subproject-$(CONFIG_SERVER_PROFTP_SP)+=proftpd
 proftpd-url=ftp://ftp.proftpd.org/distrib/source/proftpd-$(proftpd-version).tar.gz
-proftpd-configure-arguments:=--enable-dso --disable-ipv6
+proftpd-configure-arguments:=--enable-dso --disable-ipv6 --disable-strip
 ifeq ($(CONFIG_LIBC_NLS),y)
 proftpd-configure-arguments:=--enable-nls
 endif
@@ -79,6 +79,21 @@ install-$(CONFIG_SERVER_TCPW_SP)+=etc/hosts.allow
 etc/hosts.allow:copy=$(src)/hosts.allow
 etc/hosts.allow:$(src)/hosts.allow
 
+libtirpc-version:=$(CONFIG_SERVER_LIBTIRPC_VERSION)
+subproject-$(CONFIG_SERVER_LIBTIRPC_SP)+=libtirpc
+libtirpc-url:=http://downloads.sourceforge.net/project/libtirpc/libtirpc/$(libtirpc-version)/libtirpc-$(libtirpc-version).tar.bz2
+libtirpc-builddir:=y
+libtirpc-makeflags:=CPPFLAGS="$(CPPFLAGS) -I$(sysroot)/usr/include/tirpc"
+libtirpc-configure-arguments:=--disable-static
+ifneq ($(CONFIG_SECURITY_GSS),y)
+libtirpc-configure-arguments+=--disable-gssapi
+endif
+ifneq ($(CONFIG_SERVER_NIS),y)
+libtirpc-configure-arguments+=--disable-nis
+endif
+install-$(CONFIG_SERVER_RPC)+=etc/netconfig
+etc/netconfig:copy=$(packagesdir)/libtirpc-$(libtirpc-version)/etc/netconfig
+
 nis-utils-version:=1.4.1
 subproject-$(CONFIG_SERVER_NIS)+=nis-utils
 nis-utils-url:=http://www.linux-nis.org/download/NIS+/nis-utils-$(nis-utils-version).tar.gz
@@ -89,13 +104,13 @@ nis-utils-configure-arguments+=--enable-nls
 else
 nis-utils-configure-arguments+=--disable-nls
 endif
-pre-install-$(CONFIG_SERVER_RCP)+=usr/include/tirpc/rpcsvc/nispasswd.h
+pre-install-$(CONFIG_SERVER_RCP)+=usr/include/rpcsvc/tirpc/nispasswd.h
 usr/include/tirpc/rpcsvc/nispasswd.h: copy=$(src)/nis-utils-$(nis-utils-version)/src/rpc.nispasswdd/nispasswd.h
 usr/include/tirpc/rpcsvc/nispasswd.h:install-sysroot:=y
-pre-install-$(CONFIG_SERVER_RCP)+=usr/include/tirpc/rpcsvc/nis.h
+pre-install-$(CONFIG_SERVER_RPC)+=usr/include/tirpc/rpcsvc/nis.h
 usr/include/tirpc/rpcsvc/nis.h: generate=/tmp/nis.h
 usr/include/tirpc/rpcsvc/nis.h:install-sysroot:=y
-usr/include/tirpc/rpcsvc/nis.h:/tmp/nis.h
+usr/include/tirpc/rpcsvc/nis.h: /tmp/nis.h
 /tmp/nis.h:
 	$(Q)$(hostbin)/rpcgen -h $(src)/nis-utils-$(nis-utils-version)/src/nis.x -o $@
 
@@ -146,23 +161,15 @@ else
 ypbind-mt-configure-arguments:=--disable-nls
 endif
 
-libtirpc-version:=$(CONFIG_SERVER_LIBTIRPC_VERSION)
-subproject-$(CONFIG_SERVER_LIBTIRPC_SP)+=libtirpc
-libtirpc-url:=http://downloads.sourceforge.net/project/libtirpc/libtirpc/$(libtirpc-version)/libtirpc-$(libtirpc-version).tar.bz2
-libtirpc-configure-arguments:=--disable-static
-ifneq ($(CONFIG_SECURITY_GSS),y)
-libtirpc-configure-arguments+=--disable-gssapi
-endif
-install-$(CONFIG_SERVER_RPC)+=etc/netconfig
-etc/netconfig:copy=$(packagesdir)/libtirpc-$(libtirpc-version)/etc/netconfig
-
 libnfsidmap-version:=$(CONFIG_SERVER_NFSIDMAP_VERSION)
 subproject-$(CONFIG_SERVER_NFSIDMAP_SP)+=libnfsidmap
 libnfsidmap-url:=http://www.citi.umich.edu/projects/nfsv4/linux/libnfsidmap/libnfsidmap-$(libnfsidmap-version).tar.gz
+libnfsidmap-builddir:=y
 
 nfs-utils-version=$(CONFIG_SERVER_NFSUTILS_VESION)
 subproject-$(CONFIG_SERVER_NFSUTILS_SP)+=nfs-utils
 nfs-utils-url:=ftp://ftp.kernel.org/pub/linux/utils/nfs-utils/$(nfs-utils-version)/nfs-utils-$(nfs-utils-version).tar.xz
+nfs-utils-url:=http://ftp.free.fr/mirrors/ftp.kernel.org/linux/utils/nfs-utils/$(nfs-utils-version)/nfs-utils-$(nfs-utils-version).tar.xz
 #nfs-utils-url:=http://downloads.sourceforge.net/nfs/nfs-utils-$(nfs-utils-version).tar.bz2
 nfs-utils-git:=git://git.linux-nfs.org/projects/steved/nfs-utils.git
 nfs-utils-LIBS:=-lrt -ldl
@@ -202,6 +209,7 @@ usr/include/tirpc/rpcsvc/nfs_prot.h:install-sysroot:=y
 rpcbind-version:=$(CONFIG_SERVER_RPCBIND_VESION)
 subproject-$(CONFIG_SERVER_RPCBIND_SP)+=rpcbind
 rpcbind-url:=sourceforge.net/projects/rpcbind/files/rpcbind/$(rpcbind-version)/rpcbind-$(rpcbind-version).tar.bz2
+rpcbind-builddir:=y
 rpcbind-configure-arguments:=--bindir=/sbin --with-rpcuser=root
 ifeq ($(CONFIG_SERVER_TCPW_SP),y)
 rpcbind-configure-arguments+=--enable-libwrap
@@ -275,6 +283,7 @@ lighttpd-version:=$(CONFIG_SERVER_LIGHTTPD_VERSION)
 subproject-$(CONFIG_SERVER_LIGHTTPD_SP)+=lighttpd
 lighttpd-url:=http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.35.tar.gz
 lighttpd-git:=
+lighttpd-builddir:=y
 lighttpd-configure-arguments:=--without-pcre
 ifneq (y,$(CONFIG_FW_BZIP2_SP))
 lighttpd-configure-arguments+=--without-bzip2
@@ -290,6 +299,8 @@ libupnp-version:=$(CONFIG_SERVER_LIBUPNP_VESION)
 subproject-$(CONFIG_SERVER_LIBUPNP_SP)+=libupnp
 libupnp-url:=http://downloads.sourceforge.net/pupnp/libupnp-$(libupnp-version).tar.bz2
 libupnp-git:= git://gitorious.org/pupnp/pupnp.git
+libupnp-builddir:=y
+libupnp-makeflags:=CPPFLAGS="$(CPPFLAGS) -I$(srctree)/$(src)/libupnp$(if $(findstring git,$(libupnp-version)),,$(libupnp-version:%=-%))/upnp/inc"
 #the configuration request that the $LD version answers "*GNU*" but gcc as linker answers GCC
 #during the configuration we use ld
 libupnp-configure-arguments:=--enable-samples --enable-debug
@@ -299,13 +310,13 @@ libdlna-version=$(CONFIG_SERVER_LIBDLNA_VERSION)
 subproject-$(CONFIG_SERVER_LIBDLNA_SP)+=libdlna
 libdlna-url= http://libdlna.geexbox.org/releases/libdlna-$(libdlna-version).tar.bz2
 libdlna-hg=http://hg.geexbox.org/libdlna
-libdlna-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE) --prefix=/usr
+libdlna-config:=$(srctree)/$(src)/libdlna$(if $(findstring git,$(libdlna-version)),,$(libdlna-version:%=-%))/configure --cross-compile --cross-prefix=$(CROSS_COMPILE) --prefix=/usr
 
 ushare-version=$(CONFIG_SERVER_USHARE_VERSION)
 subproject-$(CONFIG_SERVER_USHARE_SP)+=ushare
 ushare-url=http://ushare.geexbox.org/releases/ushare-$(ushare-version).tar.bz2
 ushare-hg=http://hg.geexbox.org/ushare
-ushare-config=./configure --cross-compile --cross-prefix=$(CROSS_COMPILE)
+ushare-config=$(srctree)/$(src)/ushare$(if $(findstring git,$(ushare-version)),,$(ushare-version:%=-%))/configure --cross-compile --cross-prefix=$(CROSS_COMPILE)
 ushare-config+=--prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --disable-strip --enable-debug
 ifneq ($(CONFIG_LIBC_NLS),y)
 ushare-config+=--disable-nls
