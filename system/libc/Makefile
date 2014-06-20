@@ -56,6 +56,9 @@ eglibc-configure-arguments+=--without-gd
 eglibc-configure-arguments+=--without-cvs
 eglibc-configure-arguments+=--disable-build-nscd
 eglibc-configure-arguments+=--enable-multi-arch
+ifeq (y,$(CONFIG_LIBC_OBSOLETE_RPC))
+eglibc-configure-arguments+=--enable-obsolete-rpc
+endif
 eglibc-builddir:=y
 
 uClibc-version=$(CONFIG_LIBC_UCLIBC_VERSION)

@@ -71,6 +71,10 @@ config LIBC_RT
 	bool
 	prompt "libc supports RealTime functions (-lrt)" if LIBC_TOOLCHAIN
 	
+config LIBC_OBSOLETE_RPC
+	bool
+	prompt "sunrpc obsolete support" if LIBC_GLIBC_SP || LIBC_EGLIBC_SP
+
 config LINARO_RUNTIME
 	bool "Linaro Runtime libraries"
 	default y if LINARO && LIBC_TOOLCHAIN
