@@ -1,0 +1,15 @@
+--- upnp/src/api/upnpdebug.c.orig	2014-06-20 18:27:48.535145850 +0200
++++ upnp/src/api/upnpdebug.c	2014-06-20 16:40:19.843415555 +0200
+@@ -60,10 +60,10 @@
+ static FILE *InfoFileHnd = NULL;
+ 
+ /*! Name of the error file */
+-static const char *errFileName = "IUpnpErrFile.txt";
++static const char *errFileName = "/tmp/IUpnpErrFile.txt";
+ 
+ /*! Name of the info file */
+-static const char *infoFileName = "IUpnpInfoFile.txt";
++static const char *infoFileName = "/tmp/IUpnpInfoFile.txt";
+ 
+ int UpnpInitLog(void)
+ {

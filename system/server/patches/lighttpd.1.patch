@@ -1,0 +1,42 @@
+--- ./src/Makefile.am.orig	2014-06-20 18:15:27.811176830 +0200
++++ ./src/Makefile.am	2014-06-20 18:21:48.059160927 +0200
+@@ -281,7 +281,7 @@
+       mod_magnet_cache.h \
+       version.h
+ 
+-DEFS= @DEFS@ -DHAVE_VERSION_H -DLIBRARY_DIR="\"$(libdir)\"" -DSBIN_DIR="\"$(sbindir)\""
++DEFS= @DEFS@ -DHAVE_VERSION_H -DLIBRARY_DIR="\"$(libdir)\"" -DSBIN_DIR="\"$(sbindir)\"" -DMOD_DIR="\"$(libexecdir)\""
+ 
+ lighttpd_SOURCES = $(src)
+ lighttpd_LDADD = $(PCRE_LIB) $(DL_LIB) $(SENDFILE_LIB) $(ATTR_LIB) $(common_libadd) $(SSL_LIB) $(FAM_LIBS) $(LIBEV_LIBS)
+--- ./src/Makefile.in.orig	2014-06-20 18:14:46.911178541 +0200
++++ ./src/Makefile.in	2014-06-20 18:21:56.843160560 +0200
+@@ -585,7 +585,7 @@
+ CPPFLAGS = @CPPFLAGS@
+ CRYPT_LIB = @CRYPT_LIB@
+ CYGPATH_W = @CYGPATH_W@
+-DEFS = @DEFS@ -DHAVE_VERSION_H -DLIBRARY_DIR="\"$(libdir)\"" -DSBIN_DIR="\"$(sbindir)\""
++DEFS = @DEFS@ -DHAVE_VERSION_H -DLIBRARY_DIR="\"$(libdir)\"" -DSBIN_DIR="\"$(sbindir)\"" -DMOD_DIR="\"$(libexecdir)\""
+ DEPDIR = @DEPDIR@
+ DLLTOOL = @DLLTOOL@
+ DL_LIB = @DL_LIB@
+--- ./src/server.c.orig	2014-06-20 18:15:14.383177393 +0200
++++ ./src/server.c	2014-06-20 18:22:58.915157964 +0200
+@@ -239,7 +239,7 @@
+ 	force_assert(srv->fdwaitqueue);
+ 
+ 	srv->srvconf.modules = array_init();
+-	srv->srvconf.modules_dir = buffer_init_string(MOD_DIR);
++	srv->srvconf.modules_dir = buffer_init_string(MOD_DIR"/libghttpd");
+ 	srv->srvconf.network_backend = buffer_init();
+ 	srv->srvconf.upload_tempdirs = array_init();
+ 	srv->srvconf.reject_expect_100_with_417 = 1;
+@@ -524,7 +524,7 @@
+ " - a light and fast webserver\n" \
+ "usage:\n" \
+ " -f <name>  filename of the config-file\n" \
+-" -m <name>  module directory (default: "LIBRARY_DIR")\n" \
++" -m <name>  module directory (default: "MOD_DIR"/libghttpd)\n" \
+ " -p         print the parsed config-file in internal form, and exit\n" \
+ " -t         test the config-file, and exit\n" \
+ " -D         don't go to background (default: go to background)\n" \

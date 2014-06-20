@@ -1,0 +1,45 @@
+--- configure.orig	2012-02-26 20:34:00.000000000 +0100
++++ configure	2014-06-19 16:19:45.183080684 +0200
+@@ -164,6 +164,19 @@
+     "$@" >>$logfile 2>&1
+ }
+ 
++check_build_cc(){
++    log check_build_cc "$@"
++    cat >$TMPC
++    log_file $TMPC
++    check_cmd $build_cc $BUILD_CFLAGS -Isrc "$@" -c -o $TMPO $TMPC
++}
++
++check_build_ld(){
++    log check_build_ld "$@"
++    check_build_cc || return
++    check_cmd $build_cc $BUILD_LDFLAGS "$@" -o $TMPE $TMPO
++}
++
+ check_cc(){
+     log check_cc "$@"
+     cat >$TMPC
+@@ -454,11 +467,13 @@
+ 
+ if [ -n "$cross_prefix" ]; then
+   cross_compile="yes"
++  build_cc="${cc}"
+   cc="${cross_prefix}${cc}"
+   ar="${cross_prefix}${ar}"
+   ranlib="${cross_prefix}${ranlib}"
+   strip="${cross_prefix}${strip}"
+ else
++  [ -n "$CC" ] && build_cc="${cc}"
+   [ -n "$CC" ] && cc="$CC"
+   [ -n "$AR" ] && ar="$AR"
+   [ -n "$RANLIB" ] && ranlib="$RANLIB"
+@@ -650,7 +665,7 @@
+ #   version
+ #################################################
+ temp_cflags "-Isrc"
+-check_ld <<EOF
++check_build_ld <<EOF
+ #include <stdio.h>
+ #include <dlna.h>
+ int main(){
