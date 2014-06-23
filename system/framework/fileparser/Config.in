@@ -17,4 +17,10 @@ config FW_LIBFFI
     help
         http://sourceware.org/libffi/
 
+config FW_PCRE_SP
+    bool
+    prompt "pcre : Perl Compatible Regular Expressions Library " if SHOW_ALL
+    help
+        http://pcre.org
+
 endmenu
