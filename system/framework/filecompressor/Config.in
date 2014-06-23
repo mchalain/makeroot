@@ -6,4 +6,11 @@ config FW_ZLIB_SP
     help
         http://zlib.net/
 
+config FW_BZIP2_SP
+    bool
+    prompt "bzip2 : bz2 compression library" if SHOW_ALL
+    default y
+    help
+        http://zlib.net/
+
 endmenu
