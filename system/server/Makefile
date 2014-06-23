@@ -291,6 +291,12 @@ endif
 ifeq (y,$(CONFIG_DB_GDBM_SP))
 lighttpd-configure-arguments+=--with-gdbm
 endif
+ifeq (y,$(CONFIG_SECURITY_OPENSSL_SP))
+lighttpd-configure-arguments+=--with-openssl
+endif
+ifeq (y,$(CONFIG_SECURITY_KRB5))
+lighttpd-configure-arguments+=--with-kerberos5
+endif
 
 # the git reposiroty stores the cod inside pupnp directory,
 # the official release stores the code inside libupnp
