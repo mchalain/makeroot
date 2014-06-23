@@ -69,6 +69,7 @@ endmenu
 menu "Web server"
 config SERVER_LIGHTTPD_SP
 	bool "Lighttpd : a light HTTP server"
+	select FW_PCRE_SP
 
 menuconfig UPNP
 	bool "UPnP servers"

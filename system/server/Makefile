@@ -284,7 +284,13 @@ subproject-$(CONFIG_SERVER_LIGHTTPD_SP)+=lighttpd
 lighttpd-url:=http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.35.tar.gz
 lighttpd-git:=
 lighttpd-builddir:=y
-lighttpd-configure-arguments:=--without-pcre --program-prefix=
+lighttpd-makeflags:=
+lighttpd-configure-arguments:=--program-prefix=
+ifneq (y,$(CONFIG_FW_PCRE_SP))
+lighttpd-configure-arguments+=--without-pcre
+else
+lighttpd-makeflags+=PCRECONFIG=$(rootfs)/usr/bin/pcre-config
+endif
 ifneq (y,$(CONFIG_FW_BZIP2_SP))
 lighttpd-configure-arguments+=--without-bzip2
 endif
