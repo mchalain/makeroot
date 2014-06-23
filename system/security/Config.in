@@ -4,6 +4,12 @@ config SECURITY_OPENSSL_SP
 	help
 		http://www.openssl.org
 
+config SECURITY_OPENSSH_SP
+	bool "openssh: remote terminal over ssh"
+	select SECURITY_OPENSSL_SP
+	help
+		http://www.openssh.com/
+
 config SECURITY_GSSDP
 	bool
 	depends on FW_GLIB

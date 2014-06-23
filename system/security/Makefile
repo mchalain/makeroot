@@ -16,6 +16,12 @@ ifneq ($(CONFIG_SECURITY_KRB5),y)
 openssl-config+= no-krb5 
 endif
 
+openssh-version=$(CONFIG_SECURITY_OPENSSH_VERSION)
+subproject-$(CONFIG_SECURITY_OPENSSH_SP)+=openssh
+openssh-url=http://mirrors.ircam.fr/pub/OpenBSD/OpenSSH/portable/openssh-$(openssh-version).tar.gz
+openssh-makeflags:=LD=$(CC)
+openssh-configure-arguments:=--disable-strip
+
 subproject-$(CONFIG_SECURITY_PAM)+=pam
 
 subproject-$(CONFIG_SECURITY_CAP)+=CAP
