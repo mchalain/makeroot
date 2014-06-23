@@ -32,16 +32,22 @@ mantohtml-cflags:=-I$(src)/cups$(cups-version:%=-%)/
 proftpd-version=$(CONFIG_SERVER_PROFTP_VERSION)
 subproject-$(CONFIG_SERVER_PROFTP_SP)+=proftpd
 proftpd-url=ftp://ftp.proftpd.org/distrib/source/proftpd-$(proftpd-version).tar.gz
-proftpd-configure-arguments:=--enable-dso --disable-ipv6 --disable-strip
+proftpd-configure-arguments:=--enable-dso --disable-strip
+proftpd-configure-arguments+=--localstatedir=/var/run
+ifneq ($(CONFIG_NETWORK_IPV6),y)
+proftpd-configure-arguments:=--disable-ipv6
+endif
 ifeq ($(CONFIG_LIBC_NLS),y)
 proftpd-configure-arguments:=--enable-nls
 endif
-proftpd-configure-arguments+=--localstatedir=/var/run
 ifneq ($(CONFIG_SECURITY_PAM),y)
 proftpd-configure-arguments+=--disable-auth-pam
 endif
 ifeq ($(CONFIG_SECURITY_OPENSSL_SP),y)
 proftpd-configure-arguments+=--enable-openssl
+endif
+ifeq (y,$(CONFIG_FW_PCRE_SP))
+proftpd-configure-arguments+=--enable-pcre
 endif
 ifneq ($(CONFIG_SECURITY_CAP),y)
 proftpd-configure-arguments+=--disable-cap --disable-facl
