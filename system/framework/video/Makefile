@@ -2,7 +2,7 @@ xvidcore-version:=$(CONFIG_FW_VIDEO_XVID_VERSION)
 subproject-$(CONFIG_FW_VIDEO_XVID_SP)+=xvidcore
 xvidcore-url:=http://downloads.xvid.org/downloads/xvidcore-$(xvidcore-version).tar.bz2
 xvidcore-cvs:=pserver:anonymous@cvs.xvid.org:/xvid
-xvidcore-config:=cd build/generic && ./configure --prefix=/usr --host=$(TRIPLET)
+xvidcore-config:=cd build/generic && ./configure --prefix=/$(SYSTEM) --host=$(TRIPLET)
 xvidcore-build:=cd build/generic && make
 xvidcore-install:=cd build/generic && make DESTDIR=$(packagesdir)/xvidcore$(xvidcore-version:%=-%) install
 
@@ -29,7 +29,7 @@ ffmpeg-config:=$(srctree)/$(src)/ffmpeg$(if $(findstring git,$(ffmpeg-version)),
 ffmpeg-config+=--enable-cross-compile --cross-prefix=$(CROSS_COMPILE:%-=%)- --sysroot=$(sysroot)
 ffmpeg-config+=--cc="$(CC)"
 ffmpeg-config+=--arch=$(ARCH) --target-os=linux --cpu=$(SUBARCH)
-ffmpeg-config+=--prefix=/usr --enable-shared --enable-pic --disable-stripping --extra-libs=-ldl
+ffmpeg-config+=--prefix=/$(SYSTEM) --enable-shared --enable-pic --disable-stripping --extra-libs=-ldl
 ffmpeg-config+=--enable-gpl --enable-version3 --enable-nonfree --disable-doc
 # currently neon optimization is not compatible with shared libraries
 #ffmpeg-config+=--disable-neon

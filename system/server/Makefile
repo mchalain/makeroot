@@ -72,21 +72,21 @@ tcp_wrappers-makeflags:=\
 	NETGROUP="-DNETGROUP"  \
 	EXTRA_CFLAGS="$(tcp_wrappers-CFLAGS) $(CFLAGS)"
 tcp_wrappers-install:= \
-	$(INSTALL) -D     libwrap.a $(sprj-destdir)/usr/lib/ && \
-	$(INSTALL) -DrpP  libwrap.so* $(sprj-destdir)/usr/lib && \
-	$(INSTALL) -D     tcpd.h $(sprj-destdir)/usr/include/tcpd.h && \
-	$(INSTALL) -D     safe_finger tcpd tcpdchk tcpdmatch try-from $(sprj-destdir)/usr/bin/safe_finger
+	$(INSTALL) -D     libwrap.a $(sprj-destdir)/$(SYSTEM)/lib/ && \
+	$(INSTALL) -DrpP  libwrap.so* $(sprj-destdir)/$(SYSTEM)/lib && \
+	$(INSTALL) -D     tcpd.h $(sprj-destdir)/$(SYSTEM)/include/tcpd.h && \
+	$(INSTALL) -D     safe_finger tcpd tcpdchk tcpdmatch try-from $(sprj-destdir)/$(SYSTEM)/bin/safe_finger
 download-$(CONFIG_SERVER_TCPW_SP)+=hosts.allow
 hosts.allow-url:=http://svnweb.freebsd.org/base/head/etc/hosts.allow?view=co
-install-$(CONFIG_SERVER_TCPW_SP)+=etc/hosts.allow
-etc/hosts.allow:copy=$(src)/hosts.allow
-etc/hosts.allow:$(src)/hosts.allow
+install-$(CONFIG_SERVER_TCPW_SP)+=$(CONFIGDIR)/hosts.allow
+$(CONFIGDIR)/hosts.allow:copy=$(src)/hosts.allow
+$(CONFIGDIR)/hosts.allow:$(src)/hosts.allow
 
 libtirpc-version:=$(CONFIG_SERVER_LIBTIRPC_VERSION)
 subproject-$(CONFIG_SERVER_LIBTIRPC_SP)+=libtirpc
 libtirpc-url:=http://downloads.sourceforge.net/project/libtirpc/libtirpc/$(libtirpc-version)/libtirpc-$(libtirpc-version).tar.bz2
 libtirpc-builddir:=y
-libtirpc-makeflags:=CPPFLAGS="$(CPPFLAGS) -I$(sysroot)/usr/include/tirpc"
+libtirpc-makeflags:=CPPFLAGS="$(CPPFLAGS) -I$(sysroot)/$(SYSTEM)/include/tirpc"
 libtirpc-configure-arguments:=--disable-static
 ifneq ($(CONFIG_SECURITY_GSS),y)
 libtirpc-configure-arguments+=--disable-gssapi
@@ -94,26 +94,24 @@ endif
 ifneq ($(CONFIG_SERVER_NIS),y)
 libtirpc-configure-arguments+=--disable-nis
 endif
-install-$(CONFIG_SERVER_RPC)+=etc/netconfig
-etc/netconfig:copy=$(packagesdir)/libtirpc-$(libtirpc-version)/etc/netconfig
 
 nis-utils-version:=1.4.1
 subproject-$(CONFIG_SERVER_NIS)+=nis-utils
 nis-utils-url:=http://www.linux-nis.org/download/NIS+/nis-utils-$(nis-utils-version).tar.gz
-nis-utils-makeflags:=CFLAGS="$(CFLAGS) -I/usr/include/tircp"
+nis-utils-makeflags:=CFLAGS="$(CFLAGS) -I/$(SYSTEM)/include/tircp"
 nis-utils-configure-arguments:=
 ifeq ($(CONFIG_LIBC_NLS),y)
 nis-utils-configure-arguments+=--enable-nls
 else
 nis-utils-configure-arguments+=--disable-nls
 endif
-pre-install-$(CONFIG_SERVER_RCP)+=usr/include/rpcsvc/tirpc/nispasswd.h
-usr/include/tirpc/rpcsvc/nispasswd.h: copy=$(src)/nis-utils-$(nis-utils-version)/src/rpc.nispasswdd/nispasswd.h
-usr/include/tirpc/rpcsvc/nispasswd.h:install-sysroot:=y
-pre-install-$(CONFIG_SERVER_RPC)+=usr/include/tirpc/rpcsvc/nis.h
-usr/include/tirpc/rpcsvc/nis.h: generate=/tmp/nis.h
-usr/include/tirpc/rpcsvc/nis.h:install-sysroot:=y
-usr/include/tirpc/rpcsvc/nis.h: /tmp/nis.h
+pre-install-$(CONFIG_SERVER_RCP)+=$(SYSTEM)/include/rpcsvc/tirpc/nispasswd.h
+$(SYSTEM)/include/tirpc/rpcsvc/nispasswd.h: copy=$(src)/nis-utils-$(nis-utils-version)/src/rpc.nispasswdd/nispasswd.h
+$(SYSTEM)/include/tirpc/rpcsvc/nispasswd.h:install-sysroot:=y
+pre-install-$(CONFIG_SERVER_RPC)+=$(SYSTEM)/include/tirpc/rpcsvc/nis.h
+$(SYSTEM)/include/tirpc/rpcsvc/nis.h: generate=/tmp/nis.h
+$(SYSTEM)/include/tirpc/rpcsvc/nis.h:install-sysroot:=y
+$(SYSTEM)/include/tirpc/rpcsvc/nis.h: /tmp/nis.h
 /tmp/nis.h:
 	$(Q)$(hostbin)/rpcgen -h $(src)/nis-utils-$(nis-utils-version)/src/nis.x -o $@
 
@@ -136,12 +134,12 @@ ypserv-configure-arguments+=--enable-nls
 else
 ypserv-configure-arguments+=--disable-nls
 endif
-pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/yp.h
-usr/include/tirpc/rpcsvc/yp.h: copy=$(src)/ypserv-$(ypserv-version)/lib/yp.h
-usr/include/tirpc/rpcsvc/yp.h:install-sysroot:=y
-pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/yppasswd.h
-usr/include/tirpc/rpcsvc/yppasswd.h: copy=$(src)/ypserv-$(ypserv-version)/rpc.yppasswdd/yppasswd.h
-usr/include/tirpc/rpcsvc/yppasswd.h:install-sysroot:=y
+pre-install-$(CONFIG_SERVER_NIS)+=$(SYSTEM)/include/tirpc/rpcsvc/yp.h
+$(SYSTEM)/include/tirpc/rpcsvc/yp.h: copy=$(src)/ypserv-$(ypserv-version)/lib/yp.h
+$(SYSTEM)/include/tirpc/rpcsvc/yp.h:install-sysroot:=y
+pre-install-$(CONFIG_SERVER_NIS)+=$(SYSTEM)/include/tirpc/rpcsvc/yppasswd.h
+$(SYSTEM)/include/tirpc/rpcsvc/yppasswd.h: copy=$(src)/ypserv-$(ypserv-version)/rpc.yppasswdd/yppasswd.h
+$(SYSTEM)/include/tirpc/rpcsvc/yppasswd.h:install-sysroot:=y
 
 yp-tools-version:=2.14
 subproject-$(CONFIG_SERVER_NIS)+=yp-tools
@@ -151,9 +149,9 @@ yp-tools-configure-arguments:=--enable-nls
 else
 yp-tools-configure-arguments:=--disable-nls
 endif
-pre-install-$(CONFIG_SERVER_NIS)+=usr/include/tirpc/rpcsvc/ypclnt.h
-usr/include/tirpc/rpcsvc/ypclnt.h: copy=$(src)/yp-tools-$(yp-tools-version)/src/ypclnt.h
-usr/include/tirpc/rpcsvc/ypclnt.h:install-sysroot:=y
+pre-install-$(CONFIG_SERVER_NIS)+=$(SYSTEM)/include/tirpc/rpcsvc/ypclnt.h
+$(SYSTEM)/include/tirpc/rpcsvc/ypclnt.h: copy=$(src)/yp-tools-$(yp-tools-version)/src/ypclnt.h
+$(SYSTEM)/include/tirpc/rpcsvc/ypclnt.h:install-sysroot:=y
 
 ypbind-mt-version:=1.37.1
 subproject-$(CONFIG_SERVER_NIS)+=ypbind-mt
@@ -186,28 +184,28 @@ ifneq ($(CONFIG_SECURITY_GSS),y)
 nfs-utils-configure-arguments+=--disable-gss --disable-uuid --disable-nfsdcltrack
 endif
 ifeq ($(CONFIG_SERVER_LIBTIRPC_SP),y)
-nfs-utils-configure-arguments+=--enable-tirpc --with-tirpcinclude=$(sysroot)/usr/include/tirpc
+nfs-utils-configure-arguments+=--enable-tirpc --with-tirpcinclude=$(sysroot)/$(SYSTEM)/include/tirpc
 else
 nfs-utils-configure-arguments+=--disable-tirpc
 endif
 
-install-$(CONFIG_SERVER_NFS)+=var/lib/nfs etc/exports usr/include/
+install-$(CONFIG_SERVER_NFS)+=var/lib/nfs $(CONFIGDIR)/exports $(SYSTEM)/include/
 var/lib/nfs:dir=y
 var/lib/nfs/rmtab:touch=y
-etc/exports:generate=/tmp/exports
-etc/exports:/tmp/exports
+$(CONFIGDIR)/exports:generate=/tmp/exports
+$(CONFIGDIR)/exports:/tmp/exports
 /tmp/exports:
 	$(Q)echo "/home $(CONFIG_IPADDRESS)(rw,sync)" > $@
 
-pre-install-$(CONFIG_SERVER_RPC)+=usr/include/tirpc/rpcsvc/mount.h
-usr/include/tirpc/rpcsvc/mount.h: generate=/tmp/mount.h
-usr/include/tirpc/rpcsvc/mount.h:install-sysroot:=y
-usr/include/tirpc/rpcsvc/mount.h: /tmp/mount.h
+pre-install-$(CONFIG_SERVER_RPC)+=$(SYSTEM)/include/tirpc/rpcsvc/mount.h
+$(SYSTEM)/include/tirpc/rpcsvc/mount.h: generate=/tmp/mount.h
+$(SYSTEM)/include/tirpc/rpcsvc/mount.h:install-sysroot:=y
+$(SYSTEM)/include/tirpc/rpcsvc/mount.h: /tmp/mount.h
 /tmp/mount.h:
 	$(Q)$(hostbin)/rpcgen -h $(src)/nfs-utils-$(nfs-utils-version)/support/export/mount.x -o $@
-pre-install-$(CONFIG_SERVER_RPC)+=usr/include/tirpc/rpcsvc/nfs_prot.h
-usr/include/tirpc/rpcsvc/nfs_prot.h: copy=$(src)/nfs-utils-$(nfs-utils-version)/support/include/rpcsvc/nfs_prot.h
-usr/include/tirpc/rpcsvc/nfs_prot.h:install-sysroot:=y
+pre-install-$(CONFIG_SERVER_RPC)+=$(SYSTEM)/include/tirpc/rpcsvc/nfs_prot.h
+$(SYSTEM)/include/tirpc/rpcsvc/nfs_prot.h: copy=$(src)/nfs-utils-$(nfs-utils-version)/support/include/rpcsvc/nfs_prot.h
+$(SYSTEM)/include/tirpc/rpcsvc/nfs_prot.h:install-sysroot:=y
 
 rpcbind-version:=$(CONFIG_SERVER_RPCBIND_VESION)
 subproject-$(CONFIG_SERVER_RPCBIND_SP)+=rpcbind
@@ -228,14 +226,14 @@ rpcbind-makeflags:=CFLAGS="$(CFLAGS) $(rpcbind-CFLAGS)"
 
 download-$(CONFIG_SERVER_RPC)+=services
 services-url:=http://svnweb.freebsd.org/base/head/etc/services?view=co
-install-$(CONFIG_SERVER_RPC)+=etc/services
-etc/services:copy=$(src)/services
-etc/services:$(src)/services
+install-$(CONFIG_SERVER_RPC)+=$(CONFIGDIR)/services
+$(CONFIGDIR)/services:copy=$(src)/services
+$(CONFIGDIR)/services:$(src)/services
 download-$(CONFIG_SERVER_RPC)+=rpc
 rpc-url:=http://svnweb.freebsd.org/base/head/etc/rpc?view=co
-install-$(CONFIG_SERVER_RPC)+=etc/rpc
-etc/rpc:copy=$(src)/rpc
-etc/rpc:$(src)/rpc
+install-$(CONFIG_SERVER_RPC)+=$(CONFIGDIR)/rpc
+$(CONFIGDIR)/rpc:copy=$(src)/rpc
+$(CONFIGDIR)/rpc:$(src)/rpc
 
 cifs-utils-version=$(CONFIG_SERVER_CIFSUTILS_VERSION)
 subproject-$(CONFIG_SERVER_CIFSUTILS_SP)+=cifs-utils
@@ -257,7 +255,7 @@ subproject-n+=samba
 samba-url:=http://ftp.samba.org/pub/samba/stable/samba-$(samba-version).tar.gz
 samba-config:=cd source3 && ./configure --host=$(TRIPLET) --target=$(TRIPLET)
 #samba-config:=./source3/configure --cross-compile --cross-execute=$(CROSS_COMPILE:%-=%)-  --abi-check
-samba-config+= --prefix=/usr --sysconfdir=/etc --with-configdir=/etc/samba
+samba-config+= --prefix=/$(SYSTEM) --sysconfdir=/$(CONFIGDIR) --with-configdir=/$(CONFIGDIR)/samba
 samba-configure-arguments+= --without-ads
 samba-configure-arguments+= --enable-swat=no --with-winbind=no
 samba-configure-arguments+= samba_cv_CC_NEGATIVE_ENUM_VALUES=yes
@@ -292,7 +290,7 @@ lighttpd-configure-arguments:=--program-prefix=
 ifneq (y,$(CONFIG_FW_PCRE_SP))
 lighttpd-configure-arguments+=--without-pcre
 else
-lighttpd-makeflags+=PCRECONFIG=$(rootfs)/usr/bin/pcre-config
+lighttpd-makeflags+=PCRECONFIG=$(rootfs)/$(SYSTEM)/bin/pcre-config
 endif
 ifneq (y,$(CONFIG_FW_BZIP2_SP))
 lighttpd-configure-arguments+=--without-bzip2
@@ -325,22 +323,20 @@ libdlna-version=$(CONFIG_SERVER_LIBDLNA_VERSION)
 subproject-$(CONFIG_SERVER_LIBDLNA_SP)+=libdlna
 libdlna-url= http://libdlna.geexbox.org/releases/libdlna-$(libdlna-version).tar.bz2
 libdlna-hg=http://hg.geexbox.org/libdlna
-libdlna-config:=$(srctree)/$(src)/libdlna$(if $(findstring git,$(libdlna-version)),,$(libdlna-version:%=-%))/configure --cross-compile --cross-prefix=$(CROSS_COMPILE) --prefix=/usr
+libdlna-config:=$(srctree)/$(src)/libdlna$(if $(findstring git,$(libdlna-version)),,$(libdlna-version:%=-%))/configure --cross-compile --cross-prefix=$(CROSS_COMPILE) --prefix=/$(SYSTEM)
 
 ushare-version=$(CONFIG_SERVER_USHARE_VERSION)
 subproject-$(CONFIG_SERVER_USHARE_SP)+=ushare
 ushare-url=http://ushare.geexbox.org/releases/ushare-$(ushare-version).tar.bz2
 ushare-hg=http://hg.geexbox.org/ushare
 ushare-config=$(srctree)/$(src)/ushare$(if $(findstring git,$(ushare-version)),,$(ushare-version:%=-%))/configure --cross-compile --cross-prefix=$(CROSS_COMPILE)
-ushare-config+=--prefix=/usr --bindir=/usr/sbin --sysconfdir=/etc --disable-strip --enable-debug
+ushare-config+=--prefix=/$(SYSTEM) --bindir=/$(SYSTEM)/sbin --sysconfdir=/$(CONFIGDIR) --disable-strip --enable-debug
 ifneq ($(CONFIG_LIBC_NLS),y)
 ushare-config+=--disable-nls
 endif
 ifeq ($(CONFIG_SERVER_LIBDLNA_SP),y)
 ushare-config+=--enable-dlna
 endif
-install-$(CONFIG_SERVER_USHARE_SP)+=etc/ushare.conf
-etc/ushare.conf:copy=$(packagesdir)/ushare-$(ushare-version)/etc/ushare.conf
 
 mediatomb-version=$(CONFIG_SERVER_MEDIATOMB_VERSION)
 subproject-$(CONFIG_SERVER_MEDIATOMB_SP)+=mediatomb

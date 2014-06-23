@@ -10,7 +10,7 @@ ifeq ($(ARCH),arm)
 openssl-targetname:=$(openssl-targetname:%=%-)armv4
 endif
 openssl-makeflags:=MAKEFLAGS="CROSS_COMPILE= INSTALL_PREFIX=$(packagesdir)/openssl-$(openssl-version)"
-openssl-config:=./Configure $(openssl-targetname) --prefix=/usr --openssldir=/usr/lib/ssl
+openssl-config:=./Configure $(openssl-targetname) --prefix=/$(SYSTEM) --openssldir=/$(CONFIGDIR)/ssl
 openssl-config+=shared zlib-dynamic
 ifneq ($(CONFIG_SECURITY_KRB5),y)
 openssl-config+= no-krb5 

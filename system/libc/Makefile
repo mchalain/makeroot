@@ -4,9 +4,9 @@ libc-toolchain-config:=echo configuration
 # during the glibc configuration CPP are looking for limits.h recursivly.
 # but no ending limits.h are available. We work around this problem to create an empty limits.h file
 # this file will be over write during the installation of the glibc
-pre-install-$(CONFIG_LIBC_GLIBC_SP)+=usr/include/limits.h
-usr/include/limits.h: touch=y
-usr/include/limits.h: install-sysroot:=y
+pre-install-$(CONFIG_LIBC_GLIBC_SP)+=$(SYSTEM)/include/limits.h
+$(SYSTEM)/include/limits.h: touch=y
+$(SYSTEM)/include/limits.h: install-sysroot:=y
 glibc-version=$(CONFIG_LIBC_GLIBC_VERSION)
 download-$(CONFIG_LIBC_GLIBC_SP)+=glibc-ports
 glibc-ports-url:=http://ftp.gnu.org/gnu/glibc/glibc-ports-$(glibc-version).tar.bz2
@@ -14,7 +14,7 @@ subproject-$(CONFIG_LIBC_GLIBC_SP)+=glibc
 glibc-url:=http://ftp.gnu.org/gnu/glibc/glibc-$(glibc-version).tar.xz
 glibc-git:=git://sourceware.org/git/glibc.git
 glibc-makeflags:=MAKEFLAGS="install_root=$(packagesdir)/glibc-$(glibc-version) ld.so-version=$(LDSO)"
-glibc-configure-arguments:=--with-headers=$(sysroot)/usr/include --enable-add-ons=../glibc-ports-$(glibc-version),nptl --config-cache
+glibc-configure-arguments:=--with-headers=$(sysroot)/$(SYSTEM)/include --enable-add-ons=../glibc-ports-$(glibc-version),nptl --config-cache
 glibc-configure-arguments+=--disable-profile
 # by default applications will be linked with -z now option. At the start, all links are done before running.
 # This feature increases the start time of the application but decreases the running time for big application.
@@ -50,7 +50,7 @@ endif
 subproject-$(CONFIG_LIBC_EGLIBC_SP):=eglibc
 eglibc-makeflags:=MAKEFLAGS="install_root=$(packagesdir)/eglibc-$(eglibc-version) install-bootstrap-headers=yes ld.so-version=$(LDSO)"
 eglibc-targets:=install-headers all
-eglibc-configure-arguments:=--with-headers=$(sysroot)/usr/include --enable-add-ons=ports,nptl
+eglibc-configure-arguments:=--with-headers=$(sysroot)/$(SYSTEM)/include --enable-add-ons=ports,nptl
 eglibc-configure-arguments+=--disable-profile
 eglibc-configure-arguments+=--without-gd
 eglibc-configure-arguments+=--without-cvs
@@ -91,11 +91,11 @@ linaro-release=$(firstword $(subst -, ,$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%))
 gcc-linaro-version=$(CONFIG_CROSS_COMPILE:"%"=%)$(CONFIG_TOOLCHAIN_GCC_VERSION:"%"=-%)-$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)_runtime
 gcc-linaro-url=http://launchpad.net/linaro-toolchain-binaries/trunk/$(linaro-release)/+download/gcc-linaro$(gcc-linaro-version:%=-%).tar.bz2
 download-$(CONFIG_LINARO_RUNTIME)+=gcc-linaro
-install-$(CONFIG_LINARO_RUNTIME)+=lib/$(TRIPLET)/ usr/lib/$(TRIPLET)/
+install-$(CONFIG_LINARO_RUNTIME)+=lib/$(TRIPLET)/ $(SYSTEM)/lib/$(TRIPLET)/
 lib/$(TRIPLET)/: copy=$(srctree)/$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/lib/$(TRIPLET)/
 lib/$(TRIPLET)/: $(srctree)/$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/lib/$(TRIPLET)/ FORCE
-usr/lib/$(TRIPLET)/: copy=$(srctree)/$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/usr/lib/$(TRIPLET)/
-usr/lib/$(TRIPLET)/: $(srctree)/$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/usr/lib/$(TRIPLET)/ FORCE
+$(SYSTEM)/lib/$(TRIPLET)/: copy=$(srctree)/$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/usr/lib/$(TRIPLET)/
+$(SYSTEM)/lib/$(TRIPLET)/: $(srctree)/$(src)/gcc-linaro$(gcc-linaro-version:%=-%)/usr/lib/$(TRIPLET)/ FORCE
 
 musl-version:=$(CONFIG_LIBC_MUSL_VERSION)
 subproject-$(CONFIG_LIBC_MUSL_SP):=musl
@@ -103,13 +103,13 @@ musl-url:=http://www.musl-libc.org/releases/musl-$(musl-version).tar.gz
 musl-git:=git://git.musl-libc.org/musl
 install-$(CONFIG_LIBC_MUSL_SP)+=lib/$(LDSO)
 lib/$(LDSO):install-sysroot:=y
-lib/$(LDSO):link:=../usr/lib/libc.so
+lib/$(LDSO):link:=../$(SYSTEM)/lib/libc.so
 install-$(CONFIG_LIBC_MUSL_SP)+=gcc.specs
 gcc.specs:install-sysroot:=y
 gcc.specs:generate:=/tmp/gcc.specs
 gcc.specs:/tmp/gcc.specs
-/tmp/gcc.specs:incdir:=/usr/include
-/tmp/gcc.specs:libdir:=/usr/lib
+/tmp/gcc.specs:incdir:=/$(SYSTEM)/include
+/tmp/gcc.specs:libdir:=/$(SYSTEM)/lib
 /tmp/gcc.specs:
 	$(Q)echo '' > $@
 	$(Q)echo '%rename cpp_options old_cpp_options' >> $@

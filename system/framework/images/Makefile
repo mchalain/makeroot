@@ -24,7 +24,7 @@ pixman-configure-arguments:=
 freetype-version=2.5.2
 subproject-$(CONFIG_FREETYPE)+=freetype
 freetype-url:=http://download.savannah.gnu.org/releases/freetype/freetype-$(freetype-version).tar.gz
-freetype-configure-arguments:=LIBPNG_CFLAGS=-I$(sysroot)/usr/lib LIBPNG_LDFLAGS=-lpng16
+freetype-configure-arguments:=LIBPNG_CFLAGS=-I$(sysroot)/$(SYSTEM)/lib LIBPNG_LDFLAGS=-lpng16
 
 CAIRO_CONFIGURE_OPTIONS:=
 ifeq ($(CONFIG_FREETYPE),y)
