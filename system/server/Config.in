@@ -121,8 +121,4 @@ config SERVER_LIBSOUP
 		https://wiki.gnome.org/action/show/Projects/libsoup
 endmenu
 
-config SECURITY_GSSDP
-	bool
-	depends on FW_GLIB
-
 endmenu

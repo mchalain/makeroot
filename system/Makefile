@@ -9,6 +9,8 @@ lib/libgcc_s.so.1:install-sysroot:=y
 
 subdir-y+=$(src)/tree $(src)/libc $(src)/base $(src)/init
 
+subdir-y+=$(src)/security
+
 subdir-y+=$(src)/framework/filecompressor
 subdir-y+=$(src)/framework/fileparser
 subdir-y+=$(src)/framework/ipc

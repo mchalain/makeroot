@@ -40,7 +40,7 @@ proftpd-configure-arguments+=--localstatedir=/var/run
 ifneq ($(CONFIG_SECURITY_PAM),y)
 proftpd-configure-arguments+=--disable-auth-pam
 endif
-ifeq ($(CONFIG_SECURITY_OPENSSL),y)
+ifeq ($(CONFIG_SECURITY_OPENSSL_SP),y)
 proftpd-configure-arguments+=--enable-openssl
 endif
 ifneq ($(CONFIG_SECURITY_CAP),y)
@@ -345,12 +345,6 @@ libsoup-mainversion=$(call mainversion,$(libsoup-version))
 subproject-$(CONFIG_SERVER_LIBSOUP)+=libsoup
 libsoup-url=https://download.gnome.org/sources/libsoup/$(libsoup-mainversion)/libsoup-$(libsoup-version).tar.xz
 libsoup-git=git://git.gnome.org/libsoup
-
-gssdp-version=0.14.6
-gssdp-mainversion=0.14
-subproject-$(CONFIG_SECURITY_GSSDP)+=gssdp
-gssdp-url=https://download.gnome.org/sources/gupnp/$(gssdp-mainversion)/gssdp-$(gssdp-version).tar.xz
-gssdp-git=git://git.gnome.org/gssdp.git
 
 gupnp-dlna-version=$(CONFIG_SERVER_GUPNP_DLNA_VERSION)
 gupnp-dlna-mainversion=0.10

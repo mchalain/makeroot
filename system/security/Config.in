@@ -1,0 +1,11 @@
+menu "security"
+config SECURITY_OPENSSL_SP
+	bool "openssl: SSL/TLS toolkit"
+	help
+		http://www.openssl.org
+
+config SECURITY_GSSDP
+	bool
+	depends on FW_GLIB
+
+endmenu
