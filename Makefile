@@ -53,6 +53,10 @@ export root srctree objtree sysroot
 export hostobjtree hostbin toolchain_path
 export packagesdir rootfs bootfs homefs
 
+SYSTEM		?= usr
+CONFIGDIR	?= etc
+export SYSTEM CONFIGDIR
+
 CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
 KERNEL	?= $(if $(findstring y,$(CONFIG_LINUX)),linux,none)
 ARCH ?= $(CONFIG_ARCH:"%"=%)

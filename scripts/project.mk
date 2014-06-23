@@ -50,8 +50,8 @@ configure-cmd:= \
 	--host=$(TRIPLET) \
 	--target=$(TRIPLET) \
 	--build=x86_64-unknown-linux-gnu \
-	--prefix=/usr \
-	--sysconfdir=/etc
+	--prefix=/$(SYSTEM) \
+	--sysconfdir=/$(CONFIGDIR)
 quiet_cmd_configure-project = CONFIGURE $(sprj)
 define cmd_configure-project
 	$(eval sprj-makeflags:=$($(sprj)-makeflags))
@@ -124,17 +124,17 @@ endef
 
 quiet_cmd_post-install-project = SYSROOT $(sprj)
 define cmd_post-install-project
-	$(foreach install-target, lib/ usr/lib/ usr/include/, \
+	$(foreach install-target, lib/ $(SYSTEM)/lib/ $(SYSTEM)/include/, \
 		$(eval install-dest = $(join $(sysroot)/,$(install-target)))
 		$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(install-dest); fi
 	)
-	$(foreach install-target, lib/ bin/ sbin/ usr/lib/ usr/bin/ usr/sbin/ usr/libexec/, \
+	$(foreach install-target, lib/ bin/ sbin/ $(SYSTEM)/lib/ $(SYSTEM)/bin/ $(SYSTEM)/sbin/ $(SYSTEM)/libexec/, \
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
 			$(eval install-dest = $(join $(rootfs)/,$(install-target)))
 			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(install-dest); fi
 		)
 	)
-	$(foreach install-target, usr/share/locale usr/share/$(sprj),
+	$(foreach install-target, $(SYSTEM)/share/locale $(SYSTEM)/share/$(sprj) $(CONFIGDIR)/,
 		$(if $$(wildcard $(join $(sprj-destdir)/,$(install-target))) ,
 			$(eval install-dest = $(join $(rootfs)/,$(install-target)))
 			$(Q)if [ -d $(join $(sprj-destdir)/,$(install-target)) ]; then cd $(sprj-destdir)/ && $(INSTALL) -DrpP $(install-target) $(install-dest); fi
