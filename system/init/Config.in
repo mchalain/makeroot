@@ -83,31 +83,35 @@ menu  "Select scripts"
 			config INIT_MR_FTPD
 				bool "start ftp server"
 				depends on INIT_MR_BUSYBOX_SERVER
-				
+
 			config INIT_MR_HTTPD
-				bool "start ftp server"
+				bool "start http server"
 				depends on INIT_MR_BUSYBOX_SERVER
-				
+
 			config INIT_MR_NTPD
 				bool "start ntp server"
 				depends on INIT_MR_BUSYBOX_SERVER
-		
+
 		config INIT_MR_RPC
 			bool "start portmap or rpcbind"
 			depends on INIT_MR_NETWORK && SERVER_RPC
-			
+
 		config INIT_MR_NFSD
 			bool "start nfsd"
 			depends on INIT_MR_NETWORK && SERVER_NFS
-			
+
 		config INIT_MR_PROFTPD
 			bool "start proftpd powerfull ftp server"
 			depends on INIT_MR_NETWORK && SERVER_PROFTP_SP
-			
+
+		config INIT_MR_LIGHTTPD
+			bool "start lighttpd light and fast http server"
+			depends on INIT_MR_NETWORK && SERVER_LIGHTTPD_SP
+
 		config INIT_MR_USHARE
 			bool "start ushare upnp/dlna server"
 			depends on INIT_MR_NETWORK && SERVER_USHARE_SP
-			
+
 endmenu
 endif
 

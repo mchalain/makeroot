@@ -33,6 +33,10 @@ install-$(CONFIG_SERVER_PROFTP_SP)+=$(CONFIGDIR)/init.d/proftpd
 $(CONFIGDIR)/init.d/proftpd: copy=$(src)/imrscripts/proftpd
 $(CONFIGDIR)/init.d/proftpd: chmod:=744
 
+install-$(CONFIG_SERVER_LIGHTTPD_SP)+=$(CONFIGDIR)/init.d/lighttpd
+$(CONFIGDIR)/init.d/lighttpd: copy=$(src)/imrscripts/lighttpd
+$(CONFIGDIR)/init.d/lighttpd: chmod:=744
+
 install-$(CONFIG_INIT_MR_TREE)+=$(CONFIGDIR)/rc.d/01_tree.rc
 $(CONFIGDIR)/rc.d/01_tree.rc: link=../init.d/fsconfig
 install-$(CONFIG_INIT_MR_UDEVD)+=$(CONFIGDIR)/rc.d/03_udevd.rc
@@ -50,12 +54,14 @@ install-$(CONFIG_INIT_MR_HTTPD)+=$(CONFIGDIR)/rc.d/20_httpd.rc
 $(CONFIGDIR)/rc.d/20_httpd.rc: link=../init.d/inetserverconfig
 install-$(CONFIG_INIT_MR_NTPD)+=$(CONFIGDIR)/rc.d/20_ntpd.rc
 $(CONFIGDIR)/rc.d/20_ntpd.rc: link=../init.d/inetserverconfig
-install-$(CONFIG_INIT_MR_PROFTPD)+=$(CONFIGDIR)/rc.d/22_proftpd.rc
-$(CONFIGDIR)/rc.d/22_proftpd.rc: link=../init.d/proftpd
 install-$(CONFIG_INIT_MR_RPC)+=$(CONFIGDIR)/rc.d/20_portmap.rc
 $(CONFIGDIR)/rc.d/20_portmap.rc: link=../init.d/portmap
 install-$(CONFIG_INIT_MR_NFSD)+=$(CONFIGDIR)/rc.d/21_nfsd.rc
 $(CONFIGDIR)/rc.d/21_nfsd.rc: link=../init.d/nfsd
+install-$(CONFIG_INIT_MR_PROFTPD)+=$(CONFIGDIR)/rc.d/22_proftpd.rc
+$(CONFIGDIR)/rc.d/22_proftpd.rc: link=../init.d/proftpd
+install-$(CONFIG_INIT_MR_LIGHTTPD)+=$(CONFIGDIR)/rc.d/22_lighttpd.rc
+$(CONFIGDIR)/rc.d/22_lighttpd.rc: link=../init.d/lighttpd
 install-$(CONFIG_INIT_MR_USHARE)+=$(CONFIGDIR)/rc.d/22_ushare.rc
 $(CONFIGDIR)/rc.d/22_ushare.rc: link=../init.d/ushare
 
