@@ -39,6 +39,10 @@ install-$(CONFIG_SERVER_LIGHTTPD_SP)+=$(CONFIGDIR)/init.d/lighttpd
 $(CONFIGDIR)/init.d/lighttpd: copy=$(src)/imrscripts/lighttpd
 $(CONFIGDIR)/init.d/lighttpd: chmod:=744
 
+install-$(CONFIG_SECURITY_OPENSSH_SP)+=$(CONFIGDIR)/init.d/sshd
+$(CONFIGDIR)/init.d/sshd: copy=$(src)/imrscripts/sshd
+$(CONFIGDIR)/init.d/sshd: chmod:=744
+
 install-$(CONFIG_INIT_MR_TREE)+=$(CONFIGDIR)/rc.d/01_tree.rc
 $(CONFIGDIR)/rc.d/01_tree.rc: link=../init.d/fsconfig
 install-$(CONFIG_INIT_MR_UDEVD)+=$(CONFIGDIR)/rc.d/03_udevd.rc
@@ -64,6 +68,8 @@ install-$(CONFIG_INIT_MR_PROFTPD)+=$(CONFIGDIR)/rc.d/22_proftpd.rc
 $(CONFIGDIR)/rc.d/22_proftpd.rc: link=../init.d/proftpd
 install-$(CONFIG_INIT_MR_LIGHTTPD)+=$(CONFIGDIR)/rc.d/22_lighttpd.rc
 $(CONFIGDIR)/rc.d/22_lighttpd.rc: link=../init.d/lighttpd
+install-$(CONFIG_INIT_MR_SSHD)+=$(CONFIGDIR)/rc.d/22_sshd.rc
+$(CONFIGDIR)/rc.d/22_sshd.rc: link=../init.d/sshd
 install-$(CONFIG_INIT_MR_USHARE)+=$(CONFIGDIR)/rc.d/22_ushare.rc
 $(CONFIGDIR)/rc.d/22_ushare.rc: link=../init.d/ushare
 

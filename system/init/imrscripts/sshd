@@ -1,0 +1,28 @@
+#!/bin/sh
+
+source /etc/network/eth0.conf
+
+[ ! -d /var/run/sshd ] && mkdir -m 700 /var/run/sshd
+
+type="ed25519"
+file="/etc/ssh/ssh_host_${type}_key"
+type="-t ${type}"
+[ ! -e ${file} ] && /usr/bin/ssh-keygen -q ${type} -N "" -f ${file} 
+
+type="ecdsa"
+file="/etc/ssh/ssh_host_${type}_key"
+type="-t ${type}"
+[ ! -e ${file} ] && /usr/bin/ssh-keygen -q ${type} -N "" -f ${file} 
+
+type="dsa"
+file="/etc/ssh/ssh_host_${type}_key"
+type="-t ${type}"
+[ ! -e ${file} ] && /usr/bin/ssh-keygen -q ${type} -N "" -f ${file} 
+
+type="rsa"
+file="/etc/ssh/ssh_host_${type}_key"
+type="-t ${type}"
+[ ! -e ${file} ] && /usr/bin/ssh-keygen -q ${type} -N "" -f ${file} 
+
+# sshd starts as daemon by default
+/usr/sbin/sshd 
