@@ -337,6 +337,8 @@ endif
 ifeq ($(CONFIG_SERVER_LIBDLNA_SP),y)
 ushare-config+=--enable-dlna
 endif
+install-$(CONFIG_SERVER_USHARE_SP)+=etc/ushare.conf
+etc/ushare.conf:copy=$(packagesdir)/ushare-$(ushare-version)/etc/ushare.conf
 
 mediatomb-version=$(CONFIG_SERVER_MEDIATOMB_VERSION)
 subproject-$(CONFIG_SERVER_MEDIATOMB_SP)+=mediatomb

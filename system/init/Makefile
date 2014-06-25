@@ -25,7 +25,9 @@ install-$(CONFIG_SERVER_NFS)+=$(CONFIGDIR)/init.d/nfsd
 $(CONFIGDIR)/init.d/nfsd: copy=$(src)/imrscripts/nfsd
 $(CONFIGDIR)/init.d/nfsd: chmod:=744
 
+# the default ushare script from the source package runs only with lsb init tools
 install-$(CONFIG_SERVER_USHARE_SP)+=$(CONFIGDIR)/init.d/ushare
+$(CONFIGDIR)/init.d/ushare: force:=y
 $(CONFIGDIR)/init.d/ushare: copy=$(src)/imrscripts/ushare
 $(CONFIGDIR)/init.d/ushare: chmod:=744
 

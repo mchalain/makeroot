@@ -2,4 +2,11 @@
 
 . /etc/network/eth0.conf
 
-/usr/sbin/ushare --name $hostname --content /home --daemon
+if [ -e /etc/ushare.conf ]; then
+conf="--cfg /etc/ushare.conf"
+else
+dlna=--dlna
+name="--name $hostname"
+content="--content /home"
+fi
+/usr/sbin/ushare $conf $name $content $dlna --daemon
