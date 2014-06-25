@@ -33,6 +33,8 @@ root/.ssh/id_ecdsa:$(CONFIG_CONFIGNAME:"%"=%)-login-key
 $(CONFIG_CONFIGNAME:"%"=%)-login-key.pub: $(CONFIG_CONFIGNAME:"%"=%)-login-key
 $(CONFIG_CONFIGNAME:"%"=%)-login-key:
 	$(Q)ssh-keygen -t ecdsa -N "" -f $@
+install-$(CONFIG_SECURITY_OPENSSH_SP)+=etc/ssh/sshd_config
+etc/ssh/sshd_config:copy:=$(src)/configs/sshd_config
 
 subproject-$(CONFIG_SECURITY_PAM)+=pam
 
