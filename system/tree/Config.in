@@ -16,8 +16,13 @@ endchoice
 
 config SYSTEM
     string
-    default "lsb" if FHS_LSB
-    default "android" if FHS_ANDROID
+    default "usr" if FHS_LSB
+    default "system" if FHS_ANDROID
+
+config CONFIGDIR
+    string
+    default "etc" if FHS_LSB
+    default "etc" if FHS_ANDROID
 
 if FHS_LSB
 config LSB

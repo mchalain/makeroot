@@ -53,8 +53,8 @@ export root srctree objtree sysroot
 export hostobjtree hostbin toolchain_path
 export packagesdir rootfs bootfs homefs
 
-SYSTEM		?= usr
-CONFIGDIR	?= etc
+SYSTEM		:= $(CONFIG_SYSTEM:"%"=%)
+CONFIGDIR	:= $(CONFIG_CONFIGDIR:"%"=%)
 export SYSTEM CONFIGDIR
 
 CROSS_COMPILE   ?= $(CONFIG_CROSS_COMPILE:"%"=%-)
