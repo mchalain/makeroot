@@ -1,6 +1,7 @@
 #!/bin/sh
 
 MKDIR="/bin/mkdir -p"
+CHMOD="/bin/chmod"
 LN="/bin/ln -s"
 LS="/bin/ls"
 MOUNT="/bin/mount"
@@ -18,7 +19,7 @@ done
 $MOUNT -a
 for DIR in $($LS /var) ; do
    if [ -L /var/$DIR ]; then
-    echo $MKDIR /tmp/var/$DIR
     $MKDIR /tmp/var/$DIR
+    $CHMOD 777 /tmp/var/$DIR
    fi
 done
