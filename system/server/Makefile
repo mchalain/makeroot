@@ -35,10 +35,10 @@ proftpd-url=ftp://ftp.proftpd.org/distrib/source/proftpd-$(proftpd-version).tar.
 proftpd-configure-arguments:=--enable-dso --disable-strip
 proftpd-configure-arguments+=--localstatedir=/var/run
 ifneq ($(CONFIG_NETWORK_IPV6),y)
-proftpd-configure-arguments:=--disable-ipv6
+proftpd-configure-arguments+=--disable-ipv6
 endif
 ifeq ($(CONFIG_LIBC_NLS),y)
-proftpd-configure-arguments:=--enable-nls
+proftpd-configure-arguments+=--enable-nls
 endif
 ifneq ($(CONFIG_SECURITY_PAM),y)
 proftpd-configure-arguments+=--disable-auth-pam
