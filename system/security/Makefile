@@ -21,6 +21,18 @@ subproject-$(CONFIG_SECURITY_OPENSSH_SP)+=openssh
 openssh-url=http://mirrors.ircam.fr/pub/OpenBSD/OpenSSH/portable/openssh-$(openssh-version).tar.gz
 openssh-makeflags:=LD=$(CC)
 openssh-configure-arguments:=--disable-strip
+openssh-configure-arguments+=--sysconfdir=/etc/ssh
+openssh-configure-arguments+=--with-md5-passwords
+openssh-configure-arguments+=--with-privsep-path=/var/run/sshd
+install-$(CONFIG_SECURITY_OPENSSH_SP)+=root/.ssh/authorized_keys root/.ssh/id_ecdsa
+root/.ssh/authorized_keys:copy:=$(CONFIG_CONFIGNAME:"%"=%)-login-key.pub
+root/.ssh/authorized_keys:$(CONFIG_CONFIGNAME:"%"=%)-login-key.pub
+root/.ssh/id_ecdsa:copy:=$(CONFIG_CONFIGNAME:"%"=%)-login-key
+root/.ssh/id_ecdsa:chmod:=600
+root/.ssh/id_ecdsa:$(CONFIG_CONFIGNAME:"%"=%)-login-key
+$(CONFIG_CONFIGNAME:"%"=%)-login-key.pub: $(CONFIG_CONFIGNAME:"%"=%)-login-key
+$(CONFIG_CONFIGNAME:"%"=%)-login-key:
+	$(Q)ssh-keygen -t ecdsa -N "" -f $@
 
 subproject-$(CONFIG_SECURITY_PAM)+=pam
 
