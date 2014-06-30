@@ -1,3 +1,7 @@
+tinyalsa-version:=git
+subproject-$(CONFIG_LOWLEVEL_TINYALSA)+=tinyalsa
+tinyalsa-git:=https://github.com/tinyalsa/tinyalsa.git
+
 alsa-version:=1.0.27
 alsa-lib-version:=$(alsa-version)
 subproject-$(CONFIG_ALSA)+=alsa-lib

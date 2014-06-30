@@ -1,3 +1,7 @@
+config LOWLEVEL_TINYALSA
+	bool "tinALSA userland library"
+	default y
+
 config ALSA
 	bool "ALSA userland library"
 	default y
