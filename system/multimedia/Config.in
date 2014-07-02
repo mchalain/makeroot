@@ -3,4 +3,11 @@ config MM_MPD
 	bool "mpd - Music Player daemon"
 	depends on FW_GLIB
 
+config MM_LAME_SP
+	bool "lame - MP3 audio encoder"
+
+config MM_MPG123_SP
+	bool "mpg123 - MP3 audio player"
+	help
+		http://www.mpg123.de/
 endmenu
