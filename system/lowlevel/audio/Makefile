@@ -1,6 +1,14 @@
 tinyalsa-version:=git
 subproject-$(CONFIG_LOWLEVEL_TINYALSA)+=tinyalsa
 tinyalsa-git:=https://github.com/tinyalsa/tinyalsa.git
+tinyalsa-config:= make clean
+tinyalsa-install:=$(INSTALL) -DR libtinyalsa.so /usr/lib/libtinyalsa.so
+tinyalsa-install+=&& $(INSTALL) -DR include/sound/asound.h /usr/include/sound/asound.h
+tinyalsa-install+=&& $(INSTALL) -DR include/tinyalsa/asoundlib.h /usr/include/tinyalsa/asoundlib.h
+tinyalsa-install+=&& $(INSTALL) -DR tinymix /usr/bin/tinymix
+tinyalsa-install+=&& $(INSTALL) -DR tinyplay /usr/bin/tinyplay
+tinyalsa-install+=&& $(INSTALL) -DR tinycap /usr/bin/tinycap
+tinyalsa-install+=&& $(INSTALL) -DR tinypcminfo /usr/bin/tinypcminfo
 
 alsa-version:=1.0.27
 alsa-lib-version:=$(alsa-version)
