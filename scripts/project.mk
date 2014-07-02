@@ -107,6 +107,7 @@ define cmd_install-project
 	$(eval sprj-makeflags:=$($(sprj)-makeflags))
 	$(eval sprj-install = $($(sprj)-install))
 	$(if $(wildcard $(sprj-destdir)),, $(Q)mkdir -p $(sprj-destdir))
+	$(eval export INSTALL_SYSROOT=$(sprj-destdir))
 	$(if $(sprj-install), 
 		$(Q)cd $(sprj-builddir) && $(sprj-install),
 		$(if $(sprj-mkinstall),

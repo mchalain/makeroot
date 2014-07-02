@@ -204,6 +204,7 @@ static struct option const long_options[] =
   {"backup", no_argument, NULL, 'b'},
   {"recursive", no_argument, NULL, 'r'},
   {"suffix", required_argument, NULL, 'S'},
+  {"sysroot", no_argument, NULL, 'R'},
   {"version-control", required_argument, NULL, 'V'},
   {"verbose", no_argument, NULL, 'v'},
   {"help", no_argument, &show_help, 1},
@@ -280,7 +281,7 @@ main (int argc, char **argv)
     simple_backup_suffix = version;
   version = getenv ("VERSION_CONTROL");
 
-  while ((optc = getopt_long (argc, argv, "bcsDdzg:m:o:PpvV:rS:", long_options,
+  while ((optc = getopt_long (argc, argv, "bcsDdzg:m:o:PpvV:rRS:", long_options,
 			      &longind)) != -1)
     {
     switch (optc)
