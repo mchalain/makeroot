@@ -6,4 +6,7 @@ menu "devices manager"
 	config MTDEV_DEAMON
 		bool "mtdev multitouch device protocol"
 
+	config MR_HOTPLUG
+		bool "simple hotplug scripts"
+
 endmenu

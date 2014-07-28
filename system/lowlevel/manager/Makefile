@@ -6,3 +6,7 @@ udev-config=./configure --disable-hwdb --disable-udev_acl --disable-gudev --disa
 mtdev-version=1.1.3
 subproject-$(CONFIG_MTDEV_DEAMON)+=mtdev
 mtdev-url=http://bitmath.org/code/mtdev/mtdev-1.1.3.tar.bz2
+
+install-$(CONFIG_MR_HOTPLUG)+=sbin/hotplug sbin/hotmount
+sbin/hotplug: copy=$(src)/sbin/hotplug
+sbin/hotmount: copy=$(src)/sbin/hotmount

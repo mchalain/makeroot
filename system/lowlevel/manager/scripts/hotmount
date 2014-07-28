@@ -1,0 +1,11 @@
+#!/bin/sh
+
+MNTPNT=$(mount | awk -v devblk=$MNTDEV '$1 == "/dev/"devblk {print $3}')
+echo $MNTPNT
+echo /dev/$MNTDEV : $([ -b /dev/$MNTDEV ] )
+if [ -b /dev/$MNTDEV -a ! $MNTPNT ]; then
+LABEL=$( blkid  /dev/$MNTDEV | awk 'BEGIN {RS=" "; FS="="}  $1 == "LABEL" {print $2}' | sed 's/\"//g')
+/bin/mount LABEL=$LABEL
+elif [ $MNTPNT ]; then
+/bin/umount $MNTPNT
+fi

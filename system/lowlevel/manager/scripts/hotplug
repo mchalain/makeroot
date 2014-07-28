@@ -1,0 +1,11 @@
+#!/bin/sh
+
+case $1 in
+ block)
+	MNTDEV=mmcblk1p1 /sbin/hotmount
+	;;
+ *)
+	echo $@ >> /tmp/hotplug
+	;;
+esac
+
