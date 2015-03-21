@@ -7,9 +7,12 @@ bare-metal-4.6-url=https://launchpad.net/gcc-arm-embedded/$(gcc-version)/$(gcc-v
 bare-metal-4.7-url=https://launchpad.net/gcc-arm-embedded/$(gcc-version)/$(gcc-version)-2012-q4-major/+download/gcc-arm-none-eabi-4_7-2012q4-20121208-linux.tar.bz2
 
 linaro-release=$(firstword $(subst -, ,$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)))
-gcc-linaro-version=$(CONFIG_CROSS_COMPILE:"%"=%)$(gcc-version:%=-%)-$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)_linux
+#gcc-linaro-version=$(CONFIG_CROSS_COMPILE:"%"=%)$(gcc-version:%=-%)-$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)_linux
+#4.9-2014.11-x86_64_arm-linux-gnueabihf
+gcc-linaro-version=$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)-x86_64_$(CONFIG_CROSS_COMPILE:"%"=%)
 toolchain-$(CONFIG_TOOLCHAIN_LINARO):=gcc-linaro
-gcc-linaro-url=http://launchpad.net/linaro-toolchain-binaries/trunk/$(linaro-release)/+download/gcc-linaro$(gcc-linaro-version:%=-%).tar.bz2
+gcc-linaro-url=http://releases.linaro.org/14.11/components/toolchain/binaries/arm-linux-gnueabihf/gcc-linaro$(gcc-version:%=-%)$(gcc-linaro-version:%=-%).tar.xz
+#gcc-linaro-url=http://launchpad.net/linaro-toolchain-binaries/trunk/$(linaro-release)/+download/gcc-linaro$(gcc-linaro-version:%=-%).tar.bz2
 
 toolchain-$(CONFIG_TOOLCHAIN_SOURCERY_LINUX):=sourcery-linux
 ifeq ($(CONFIG_ARM),y)
