@@ -2,6 +2,7 @@ tinyalsa-version:=git
 subproject-$(CONFIG_LOWLEVEL_TINYALSA)+=tinyalsa
 tinyalsa-git:=https://github.com/tinyalsa/tinyalsa.git
 tinyalsa-config:= make clean
+tinyalsa-makeflags:="CROSS_COMPILE=$(CROSS_COMPILE)"
 tinyalsa-install:=$(INSTALL) -DR libtinyalsa.so /usr/lib/libtinyalsa.so
 tinyalsa-install+=&& $(INSTALL) -DR include/sound/asound.h /usr/include/sound/asound.h
 tinyalsa-install+=&& $(INSTALL) -DR include/tinyalsa/asoundlib.h /usr/include/tinyalsa/asoundlib.h
