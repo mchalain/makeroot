@@ -1,4 +1,4 @@
-subproject-$(CONFIG_LIBC_TOOLCHAIN):=libc-toolchain
+subproject-$(CONFIG_LIBC_TOOLCHAIN)+=libc-toolchain
 libc-toolchain-config:=echo configuration 
 
 # during the glibc configuration CPP are looking for limits.h recursivly.
@@ -43,11 +43,21 @@ linaro-version:=$(CONFIG_LINARO_VERSION:"%"=%)
 eglibc-version:=linaro-$(CONFIG_LIBC_EGLIBC_VERSION)-$(linaro-version:%=20%)
 eglibc-url:=https://releases.linaro.org/$(linaro-version)/components/toolchain/eglibc-linaro/eglibc-$(eglibc-version).tar.bz2
 eglibc-git:=git://git.linaro.org/toolchain/eglibc.git
+#subproject-$(CONFIG_LIBC_EGLIBC_SP)+=eglibc
+
+sysroot-linaro-eglibc-version=gcc$(CONFIG_TOOLCHAIN_GCC_VERSION)$(CONFIG_LINARO_VERSION:%=-20%)-$(CONFIG_CROSS_COMPILE:"%"=%)
+sysroot-linaro-eglibc-url:=http://releases.linaro.org/$(CONFIG_LINARO_VERSION)/components/toolchain/binaries/arm-linux-gnueabihf/sysroot-linaro-eglibc$(eglibc-gcc-linaro-version:%=-%).tar.xz
+
+sysroot-linaro:=system/libc/sysroot-linaro-eglibc$(sysroot-linaro-eglibc-version:%=-%)
+subproject-$(CONFIG_LIBC_EGLIBC_SP)+=sysroot-linaro-eglibc
+sysroot-linaro-eglibc-config:=true
+sysroot-linaro-eglibc-build:=true
+sysroot-linaro-eglibc-install:=cp -r * $(packagesdir)/sysroot-linaro-eglibc$(sysroot-linaro-eglibc-version:%=-%)
+
 else
 eglibc-version:=$(CONFIG_LIBC_EGLIBC_VERSION)
 eglibc-svn:=svn://svn.eglibc.org/branches/eglibc-$(subst .,_,$(eglibc-version))
-endif
-subproject-$(CONFIG_LIBC_EGLIBC_SP):=eglibc
+subproject-$(CONFIG_LIBC_EGLIBC_SP)+=eglibc
 eglibc-makeflags:=MAKEFLAGS="install_root=$(packagesdir)/eglibc-$(eglibc-version) install-bootstrap-headers=yes ld.so-version=$(LDSO)"
 eglibc-targets:=install-headers all
 eglibc-configure-arguments:=--with-headers=$(sysroot)/$(SYSTEM)/include --enable-add-ons=ports,nptl
@@ -60,6 +70,7 @@ ifeq (y,$(CONFIG_LIBC_OBSOLETE_RPC))
 eglibc-configure-arguments+=--enable-obsolete-rpc
 endif
 eglibc-builddir:=y
+endif
 
 uClibc-version=$(CONFIG_LIBC_UCLIBC_VERSION)
 subproject-$(CONFIG_LIBC_UCLIBCv)+=uClibc
