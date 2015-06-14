@@ -23,7 +23,7 @@ cmd_download-cvs = \
 
 quiet_cmd_download-git = DOWNLOAD $* from $(dwl-url:"%"=%)
 cmd_download-git = \
-	$(Q)git clone $(dwl-url) $(src)/$*
+	$(Q)git clone $(dwl-url:"%"=%) $(src)/$*
 
 quiet_cmd_download-hg = DOWNLOAD $* from $(dwl-url:"%"=%)
 cmd_download-hg = \
