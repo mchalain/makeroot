@@ -16,4 +16,9 @@ config LINARO_LSK
 menuconfig SOURCERY
 	bool "Code Sourcery tools support"
 
+config BOARD_SNOWBALL_RIFF
+  bool "riff flasher for Snowball"
+  depends on BOARD_SNOWBALL
+  default n
+
 endmenu
