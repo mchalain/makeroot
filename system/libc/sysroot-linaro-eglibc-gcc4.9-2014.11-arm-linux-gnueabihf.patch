@@ -1,0 +1,10 @@
+--- a/usr/include/sys/types.h	2014-12-17 01:41:41.000000000 +0100
++++ b/usr/include/sys/types.h	2015-05-31 15:06:25.282386405 +0200
+@@ -113,6 +113,7 @@
+ #ifdef	__USE_BSD
+ # ifndef __daddr_t_defined
+ typedef __daddr_t daddr_t;
++typedef __caddr_t caddr_t;
+ #  define __daddr_t_defined
+ # endif
+ #endif
