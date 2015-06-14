@@ -38,8 +38,7 @@ config KERNEL
 config KERNEL_VERSION
     string
     depends on LINUX
-    prompt "kernel version number" if KERNEL_CUSTOM
-    prompt "kernel version number" if LINUX_LINARO
+    prompt "kernel version number" if KERNEL_CUSTOM || LINUX_LINARO
     default "3.7.1"
 
 config KERNEL_CUSTOM_URL
