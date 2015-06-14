@@ -19,6 +19,11 @@ define cmd_mkfs-ext4
 	$(call multicmd,fill-loop)
 endef
 
+define cmd_mkfs-ext2
+	$(Q)/sbin/mkfs.ext2 -F -L $* -q $($*-device)
+	$(call multicmd,fill-loop)
+endef
+
 define cmd_mkfs-cramfs
 	$(Q)/sbin/mkfs.cramfs -b $(mtd-pagesize) -n $* $($*-data)/ $@
 endef
@@ -32,6 +37,8 @@ define cmd_mkfs
 		$(eval mkfs-cmd=cmd_mkfs-vfat))
 	$(if $(findstring msdos,$($*-fstype)),
 		$(eval mkfs-cmd=cmd_mkfs-msdos))
+	$(if $(findstring ext2,$($*-fstype)),
+		$(eval mkfs-cmd=cmd_mkfs-ext2))
 	$(if $(findstring ext4,$($*-fstype)),
 		$(eval mkfs-cmd=cmd_mkfs-ext4))
 	$(if $(findstring ubifs,$($*-fstype)),
