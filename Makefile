@@ -126,7 +126,7 @@ PHONY+=menuconfig
 menuconfig: scripts_basic
 	$(Q)$(MAKE) $(build)=scripts/kconfig $@
 
-%config: FORCE
+%config: FORCE scripts_basic
 	@echo Make $@
 	$(Q)$(MAKE) $(build)=scripts/kconfig $@
 
