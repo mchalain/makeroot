@@ -13,7 +13,8 @@ u-boot-git:=git://www.denx.de/git/u-boot.git
 endif
 u-boot:=$(u-boot-targetname)_config
 u-boot-config:=make $(u-boot-targetname)_config
-u-boot-hostbin:=dumpimage img2brec.sh img2srec jtagconsole mkenvimage mkimage netconsole proftool reformat.py
+u-boot-hostbin:=dumpimage img2brec.sh img2srec jtagconsole mkenvimage mkimage netconsole proftool
+#u-boot-hostbin+=reformat.py
 u-boot-hostbin:=$(addprefix tools/,$(u-boot-hostbin))
 u-boot-script:=boot.scr
 u-boot-install:= \
