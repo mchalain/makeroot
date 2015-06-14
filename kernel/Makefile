@@ -15,12 +15,12 @@ linux-url:=http://www.kernel.org/pub/linux/kernel/v3.0/linux$(linux-version:%=-%
 else
 ifeq ($(CONFIG_LINUX_LINARO), y)
 linaro-version:=$(CONFIG_LINARO_VERSION:"%"=%)
-ifeq ($(findstring git,$(CONFIG_KERNEL_VERSION)))
-linux-version:=linaro-$(CONFIG_KERNEL_VERSION:"%"=%)-$(linaro-version:%=20%)
+ifneq ($(CONFIG_KERNEL_VERSION:"%"=%),git)
+linux-version:=linaro-stable-$(CONFIG_KERNEL_VERSION:"%"=%)
 endif
 linaro-lsk:=$(if $(CONFIG_LINARO_LSK),stable-lsk)
-linux-git:=git://git.linaro.org/kernel/linux-linaro-tracking.git
-linux-url:=http://releases.linaro.org/$(linaro-version)/components/kernel/linux-linaro$(linaro-lsk)/linux-$(linux-linaro-version).tar.bz2
+linux-git:=git://git.linaro.org/kernel/linux-linaro-stable.git
+linux-url:=http://releases.linaro.org/$(linaro-version)/components/kernel/linux-linaro$(linaro-lsk:%=-%)/linux-$(linux-version).tar.bz2
 endif
 endif
 
@@ -29,7 +29,7 @@ export KDIR
 
 ifneq ($(CONFIG_KERNEL_CUSTOM_URL),"")
 $(kernel:%=%-url):=$(sort $(filter-out %.git, $(CONFIG_KERNEL_CUSTOM_URL:"%"=%)) $(filter-out git:%, $(CONFIG_KERNEL_CUSTOM_URL:"%"=%)))
-$(kernel:%=%-git):=$(sort $(filter %.git, $(CONFIG_KERNEL_CUSTOM_URL:"%"=%)) $(filter git:%, $(CONFIG_KERNEL_CUSTOM_URL:"%"=%)))
+$(kernel:%=%-git):=$(if $(sort $(filter %.git, $(CONFIG_KERNEL_CUSTOM_URL)) $(filter git:%, $(CONFIG_KERNEL_CUSTOM_URL))), $(CONFIG_KERNEL_CUSTOM_URL))
 $(kernel:%=%-version):=$(if $(filter %.git, $(CONFIG_KERNEL_CUSTOM_URL:"%"=%)) $(filter git:%, $(CONFIG_KERNEL_CUSTOM_URL:"%"=%)),git,$($(kernel:%=%-version)))
 endif
 
@@ -38,12 +38,12 @@ $(kernel:%=%-dependances):=$(bootfs)
 #sed -e "/unwanted /d" -i scripts/Makefile.headersinst
 $(kernel:%=%-defconfig):=$(CONFIG_KERNEL_DEFCONFIG:"%"=%)
 $(kernel:%=%-destdir):=$(join $(packagesdir)/,$(if $(filter-out git hg cvs,$($(kernel)-version)),$(kernel)-$($(kernel)-version),$(kernel)))
-$(kernel:%=%-makeflags):=$(makeflags) INSTALL_PATH=$(bootfs) INSTALL_MOD_PATH=$($(kernel:%=%-destdir)) INSTALL_HDR_PATH=$(sysroot)/usr/ INSTALLKERNEL:=noinstallkernel
+$(kernel:%=%-makeflags):=$(makeflags) INSTALL_PATH=$(bootfs) INSTALL_MOD_PATH=$($(kernel:%=%-destdir)) INSTALL_HDR_PATH=$($(kernel:%=%-destdir))/usr/ INSTALLKERNEL:=noinstallkernel LOADADDR=$(CONFIG_KERNEL_RAMADDR:"%"=%)
 ifneq (,$(findstring y,$(CONFIG_U_IMAGE)))
-	$(kernel:%=%-targets):= uImage modules modules_install headers_install uinstall
-	$(kernel:%=%-install):= find $($(kernel:%=%-destdir))/lib/modules/ -name build -delete && find $($(kernel:%=%-destdir))/lib/modules/ -name source -delete
+	$(kernel:%=%-targets):= uImage modules modules_install headers_install
+	$(kernel:%=%-install):= find $($(kernel:%=%-destdir))/lib/modules/ -name build -delete && find $($(kernel:%=%-destdir))/lib/modules/ -name source -delete && $(INSTALL) -DrpP arch/arm/boot/uImage $($(kernel:%=%-destdir))/boot/ && $(INSTALL) -DrpP arch/arm/boot/uImage $(bootfs)
 else
-	$(kernel:%=%-targets):= modules $(CONFIG_KERNEL_IMAGE:"%"=%) modules_install headers_install install
+	$(kernel:%=%-targets):= $(CONFIG_KERNEL_IMAGE:"%"=%) modules modules_install headers_install install
 	$(kernel:%=%-install):= find $($(kernel:%=%-destdir))/lib/modules/ -name build -delete && find $($(kernel:%=%-destdir))/lib/modules/ -name source -delete
 endif
 
