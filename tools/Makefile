@@ -21,3 +21,8 @@ hostprogs-n+=pkg-config
 pkg-config-directory=$(if $(findstring git,$(pkg-config-version)),pkg-config,pkg-config$(pkg-config-version:%=-%))
 pkg-config-objs:=$(pkg-config-directory)/main.o $(pkg-config-directory)/parse.o $(pkg-config-directory)/pkg.o
 pkg-config-install:=pkg-config
+
+subproject-y+=ldd
+ldd-config:=echo done
+ldd-build:=echo done
+ldd-install:=cp arm-linux-gnueabihf-ldd $(hostbin)
