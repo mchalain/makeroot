@@ -7,11 +7,11 @@ lib/libgcc_s.so.1:copy:=$(toolchain_path)/$(CROSS_COMPILE:%-=%)/lib/libgcc_s.so.
 lib/libgcc_s.so.1:$(toolchain_path)/$(CROSS_COMPILE:%-=%)/lib/libgcc_s.so.1
 lib/libgcc_s.so.1:install-sysroot:=y
 
-subdir-y+=$(src)/tree $(src)/libc $(src)/base $(src)/init
-
-subdir-y+=$(src)/security
+subdir-y+=$(src)/tree $(src)/libc $(src)/base
 
 subdir-y+=$(src)/framework/filecompressor
+subdir-y+=$(src)/security
+
 subdir-y+=$(src)/framework/fileparser
 subdir-y+=$(src)/framework/ipc
 
@@ -30,4 +30,6 @@ subdir-y+=$(src)/server
 subdir-y+=$(src)/lowlevel/graphics
 
 subdir-y+=$(src)/dev
+
+subdir-y+=$(src)/init
 
