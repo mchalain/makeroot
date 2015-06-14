@@ -105,6 +105,7 @@ nis-utils-configure-arguments+=--enable-nls
 else
 nis-utils-configure-arguments+=--disable-nls
 endif
+ifeq ($(CONFIG_SERVER_NIS),y)
 pre-install-$(CONFIG_SERVER_RCP)+=$(SYSTEM)/include/rpcsvc/tirpc/nispasswd.h
 $(SYSTEM)/include/tirpc/rpcsvc/nispasswd.h: copy=$(src)/nis-utils-$(nis-utils-version)/src/rpc.nispasswdd/nispasswd.h
 $(SYSTEM)/include/tirpc/rpcsvc/nispasswd.h:install-sysroot:=y
@@ -114,6 +115,7 @@ $(SYSTEM)/include/tirpc/rpcsvc/nis.h:install-sysroot:=y
 $(SYSTEM)/include/tirpc/rpcsvc/nis.h: /tmp/nis.h
 /tmp/nis.h:
 	$(Q)$(hostbin)/rpcgen -h $(src)/nis-utils-$(nis-utils-version)/src/nis.x -o $@
+endif
 
 pwdutils-version:=3.0.4
 subproject-$(CONFIG_SERVER_NIS)+=pwdutils
@@ -312,7 +314,7 @@ libupnp-version:=$(CONFIG_SERVER_LIBUPNP_VESION)
 subproject-$(CONFIG_SERVER_LIBUPNP_SP)+=libupnp
 libupnp-url:=http://downloads.sourceforge.net/pupnp/libupnp-$(libupnp-version).tar.bz2
 libupnp-git:= git://gitorious.org/pupnp/pupnp.git
-libupnp-builddir:=y
+#libupnp-builddir:=y
 libupnp-makeflags:=CPPFLAGS="$(CPPFLAGS) -I$(srctree)/$(src)/libupnp$(if $(findstring git,$(libupnp-version)),,$(libupnp-version:%=-%))/upnp/inc"
 #the configuration request that the $LD version answers "*GNU*" but gcc as linker answers GCC
 #during the configuration we use ld
