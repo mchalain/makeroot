@@ -53,9 +53,15 @@ config RCS_FILE
 
 config RCS_FILENAME
 	string 
-	prompt "rcS starting file path" if RCS_FILE
+	prompt "rcS services starting file path" if RCS_FILE
 	default "imrscripts/rcS" if INIT_MAKEROOT
 	default "config/rcS.default"
+
+config RC0_FILENAME
+	string 
+	prompt "rc0 services stoping file path" if RCS_FILE
+	default "imrscripts/rc0" if INIT_MAKEROOT
+	default "config/rc0.default"
 
 if INIT_MAKEROOT
 menu  "Select scripts"

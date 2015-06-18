@@ -3,11 +3,14 @@ install-$(CONFIG_INITTAB)+=$(CONFIGDIR)/inittab
 $(CONFIGDIR)/inittab: copy:=$(src)/config/$(CONFIG_INITTAB_FILE:"%"=%)
 $(CONFIGDIR)/inittab: $(src)/config/$(CONFIG_INITTAB_FILE:"%"=%)
 
-install-$(CONFIG_RCS_FILE)+=$(CONFIGDIR)/init.d/rcS
+install-$(CONFIG_RCS_FILE)+=$(CONFIGDIR)/init.d/rcS $(CONFIGDIR)/init.d/rc0
 $(CONFIGDIR)/init.d/rcS: copy:=$(src)/$(CONFIG_RCS_FILENAME:"%"=%)
+$(CONFIGDIR)/init.d/rc0: copy:=$(src)/$(CONFIG_RC0_FILENAME:"%"=%)
 #$(CONFIGDIR)/init.d/rcS: chown:=root
 $(CONFIGDIR)/init.d/rcS: chmod:=744
+$(CONFIGDIR)/init.d/rc0: chmod:=744
 $(CONFIGDIR)/init.d/rcS: $(src)/$(CONFIG_RCS_FILENAME:"%"=%)
+$(CONFIGDIR)/init.d/rc0: $(src)/$(CONFIG_RC0_FILENAME:"%"=%)
 
 install-$(CONFIG_TMPFS)+=$(CONFIGDIR)/init.d/fsconfig
 $(CONFIGDIR)/init.d/fsconfig: copy=$(src)/imrscripts/fsconfig
