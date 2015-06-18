@@ -35,11 +35,11 @@ etc/fstab: /tmp/fstab
 	@$(if $(CONFIG_FSTAB_PROC), echo 'proc		/proc	proc	nodev$(comma)noexec$(comma)nosuid	0	0' >> $@)
 	@$(if $(CONFIG_FSTAB_SYS), echo 'sysfs		/sys	sysfs	nosuid$(comma)noexec$(comma)nodev	0	0' >> $@)
 	@$(if $(CONFIG_FSTAB_TMP), echo 'tmpfs		/tmp	tmpfs	defaults	0	0' >> $@)
-	@$(if $(CONFIG_FSTAB_BOOTVFAT), echo 'LABEL=boot	/boot	vfat	rw$(comma)quiet$(comma)showexec$(comma)iocharset=utf8	0	0' >> $@)
+	@$(if $(CONFIG_FSTAB_BOOTVFAT), echo 'LABEL=boot	/boot	vfat	rw$(comma)quiet$(comma)showexec	0	0' >> $@)
 dev/pts: dir=y
 dev/shm: dir=y
 
-install-$(CONFIG_VARSUBDIRS)+=var/log var/mail var/spool var/opt var/cache var/lib/misc var/lib/locate
+install-$(CONFIG_VARSUBDIRS)+=var/log var/mail var/spool var/opt var/cache var/lib/misc var/lib/locate var/run
 ifeq ($(CONFIG_TMPFS), y)
 var/log: link=../tmp/var/log
 var/cache: link=../tmp/var/cache
