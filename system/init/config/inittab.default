@@ -1,2 +1,3 @@
 ::once:/bin/sh
 ::sysinit:/etc/init.d/rcS
+::shutdown:/etc/init.d/rc0
