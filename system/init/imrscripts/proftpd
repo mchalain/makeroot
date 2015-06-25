@@ -1,3 +1,13 @@
 #!/bin/sh
 
-/usr/sbin/proftpd &
+[ ! -n "$1" ] && exit
+pidfile=/var/run/proftpd.pid
+if [ $1 == start ]; then
+  /usr/sbin/proftpd $conf $mod &
+  echo $! > $pidfile
+fi
+if [ $1 == stop ]; then
+  PID = $(cat $pidfile)
+  kill $PID
+fi
+

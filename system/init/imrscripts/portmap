@@ -1,5 +1,8 @@
 #!/bin/sh
 
+[ ! -n "$1" ] && exit
+if [ $1 == start ]; then
 /sbin/rpcbind
 
 /usr/sbin/rpc.statd
+fi

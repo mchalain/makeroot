@@ -2,6 +2,7 @@
 
 . /etc/network/eth0.conf
 
+[ ! -n "$1" ] && exit
 if [ -e /etc/ushare.conf ]; then
 conf="--cfg /etc/ushare.conf"
 else
@@ -9,4 +10,12 @@ dlna=--dlna
 name="--name $hostname"
 content="--content /home"
 fi
-/usr/sbin/ushare $conf $name $content $dlna --daemon
+pidfile=/var/run/ushare.pid
+if [ $1 == start ]; then
+  /usr/sbin/ushare $conf $name $content $dlna --daemon
+  echo $! > $pidfile
+fi
+if [ $1 == stop ]; then
+  PID = $(cat $pidfile)
+  kill $PID
+fi

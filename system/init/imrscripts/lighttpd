@@ -1,7 +1,16 @@
 #!/bin/sh
 
+[ ! -n "$1" ] && exit
 #conf="-f /etc/lighttpd/lighttpd.conf"
 #mod="-m /usr/lib/lighttpd"
 [ ! -d /var/log/lighttpd ] && mkdir -m 777 /var/log/lighttpd
 # lighttpd starts as daemon by default
-/usr/sbin/lighttpd $conf $mod 
+pidfile=/var/run/lighttpd.pid
+if [ $1 == start ]; then
+  /usr/sbin/lighttpd $conf $mod 
+  echo $! > $pidfile
+fi
+if [ $1 == stop ]; then
+  PID = $(cat $pidfile)
+  kill $PID
+fi

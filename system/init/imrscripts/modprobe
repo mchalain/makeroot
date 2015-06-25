@@ -1,9 +1,11 @@
-
 #!/bin/sh
 
 
 VERSION=$(uname -r)
-PATH=$(find "/lib/modules/$VERSION/kernel" -name $1.ko)
+PATH=$(find "/lib/modules/$VERSION/kernel" -name $2.ko)
 
+[ ! -n "$1" ] && exit
+if [ $1 == start ]; then
 /sbin/insmod $PATH
+fi
 

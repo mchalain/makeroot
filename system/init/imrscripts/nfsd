@@ -2,6 +2,8 @@
 
 MODPROBE=/etc/init.d/modprobe
 #MODPROBE=/sbin/modprobe
+[ ! -n "$1" ] && exit
+if [$1 == start ]; then
 $MODPROBE sunrpc
 $MODPROBE auth_rpcgss
 $MODPROBE lockd
@@ -10,3 +12,4 @@ $MODPROBE nfsd
 /usr/sbin/exportfs -ra
 /usr/sbin/rpc.nfsd 8
 /usr/sbin/rpc.mountd
+fi

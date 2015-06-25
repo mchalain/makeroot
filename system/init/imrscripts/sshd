@@ -2,6 +2,7 @@
 
 source /etc/network/eth0.conf
 
+[ ! -n "$1" ] && exit
 [ ! -d /var/run/sshd ] && mkdir -m 700 /var/run/sshd
 
 type="ed25519"
@@ -25,4 +26,13 @@ type="-t ${type}"
 [ ! -e ${file} ] && /usr/bin/ssh-keygen -q ${type} -N "" -f ${file} 
 
 # sshd starts as daemon by default
-/usr/sbin/sshd 
+pidfile=/var/run/sshd.pid
+if [ $1 == start ]; then
+  /usr/sbin/sshd $conf $mod 
+  echo $! > $pidfile
+fi
+if [ $1 == stop ]; then
+  PID = $(cat $pidfile)
+  kill $PID
+fi
+
