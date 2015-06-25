@@ -16,6 +16,10 @@ install-$(CONFIG_TMPFS)+=$(CONFIGDIR)/init.d/fsconfig
 $(CONFIGDIR)/init.d/fsconfig: copy=$(src)/imrscripts/fsconfig
 $(CONFIGDIR)/init.d/fsconfig: chmod:=744
 
+install-$(CONFIG_INIT_MR_NETWORK)+=$(CONFIGDIR)/init.d/macconfig
+$(CONFIGDIR)/init.d/macconfig: copy=$(src)/imrscripts/macconfig
+$(CONFIGDIR)/init.d/macconfig: chmod:=744
+
 install-$(CONFIG_INIT_MAKEROOT)+=$(CONFIGDIR)/init.d/modprobe
 $(CONFIGDIR)/init.d/modprobe: copy=$(src)/imrscripts/modprobe
 $(CONFIGDIR)/init.d/modprobe: chmod:=744
@@ -50,6 +54,8 @@ install-$(CONFIG_INIT_MR_TREE)+=$(CONFIGDIR)/rc.d/01_tree.rc
 $(CONFIGDIR)/rc.d/01_tree.rc: link=../init.d/fsconfig
 install-$(CONFIG_INIT_MR_UDEVD)+=$(CONFIGDIR)/rc.d/03_udevd.rc
 $(CONFIGDIR)/rc.d/03_udevd.rc: link=../../usr/sbin/udevd
+install-$(CONFIG_INIT_MR_NETWORK)+=$(CONFIGDIR)/rc.d/04_mac.rc
+$(CONFIGDIR)/rc.d/04_mac.rc: link=../init.d/macconfig
 install-$(CONFIG_INIT_MR_NETWORK)+=$(CONFIGDIR)/rc.d/05_inet.rc
 $(CONFIGDIR)/rc.d/05_inet.rc: link=../init.d/inetconfig
 install-$(CONFIG_INIT_MR_NETWORK)+=$(CONFIGDIR)/rc.d/15_inetcheck.rc

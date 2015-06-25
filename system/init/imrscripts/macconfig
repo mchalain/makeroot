@@ -1,0 +1,15 @@
+#!/bin/sh
+
+MACTOOL=snowball-mactool
+
+[ ! -n "$1" ] && exit
+[ ! -r /etc/macaddr.conf ] && exit
+[ ! -x /bin/$MACTOOL ] && exit
+. /etc/macaddr.conf
+
+if [ $1 == start ]; then
+  /bin/$MACTOOL $MACADDR
+fi
+if [ $1 == status ]; then
+  /bin/$MACTOOL
+fi
