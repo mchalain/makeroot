@@ -8,21 +8,23 @@ $(directories):
 	$(Q)mkdir -p $@
 
 .PHONY:install-header
-install-header:  $(toolchain)/$(arch)/libc/usr/include
-	$(Q)$(INSTALL) -DrpP $(toolchain)/$(arch)/libc/usr/include/* $(DESTDIR:%=%/)/usr/include
-	$(Q)rm -rf $(DESTDIR:%=%/)/usr/include/sys
-	$(Q)$(INSTALL) -d $(DESTDIR:%=%/)/usr/include/sys
-	$(Q)$(INSTALL) -DrpP $(toolchain)/$(arch)/libc/usr/include/$(cross_compile)/sys/* $(DESTDIR:%=%/)/usr/include/sys
+install-header:  $(libcdir)/usr/include
+	$(Q)$(INSTALL) -DrpP $(libcdir)/usr/include/* $(DESTDIR:%=%/)/usr/include
+
+install-header-$(cross_compile):
+	$(Q)$(INSTALL) -DrpP $(libcdir)/usr/include/$(cross_compile)/* $(DESTDIR:%=%/)/usr/include
 
 .PHONY:install-lib
-install-lib: $(toolchain)/$(arch)/libc/lib/ $(toolchain)/$(arch)/libc/usr/lib/
-	$(Q)$(INSTALL) -DrpP $(toolchain)/$(arch)/libc/lib/ $(DESTDIR:%=%/)lib
-	$(Q)$(INSTALL) -DrpP $(toolchain)/$(arch)/libc/usr/lib/ $(DESTDIR:%=%/)usr/lib
+install-lib: $(libcdir)/lib/ $(libcdir)/usr/lib/
+	$(Q)$(INSTALL) -DrpP $(libcdir)/lib/ $(DESTDIR:%=%/)lib
+	$(Q)$(INSTALL) -DrpP $(libcdir)/usr/lib/ $(DESTDIR:%=%/)usr/lib
 
 .PHONY:install
-install: $(directories) install-lib install-header
-	echo $(DESTDIR)
-	echo $(toolchain)
-	echo $(arch)
+install: $(if $(wildcard $(toolchain)/$(arch)/libc),$(eval libcdir:=$(toolchain)/$(arch)/libc),$(eval libcdir:=$(toolchain)/libc))
+install: $(if $(wildcard $(libcdir)/usr/include/$(cross_compile)),$(eval header_cross_copile:=install-header-$(cross_compile)))
+install: $(eval ldso=$(wildcard $(libcdir)/lib/ld-*.so))
+install: $(directories) install-lib install-header $(header_cross_compile)
+	$(Q)echo "$(libcdir)/lib/ld-*.so $(ldso) => $(LDSO)"
+	$(Q)ls $(libcdir)/lib/ld*
 
 all:
