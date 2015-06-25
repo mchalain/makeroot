@@ -113,9 +113,9 @@ define cmd_install-project
 		$(if $(sprj-mkinstall),
 			$(Q)$(MAKE) $(sprj-makeflags) CONFIG=$(srctree)/$(CONFIG_FILE) -C $(sprj-src) -f $(srctree)/$(sprj-mkinstall) install,
 			$(if $(wildcard  $(sprj-builddir)/Makefile),
-				$(Q)$(MAKE) -C $(sprj-builddir) $(unsetflags) INSTALL=$(install_tool) DESTDIR=$(sprj-destdir) $(sprj-makeflags) install,
+				$(Q)$(MAKE) -C $(sprj-builddir) $(unsetflags) INSTALL=$(install_tool) DESTDIR=$(sprj-destdir) PREFIX=/$(SYSTEM) $(sprj-makeflags) install,
 				$(if $(wildcard  $(sprj-src)/Makefile),
-					$(Q)$(MAKE) -C $(sprj-builddir) -f $(srctree)/$(sprj-src)/Makefile $(unsetflags) INSTALL=$(install_tool) DESTDIR=$(sprj-destdir) $(sprj-makeflags) install,
+					$(Q)$(MAKE) -C $(sprj-builddir) -f $(srctree)/$(sprj-src)/Makefile $(unsetflags) INSTALL=$(install_tool) DESTDIR=$(sprj-destdir) PREFIX=/$(system) $(sprj-makeflags) install,
 					$(Q)echo "no build script found inside $(sprj-builddir)" && exit 1
 				)
 			)
