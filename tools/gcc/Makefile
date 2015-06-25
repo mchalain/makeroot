@@ -9,7 +9,8 @@ bare-metal-4.7-url=https://launchpad.net/gcc-arm-embedded/$(gcc-version)/$(gcc-v
 linaro-release=$(firstword $(subst -, ,$(CONFIG_LINARO_VERSION:"%"=%)))
 #gcc-linaro-version=$(CONFIG_CROSS_COMPILE:"%"=%)$(gcc-version:%=-%)-$(CONFIG_TOOLCHAIN_LINARO_VERSION:"%"=%)_linux
 #4.9-2014.11-x86_64_arm-linux-gnueabihf
-gcc-linaro-version=$(gcc-version:%=%)$(CONFIG_LINARO_VERSION:%=-20%)-x86_64_$(CONFIG_CROSS_COMPILE:"%"=%)
+#gcc-linaro-version:=$(gcc-version:%=%)$(CONFIG_LINARO_VERSION:%=-20%)-x86_64_$(CONFIG_CROSS_COMPILE:"%"=%)
+gcc-linaro-version:=$(gcc-version:%=%)$(CONFIG_LINARO_VERSION:%=-20%)-$(CONFIG_CROSS_COMPILE:"%"=%)
 toolchain-$(CONFIG_TOOLCHAIN_LINARO):=gcc-linaro
 gcc-linaro-url=http://releases.linaro.org/$(CONFIG_LINARO_VERSION)/components/toolchain/binaries/arm-linux-gnueabihf/gcc-linaro$(gcc-linaro-version:%=-%).tar.xz
 #gcc-linaro-url=http://launchpad.net/linaro-toolchain-binaries/trunk/$(linaro-release)/+download/gcc-linaro$(gcc-linaro-version:%=-%).tar.bz2
