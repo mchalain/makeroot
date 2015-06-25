@@ -120,6 +120,14 @@ config SERVER_LIBSOUP
 	depends on FW_GLIB
 	help
 		https://wiki.gnome.org/action/show/Projects/libsoup
+
+config SERVER_UDPXY
+	bool
+	prompt "udpxy: udp/rtp proxy to http"
+	help
+		udpxy is a little proxy to distpatch udp stream over http
+		http://www.udpxy.com/index-en.html
+
 endmenu
 
 endmenu

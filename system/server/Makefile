@@ -372,3 +372,9 @@ gupnp-mainversion=0.20
 subproject-$(CONFIG_SERVER_GUPNP_SP)+=gupnp
 gupnp-url=https://download.gnome.org/sources/gupnp/$(gupnp-mainversion)/gupnp-$(gupnp-version).tar.xz
 gupnp-git=git://git.gnome.org/gupnp.git
+
+udpxy-version=1.0.23-0
+subproject-$(CONFIG_SERVER_UDPXY)+=udpxy
+udpxy-svn:=svn://svn.code.sf.net/p/udpxy/code/trunk
+udpxy-url:=http://sourceforge.net/projects/udpxy/files/udpxy/Chipmunk-1.0/udpxy.${udpxy-version}-prod.tar.gz
+udpxy-config:=cat ../udpxy.patch | patch -p 1

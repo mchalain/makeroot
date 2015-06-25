@@ -1,0 +1,66 @@
+diff -Naur a/Makefile b/Makefile
+--- a/Makefile	2012-07-16 19:20:03.000000000 +0200
++++ b/Makefile	2015-06-25 05:50:49.888379430 +0200
+@@ -92,7 +92,7 @@
+ CHANGEFILE := CHANGES
+ READMEFILE := README
+ 
+-INSTALLROOT := /usr/local
++PREFIX ?= /usr/local
+ 
+ ARCDIR = ..
+ ARCFILE := $(ARCDIR)/$(EXEC).$(VERSION).$(BUILDNO)-$(PATCHNO)-$(BTYPE).tar.gz
+@@ -102,9 +102,9 @@
+ COMMON_OPT := $(COMMON_OPT) -DUDPXREC_MOD
+ endif
+ 
+-DEBUG_OPT  := $(COMMON_OPT) $(USER_OPT) $(DEBUG_ON) -DTRACE_MODULE
+-PROD_OPT   := $(COMMON_OPT) $(USER_OPT) -DNDEBUG -DTRACE_MODULE
+-LEAN_OPT   := $(COMMON_OPT) -DNDEBUG $(USER_OPT)
++DEBUG_OPT  := $(USER_OPT) $(DEBUG_ON) -DTRACE_MODULE
++PROD_OPT   := $(USER_OPT) -DNDEBUG -DTRACE_MODULE
++LEAN_OPT   := -DNDEBUG $(USER_OPT)
+ 
+ 
+ UTILDIR := util
+@@ -127,7 +127,7 @@
+ .PHONY: clean all debug lean verify touch incbuild tar wl-distro
+ 
+ .c.o :
+-	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -c $< -o $@
++	$(CC) $(CFLAGS) $(CDEFS) $(COMMON_OPT) $(COPT) -c $< -o $@
+ 
+ release:
+ 	@echo -e "\nMaking a [release] version (use 'debug' target as an alternative)\n"
+@@ -181,9 +181,9 @@
+ 
+ $(EXEC) : $(DEPFILE) $(OBJ)
+ 	@rm -f $(EXEC)
+-	$(CC) $(CFLAGS) $(COPT) -o $(EXEC) $(OBJ)
++	$(CC) $(CFLAGS) $(COMMON_OPT) $(COPT) -o $(EXEC) $(OBJ)
+ 	@ls -l $(EXEC)
+-ifneq (yes, $(NO_UDPXREC))
++ifneq (yes,$(NO_UDPXREC))
+ 	@rm -f $(UDPXREC)
+ 	ln -s $(EXEC) $(UDPXREC)
+ endif
+@@ -212,14 +212,14 @@
+ 	@rm -fr $(DISTRO_DIR)
+ 
+ install:
+-	@test -d $(INSTALLROOT)/bin || mkdir -p -m 755 $(INSTALLROOT)/bin
+-	@cp $(EXEC) $(INSTALLROOT)/bin
+-	@ln -s $(INSTALLROOT)/bin/$(EXEC) $(INSTALLROOT)/bin/$(UDPXREC)
+-	@ls -l $(INSTALLROOT)/bin/$(EXEC) $(INSTALLROOT)/bin/$(UDPXREC)
++	@test -d $(DESTDIR)$(PREFIX)/bin || mkdir -p -m 755 $(DESTDIR)$(PREFIX)/bin
++	@cp $(EXEC) $(DESTDIR)$(PREFIX)/bin
++	@ln -s $(DESTDIR)$(PREFIX)/bin/$(EXEC) $(DESTDIR)$(PREFIX)/bin/$(UDPXREC)
++	@ls -l $(DESTDIR)$(PREFIX)/bin/$(EXEC) $(DESTDIR)$(PREFIX)/bin/$(UDPXREC)
+ 	@echo "Installation of udpxy is complete"
+ 
+ uninstall:
+-	@rm -f $(INSTALLROOT)/bin/$(EXEC) $(INSTALLROOT)/bin/$(UDPXREC)
++	@rm -f $(DESTDIR)$(PREFIX)/bin/$(EXEC) $(DESTDIR)$(PREFIX)/bin/$(UDPXREC)
+ 	@echo "udpxy successfully uninstalled"
+ 
+ ifneq ($(MAKECMDGOALS), clean)
