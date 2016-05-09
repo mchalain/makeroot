@@ -32,7 +32,7 @@ config LINUX
 config KERNEL
     string
     default "linux" if LINUX
-    default "rtems" if RTMES
+    default "rtems" if RTEMS
     prompt "Kernel name" if KERNEL_CUSTOM
 
 config KERNEL_VERSION
