@@ -27,7 +27,21 @@ endchoice
 
 config LINUX
     bool
-	prompt "Is Linux kernel" if KERNEL_CUSTOM
+    prompt "Is Linux kernel" if KERNEL_CUSTOM
+
+config LINUX_PREEMPT_RT
+    bool
+    prompt "RT Preempt patch"
+    depends on LINUX && !LINUX_LINARO
+    help
+	https://www.osadl.org/Realtime-Linux.projects-realtime-linux.0.html
+
+config LINUX_PREEMPT_RT_VERSION
+    string
+    prompt "RT Preempt version"
+    depends on LINUX_PREEMPT_RT
+    help
+	https://www.osadl.org/Realtime-Linux.projects-realtime-linux.0.html
 
 config KERNEL
     string

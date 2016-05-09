@@ -6,17 +6,26 @@ makeflags:=CROSS_COMPILE=$(CROSS_COMPILE) ARCH=$(ARCH) \
 	CFLAGS="" LDFLAGS=""
 
 kernel=$(CONFIG_KERNEL:"%"=%)
-subproject-y+=$(kernel)
-#default kernel-version
 $(kernel)-version:=$(CONFIG_KERNEL_VERSION:"%"=%)
 
+linux-major:=$(word 1,$(subst ., ,$(linux-version)))
+linux-medium:=$(word 2,$(subst ., ,$(linux-version)))
+linux-minor:=$(word 3,$(subst ., ,$(linux-version)))
+linux-stdversion=$(linux-major).$(linux-medium).$(linux-minor)
+
+subproject-$(CONFIG_LINUX_PREEMPT_RT)+=rt
+rt-version:=$(CONFIG_LINUX_PREEMPT_RT_VERSION)
+rt-url:=https://www.kernel.org/pub/linux/kernel/projects/rt/$(linux-major).$(linux-medium)/older/patches-$(linux-stdversion)-rt$(rt-version).tar.xz
+
+subproject-y+=$(kernel)
+
 ifeq ($(CONFIG_LINUX_STD), y)
-linux-url:=http://www.kernel.org/pub/linux/kernel/v3.0/linux$(linux-version:%=-%).tar.bz2
+linux-url:=http://www.kernel.org/pub/linux/kernel/v$(linux-major).$(linux-medium)/linux$(linux-version:%=-%).tar.bz2
 else
 ifeq ($(CONFIG_LINUX_LINARO), y)
 linaro-version:=$(CONFIG_LINARO_VERSION:"%"=%)
 ifneq ($(CONFIG_KERNEL_VERSION:"%"=%),git)
-linux-version:=linaro-stable-$(CONFIG_KERNEL_VERSION:"%"=%)
+linux-version:=linaro-stable-$(CONFIG_KERNEL_VERSION:"%"=%)-20$(linaro-version)
 endif
 linaro-lsk:=$(if $(CONFIG_LINARO_LSK),stable-lsk)
 linux-git:=git://git.linaro.org/kernel/linux-linaro-stable.git
@@ -46,6 +55,8 @@ else
 	$(kernel:%=%-targets):= $(CONFIG_KERNEL_IMAGE:"%"=%) modules modules_install headers_install install
 	$(kernel:%=%-install):= find $($(kernel:%=%-destdir))/lib/modules/ -name build -delete && find $($(kernel:%=%-destdir))/lib/modules/ -name source -delete
 endif
+
+rt-config:=pwd && cat $(srctree)/$(src)/patches/0*.patch | patch -d $(srctree)/$(KDIR) -p 1
 
 rtems-version:=4.10.2
 rtems-url:=http://git.rtems.org/rtems/snapshot/rtems-$(rtems-version).tar.bz2
