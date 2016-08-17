@@ -23,7 +23,7 @@ cmd_download-cvs = \
 
 quiet_cmd_download-git = DOWNLOAD $* from $(dwl-url:"%"=%)
 cmd_download-git = \
-	$(Q)git clone $(dwl-url:"%"=%) $(src)/$*
+	$(Q)git clone $(dwl-url:"%"=%) $(src)/$* -b $(dwl-version)
 
 quiet_cmd_download-hg = DOWNLOAD $* from $(dwl-url:"%"=%)
 cmd_download-hg = \
@@ -37,12 +37,28 @@ define cmd_download
 		$(eval dwl-url=$($(dwl-target)-hg)) ,
 		$(if $(findstring git,$(dwl-version)),
 			$(eval download-cmd=download-git)
+			$(eval dwl-version=master)
 			$(eval dwl-url=$($(dwl-target)-git)),
 			$(if $(findstring cvs,$(dwl-version)),
 				$(eval download-cmd=download-cvs)
 				$(eval dwl-url=$($(dwl-target)-cvs)),
-				$(eval download-cmd=download-url)
 				$(eval dwl-url=$($(dwl-target)-url))
+				$(if $(dwl-url),
+					$(eval download-cmd=download-url),
+					$(eval dwl-url=$($(dwl-target)-git))
+					$(if $(dwl-url),
+						$(eval download-cmd=download-git),
+						$(eval dwl-url=$($(dwl-target)-hg))
+						$(if $(dwl-url),
+							$(eval download-cmd=download-hg),
+							$(eval dwl-url=$($(dwl-target)-cvs))
+							$(if $(dwl-url),
+								$(eval download-cmd=download-cvs),
+								$(Q)echo download not found for $(dwl-target)
+							)
+						)
+					)
+				)
 			)
 		)
 	)
